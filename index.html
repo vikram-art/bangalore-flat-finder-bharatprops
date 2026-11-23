@@ -22,6 +22,7 @@
   --likely:#6fd3ff;     /* likely match */
   --sold:#6b7391;
   --good:#58d68d;
+  --top:0px;
   --f-display:"Bricolage Grotesque","Trebuchet MS",sans-serif;
   --f-body:"IBM Plex Sans","Segoe UI",system-ui,sans-serif;
 }
@@ -31,7 +32,16 @@ body{background:var(--night);color:var(--ink);font:14px/1.45 var(--f-body);overf
 button,input,select{font:inherit;color:inherit}
 button{cursor:pointer}
 :focus-visible{outline:2px solid var(--sun);outline-offset:2px}
-#app{position:relative;height:100%;display:flex}
+.top{position:fixed;z-index:6;top:0;left:0;right:0;height:var(--top);display:flex;align-items:center;justify-content:space-between;gap:12px;padding:0 18px;background:var(--panel);border-bottom:1px solid var(--line)}
+.logo{display:flex;align-items:center;gap:8px;text-decoration:none;color:var(--ink);min-width:0;padding:4px 14px 4px 5px;border-radius:999px;border:0;background:rgba(17,24,48,.92)}
+.logo img{width:26px;height:26px;border-radius:50%;object-fit:contain;flex:none}
+.logo span{font:700 16px/1 var(--f-display);white-space:nowrap}
+.logo img+span{margin-left:0}.logo span:first-child{margin-left:8px}
+.logo small{font-size:12.5px;color:var(--mute);white-space:nowrap;margin-left:2px}
+.logo small em{font-style:normal;color:var(--sun)}
+.tagline{margin:0;font:700 19px/1.1 var(--f-display);white-space:nowrap}
+.tagline em{font-style:normal;color:var(--sun)}
+#app{position:relative;height:calc(100% - var(--top));margin-top:var(--top);display:flex}
 #map{position:absolute;inset:0}
 .rail{position:relative;z-index:3;width:372px;max-width:100%;height:100%;display:flex;flex-direction:column;background:var(--panel);border-right:1px solid var(--line)}
 .brand{padding:14px 18px 10px;border-bottom:1px solid var(--line)}
@@ -53,11 +63,26 @@ input[type=range]{width:100%;accent-color:var(--sun);margin:0}
 select{width:100%;padding:8px 10px;border-radius:10px;border:1px solid var(--line);background:var(--raise)}
 .tog{display:flex;align-items:center;gap:8px;font-size:13px}
 .tog input{accent-color:var(--sun);width:16px;height:16px}
+.dd{position:relative}
+.ddbtn{width:100%;text-align:left;padding:9px 34px 9px 12px;border-radius:10px;border:1px solid var(--line);background:var(--raise);position:relative;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.ddbtn::after{content:"";position:absolute;right:14px;top:50%;width:7px;height:7px;margin-top:-6px;border-right:1.5px solid var(--mute);border-bottom:1.5px solid var(--mute);transform:rotate(45deg)}
+.ddbtn.set{border-color:var(--sun);color:var(--sun)}
+.ddpanel{position:absolute;z-index:6;left:0;right:0;top:calc(100% + 4px);background:var(--panel);border:1px solid var(--line);border-radius:12px;box-shadow:0 12px 30px rgba(0,0,0,.55);padding:6px;display:flex;flex-direction:column;gap:6px}
+.ddpanel[hidden]{display:none}
+.ddlist{max-height:250px;overflow-y:auto;display:flex;flex-direction:column;gap:1px}
+.ddlist .chip{border:0;border-radius:8px;background:none;text-align:left;padding:8px 10px 8px 32px;position:relative;font-size:13.5px;display:flex;justify-content:space-between;gap:8px;white-space:normal}
+.ddlist .chip::before{content:"";position:absolute;left:9px;top:50%;margin-top:-7px;width:13px;height:13px;border-radius:4px;border:1.5px solid var(--mute)}
+.ddlist .chip[aria-pressed="true"]{background:var(--raise);color:var(--ink);font-weight:500}
+.ddlist .chip[aria-pressed="true"]::before{background:var(--sun);border-color:var(--sun);box-shadow:inset 0 0 0 2.5px var(--raise)}
+.ddlist .chip:hover{background:var(--raise)}
+.ddlist small{color:var(--mute);font-weight:400}
+#dev-list .chip::before{border-radius:50%}
 .reset{align-self:flex-start;background:none;border:0;color:var(--likely);padding:0;text-decoration:underline;font-size:13px}
-.resbar{display:flex;align-items:baseline;justify-content:space-between;gap:10px;padding-top:12px;border-top:1px solid var(--line)}
+.resbar{display:flex;align-items:center;justify-content:space-between;gap:12px;padding-top:12px;border-top:1px solid var(--line)}
+.resleft{display:flex;flex-direction:column;gap:5px;min-width:0}
 .count{font:700 26px/1 var(--f-display);font-variant-numeric:tabular-nums}
 .count span{font:400 12.5px var(--f-body);color:var(--mute);margin-left:6px}
-.resbar select{width:auto;font-size:12.5px;padding:6px 8px}
+.resbar select{width:auto;flex:none;font-size:12.5px;padding:6px 8px}
 .list{display:flex;flex-direction:column;gap:6px}
 .item{display:grid;grid-template-columns:1fr auto;gap:2px 10px;text-align:left;padding:10px 12px;border-radius:12px;border:1px solid var(--line);background:var(--raise);width:100%}
 .item:hover,.item.on{border-color:var(--sun)}
@@ -79,22 +104,50 @@ select{width:100%;padding:8px 10px;border-radius:10px;border:1px solid var(--lin
 .mapbar>*{pointer-events:auto}
 .mbtn{padding:8px 13px;border-radius:999px;border:1px solid var(--line);background:rgba(17,24,48,.92);font-size:13px}
 .mbtn[aria-pressed="true"]{border-color:var(--sun);color:var(--sun)}
+.lt{display:inline-flex;align-items:center;gap:7px}
+.ltstack{display:flex;flex-direction:row;align-items:center;justify-content:flex-end;gap:6px}
+.ltstack .mbtn{padding:6px 11px;font-size:12.5px}
+.lt::before{content:"";flex:none;width:8px;height:8px}
+.lt[data-c="office"]::before{width:17px;height:17px;border-radius:50%;background:#f3efe6 url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='%23231700' d='M5 21V4h9v5h5v12h-5v-4h-4v4H5zm3-13h3V6H8v2zm0 4h3v-2H8v2zm0 4h3v-2H8v2zm7-4h2v-2h-2v2zm0 4h2v-2h-2v2z'/%3E%3C/svg%3E") center/10.5px no-repeat}
+.lt[data-c="mall"]::before{width:17px;height:17px;border-radius:50%;background:#c79bff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='%231a0b33' d='M6 8h12l1 13H5L6 8zm3 0V6.5a3 3 0 0 1 6 0V8h-1.6V6.5a1.4 1.4 0 0 0-2.8 0V8H9z'/%3E%3C/svg%3E") center/10.5px no-repeat}
+.lt[data-c="metro"]::before{width:18px;height:5px;border-radius:3px;background:linear-gradient(90deg,#b565f5 0 20%,#2fbf71 20% 40%,#ffe14a 40% 60%,#ff5fa8 60% 80%,#4a90ff 80%)}
+.lt[data-c="office"][aria-pressed="true"]{border-color:#f3efe6;color:#f3efe6}
+.lt[data-c="mall"][aria-pressed="true"]{border-color:#c79bff;color:#c79bff}
+.lt[data-c="metro"][aria-pressed="true"]{border-color:#dfe5fb;color:#eef1fb}
+.lt[aria-pressed="false"]{color:var(--mute)}
+.lt[aria-pressed="false"]::before{background-color:var(--sold);opacity:.75}
 .legend{margin-left:auto;display:flex;gap:12px;align-items:center;padding:8px 13px;border-radius:999px;border:1px solid var(--line);background:rgba(17,24,48,.92);font-size:12px;color:var(--mute);flex-wrap:wrap}
 .dot{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:5px;vertical-align:-1px}
+.key{position:absolute;z-index:2;left:384px;bottom:12px;padding:10px 13px;border-radius:14px;border:1px solid var(--line);background:rgba(17,24,48,.94);display:flex;flex-direction:column;gap:6px;font-size:12.5px;max-width:calc(100% - 470px)}
+.key b{font:600 11px var(--f-body);letter-spacing:.1em;text-transform:uppercase;color:var(--mute)}
+.keyrow{display:flex;flex-wrap:wrap;gap:4px 14px}
+.keyrow span{display:flex;align-items:center;white-space:nowrap}
+.keyrow i{width:13px;height:13px;border-radius:3px;margin-right:6px;flex:none}
+.keyrow i.ln{width:12px;height:4px;border-radius:2px;margin-right:3px}
+.keyrow.sub{color:var(--mute);font-size:11.5px}
+.keyrow.sub i{width:10px;height:10px}
+.chip .tdot{display:inline-block;width:9px;height:9px;border-radius:2px;margin-right:6px;vertical-align:0}
+#bfit,#b3d{display:grid;place-items:center;font:700 11.5px var(--f-body);color:#333;cursor:pointer}
 .attr{position:absolute;z-index:2;right:8px;bottom:6px;font-size:10.5px;color:var(--mute);background:rgba(10,15,30,.7);padding:2px 6px;border-radius:6px}
 .attr a{color:inherit}
 /* markers */
 .lm-area{font:600 11px var(--f-body);color:#c9d3f5;letter-spacing:.08em;text-transform:uppercase;text-shadow:0 0 4px var(--night),0 0 4px var(--night);pointer-events:none;white-space:nowrap}
 .price{pointer-events:auto;font:600 11px var(--f-body);background:var(--sun);color:var(--sun-ink);padding:2px 7px;border-radius:999px;white-space:nowrap;cursor:pointer;transform:translateY(-16px);box-shadow:0 2px 8px rgba(0,0,0,.5)}
-.price.likely{background:var(--panel);color:var(--likely);border:1px solid var(--likely)}
+.price.k-apt{background:#38bdf8;color:#03202e}
+.price.k-villa{background:#2fd08a;color:#04261a}
+.price.k-plot{background:#ff7a5c;color:#2b0d06}
+.price.likely{background:var(--panel);color:var(--ink);border:1px dashed var(--mute)}
 .z-lo .price{display:none}
 .lm{font:500 10.5px var(--f-body);color:#b9c4ea;text-shadow:0 0 4px var(--night),0 0 4px var(--night),0 0 2px var(--night);white-space:nowrap;cursor:pointer;display:flex;align-items:center;gap:5px}
 .lm::before{content:"";flex:none;width:7px;height:7px}
-.lm-office::before{transform:rotate(45deg);background:var(--likely)}
-.lm-mall::before{border-radius:2px;background:#c79bff}
-.lm-metro::before{border-radius:50%;border:1.5px solid #ff5d8f;width:5px;height:5px}
+.lm-office::before{width:18px;height:18px;border-radius:50%;background:#f3efe6 url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='%230a0f1e' d='M5 21V4h9v5h5v12h-5v-4h-4v4H5zm3-13h3V6H8v2zm0 4h3v-2H8v2zm0 4h3v-2H8v2zm7-4h2v-2h-2v2zm0 4h2v-2h-2v2z'/%3E%3C/svg%3E") center/11px no-repeat;box-shadow:0 0 0 1.5px var(--night)}
+.lm-mall::before{width:18px;height:18px;border-radius:50%;background:#c79bff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='%231a0b33' d='M6 8h12l1 13H5L6 8zm3 0V6.5a3 3 0 0 1 6 0V8h-1.6V6.5a1.4 1.4 0 0 0-2.8 0V8H9z'/%3E%3C/svg%3E") center/11px no-repeat;box-shadow:0 0 0 1.5px var(--night)}
+.lm-metro::before{border-radius:50%;border:1.5px solid var(--dot,#ff5d8f);width:5px;height:5px}
 .lm-rail::before{background:#9aa6cc;height:3px;width:9px}
 .lm:hover{color:#fff}
+.lm.mini{font-size:0;gap:0}
+.lm.mini::before{width:8px;height:8px;box-shadow:0 0 0 1.5px var(--night)}
+.lm-office.mini::before,.lm-mall.mini::before{width:15px;height:15px;background-size:9px}
 .origin{display:flex;flex-direction:column;align-items:center;pointer-events:none}
 .origin b{font:600 11.5px var(--f-body);background:#fff;color:#0a0f1e;padding:3px 9px;border-radius:999px;white-space:nowrap;box-shadow:0 2px 10px rgba(0,0,0,.6)}
 .origin i{width:2px;height:16px;background:#fff}
@@ -177,16 +230,56 @@ details summary{cursor:pointer;color:var(--mute);font-size:12.5px;margin-top:8px
 .hint{font-size:12px;color:var(--mute)}
 .listbar{display:flex;gap:8px;flex-wrap:wrap;align-items:center;font-size:13px}
 .listbar a{color:var(--likely)}
+.grab{display:block;padding:14px 18px 2px}
+.grab>i,.grabtxt{display:none}
+.rail .logo{background:none;padding:0;display:inline-flex}
+.rail .logo span{font-size:18px}
+.fwrap,.fbody{display:contents}
+.fhead,.ffoot,.fpill{display:none}
 @media (max-width:860px){
-  body{overflow:auto}
-  #app{flex-direction:column;height:auto;min-height:100%}
-  #map{position:relative;inset:auto;height:46vh;min-height:300px;order:1}
-  .rail{order:2;width:100%;height:auto;border-right:0;border-top:1px solid var(--line)}
-  .scroll{overflow:visible}
-  .mapbar{left:12px;top:10px}
-  .legend{display:none}
-  .card{position:fixed;width:100%}
-  .attr{bottom:auto;top:calc(46vh - 24px);position:absolute}
+  /* phone: the map fills the screen; filters and results live in a sheet you swipe up and down */
+  :root{--peek:78px;--top:0px}
+  .logo{padding:3px 10px 3px 4px;gap:6px;flex:none}.logo span{font-size:14px}.logo small{display:none}.logo img{width:24px;height:24px}
+  #app{display:block}
+  #map{position:absolute;inset:0;height:auto}
+  .rail{position:fixed;z-index:5;left:0;right:0;bottom:0;top:var(--top);width:100%;height:auto;border-right:0;border-top:1px solid var(--line);border-radius:18px 18px 0 0;transform:translateY(calc(100% - var(--peek)));transition:transform .28s ease;box-shadow:0 -10px 30px rgba(0,0,0,.5);will-change:transform}
+  .rail.full{transform:translateY(0);border-radius:0}
+  .grab{display:flex;flex-direction:column;align-items:stretch;gap:6px;padding:8px 16px 10px;cursor:grab;touch-action:none;user-select:none;-webkit-user-select:none}
+  .grab>i{display:block;align-self:center;width:44px;height:5px;border-radius:3px;background:var(--mute);opacity:.7}
+  .grabrow{display:flex;align-items:center;justify-content:space-between;gap:12px}
+  .grabtxt{display:flex;flex-direction:column;align-items:flex-end;gap:2px;min-width:0;text-align:right}
+  .grabtxt span,.grabtxt em{max-width:100%;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .grabtxt span{font:700 17px/1.1 var(--f-display);font-variant-numeric:tabular-nums}
+  .grabtxt em{font-style:normal;font-size:11.5px;color:var(--mute)}
+  .rail .logo span{font-size:16px}
+  .brand{padding:6px 16px 10px;touch-action:none}
+  .brand h1{font-size:19px}
+  .rail:not(.full) .scroll,.rail:not(.full) .brand{visibility:hidden}
+  .scroll{padding:12px 16px 28px;overscroll-behavior:contain}
+  .mapbar{left:10px;right:10px;top:10px;gap:5px}
+  .mbtn{padding:6px 10px;font-size:12px}
+  .card{position:fixed;width:100%;z-index:7}
+  .attr{bottom:calc(var(--peek) + 4px);right:6px}
+  .key{left:8px;bottom:calc(var(--peek) + 26px);max-width:calc(100% - 64px);padding:7px 10px;gap:3px}
+  .key b,.key .keyrow.sub:last-child{display:none}
+  .resbar{border-top:0;padding-top:0}.resbar .count{display:none}
+  .fpill{display:grid;place-items:center;position:absolute;z-index:3;right:10px;bottom:calc(var(--peek) + 26px);width:54px;height:54px;border-radius:50%;border:0;background:var(--sun);color:var(--sun-ink);box-shadow:0 6px 18px rgba(0,0,0,.55)}
+  .fpill span{position:absolute;top:-4px;right:-4px;min-width:20px;height:20px;padding:0 5px;border-radius:999px;background:#fff;color:#0a0f1e;font:700 12px/20px var(--f-body);text-align:center}
+  .fpill span:empty{display:none}
+  .mapbar{right:58px;top:10px;row-gap:8px}
+  .ltstack{gap:5px}.ltstack .mbtn{padding:5px 9px;font-size:11.5px;gap:5px}
+  .key{max-width:calc(100% - 82px)}
+  .fwrap{display:flex;flex-direction:column;position:fixed;inset:0;z-index:8;background:var(--panel);transform:translateY(100%);visibility:hidden;transition:transform .26s ease,visibility 0s .26s}
+  .fwrap.open{transform:none;visibility:visible;transition:transform .26s ease}
+  .fhead{display:flex;align-items:center;justify-content:space-between;padding:12px 16px;border-bottom:1px solid var(--line)}
+  .fhead b{font:700 20px var(--f-display)}
+  .fbody{display:flex;flex-direction:column;gap:14px;flex:1;overflow-y:auto;padding:14px 16px 24px;overscroll-behavior:contain}
+  .fbody>*{flex:none}
+  .ffoot{display:flex;padding:10px 16px calc(10px + env(safe-area-inset-bottom,0px));border-top:1px solid var(--line)}
+}
+@media (max-width:380px){
+  .lt .lg{display:none}
+  .mapbar .mbtn{padding:6px 8px;font-size:11.5px}
 }
 @media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
 </style>
@@ -195,12 +288,12 @@ details summary{cursor:pointer;color:var(--mute);font-size:12.5px;margin-top:8px
 <div id="app">
   <div id="map" class="z-lo" aria-label="Map of East Bangalore projects"></div>
 
-  <aside class="rail" aria-label="Filters and results">
-    <div class="brand">
-      <small>Bangalore Flat Finder · by BharatProps · East Bangalore</small>
-      <h1>Find the flat that <em>fits</em>.</h1>
-    </div>
+  <aside class="rail" id="sheet" aria-label="Filters and results">
+    <div class="grab" id="grab" role="button" tabindex="0" aria-expanded="false" aria-controls="sheet"><i></i><div class="grabrow"><a class="logo" id="logo" href="https://www.bharatprops.com" target="_blank" rel="noopener" aria-label="BharatProps home"><img src="https://www.bharatprops.com/brand/mark.webp" alt="" width="26" height="26" referrerpolicy="no-referrer" onerror="this.remove()"><span>BharatProps</span></a><div class="grabtxt"><span id="peekcount">Projects</span><em id="peekhint">Swipe up for the full list</em></div></div></div>
     <div class="scroll">
+      <div class="fwrap" id="filters" aria-label="Filters">
+      <div class="fhead"><b>Filters</b><button class="x" id="fclose" type="button" aria-label="Close filters">×</button></div>
+      <div class="fbody">
       <div class="grp nearbox">
         <div class="lab"><label for="near">Start from your office, metro or mall</label></div>
         <div class="nearwrap">
@@ -214,7 +307,6 @@ details summary{cursor:pointer;color:var(--mute);font-size:12.5px;margin-top:8px
           <input id="nearkm" type="range" min="1" max="20" step="1" value="5">
         </div>
       </div>
-      <input id="q" class="search" type="search" placeholder="Search project, builder or area" autocomplete="off">
 
       <div class="grp"><div class="lab">Type</div><div class="chips" id="f-kind"></div></div>
       <div class="grp"><div class="lab">BHK</div><div class="chips" id="f-bhk"></div></div>
@@ -233,23 +325,30 @@ details summary{cursor:pointer;color:var(--mute);font-size:12.5px;margin-top:8px
         <label class="tog"><input id="sold" type="checkbox"> Also show sold-out projects</label>
       </div>
 
-      <div class="grp"><div class="lab">Amenities</div><div class="chips" id="f-am"></div></div>
+      <div class="grp"><div class="lab">Amenities</div>
+        <div class="dd" id="dd-am"><button type="button" class="ddbtn" id="am-btn" aria-expanded="false" aria-haspopup="true">Any amenities</button>
+          <div class="ddpanel" hidden><div class="ddlist" id="f-am"></div></div></div></div>
 
       <div class="grp">
         <div class="lab"><label for="metro">Any metro station within</label><b id="metro-v">Any</b></div>
         <input id="metro" type="range" min="0" max="5" step="1" value="0">
       </div>
       <div class="grp">
-        <div class="lab">Builder and possession</div>
-        <div class="row2">
-          <select id="dev" aria-label="Builder"><option value="">Any builder</option></select>
-          <select id="poss" aria-label="Possession by"><option value="">Any possession</option><option value="2026">By 2026</option><option value="2027">By 2027</option><option value="2028">By 2028</option><option value="2029">By 2029</option><option value="2030">By 2030</option></select>
-        </div>
+        <div class="lab">Builder</div>
+        <div class="dd" id="dd-dev"><button type="button" class="ddbtn" id="dev-btn" aria-expanded="false" aria-haspopup="true">Any builder</button>
+          <div class="ddpanel" hidden><input id="dev-q" class="search" type="text" placeholder="Type a builder name" autocomplete="off" aria-label="Search builders"><div class="ddlist" id="dev-list"></div></div></div>
+      </div>
+      <div class="grp">
+        <div class="lab"><label for="poss">Possession</label></div>
+        <select id="poss"><option value="">Any possession</option><option value="2026">By 2026</option><option value="2027">By 2027</option><option value="2028">By 2028</option><option value="2029">By 2029</option><option value="2030">By 2030</option></select>
       </div>
       <button class="reset" id="reset" type="button">Clear all filters</button>
+      </div>
+      <div class="ffoot"><button class="cta" id="fshow" type="button">Show projects</button></div>
+      </div>
 
       <div class="resbar">
-        <div class="count" id="count">0<span>projects</span></div>
+        <div class="resleft"><div class="count" id="count">0<span>projects</span></div><div class="stats" id="sum"></div></div>
         <select id="sort" aria-label="Sort results">
           <option value="best">Best match</option>
           <option value="plow">Price, low to high</option>
@@ -259,7 +358,6 @@ details summary{cursor:pointer;color:var(--mute);font-size:12.5px;margin-top:8px
           <option value="land">Largest land parcel</option>
         </select>
       </div>
-      <div class="stats" id="sum"></div>
       <div class="listbar" id="listbar"></div>
       <div class="list" id="list"></div>
       <button class="more" id="more" type="button" hidden>Show more</button>
@@ -267,20 +365,26 @@ details summary{cursor:pointer;color:var(--mute);font-size:12.5px;margin-top:8px
     </div>
   </aside>
 
-  <div class="mapbar">
-    <button class="mbtn" id="b3d" type="button" aria-pressed="true">3D view</button>
-    <button class="mbtn" id="bsat" type="button" aria-pressed="false" hidden>Satellite</button>
-    <button class="mbtn" id="bfit" type="button">Fit results</button>
-    <button class="mbtn lt" data-c="office" type="button" aria-pressed="true">Offices</button>
-    <button class="mbtn lt" data-c="mall" type="button" aria-pressed="true">Malls</button>
-    <button class="mbtn lt" data-c="metro" type="button" aria-pressed="true">Metro stops</button>
-    <div class="legend">
-      <span><i class="dot" style="background:var(--sun);border-radius:2px"></i>Fits</span>
-      <span><i class="dot" style="background:var(--likely);border-radius:2px"></i>Likely</span>
-      <span><i class="dot" style="background:#3a4672;border-radius:2px"></i>Doesn't match</span>
-      <span><i class="dot" style="background:#ff5d8f"></i>Metro</span>
-    </div>
+  <div hidden id="ctlhold">
+    <button id="bfit" type="button" title="Fit all results on the map" aria-label="Fit all results on the map"><svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="#333" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/><circle cx="12" cy="12" r="2.2" fill="#333" stroke="none"/></svg></button>
+    <button id="b3d" type="button" aria-pressed="true" title="Switch between 3D and flat 2D view" aria-label="Switch between 3D and 2D view">2D</button>
   </div>
+  <div class="mapbar">
+    <button class="mbtn lt" data-c="office" type="button" aria-pressed="false">Offices</button>
+    <button class="mbtn lt" data-c="mall" type="button" aria-pressed="false">Malls</button>
+    <button class="mbtn lt" data-c="metro" type="button" aria-pressed="true" aria-label="Metro stops"><span>Metro<span class="lg"> stops</span></span></button>
+    <button class="mbtn" id="bsat" type="button" aria-pressed="false" hidden>Satellite</button>
+  </div>
+  <div class="key" aria-label="What the colours mean">
+    <b>Colour shows the home type</b>
+    <div class="keyrow"><span><i style="background:#38bdf8"></i>Apartments</span><span><i style="background:#2fd08a"></i>Villas</span><span><i style="background:#ff7a5c"></i>Plots</span></div>
+    <div class="keyrow sub"><span><i style="background:#3f7f99"></i>Paler = likely match</span><span><i style="background:#343a4c"></i>Grey = not a match</span></div>
+    <div class="keyrow sub"><span>Metro<i class="ln" style="background:#b565f5;margin-left:6px"></i><i class="ln" style="background:#2fbf71"></i><i class="ln" style="background:#ffe14a"></i><i class="ln" style="background:#ff5fa8"></i><i class="ln" style="background:#4a90ff"></i></span><span>Dashed = opening later</span></div>
+  </div>
+  <button class="fpill" id="bfilters" type="button" aria-label="Filters">
+    <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M4 7h10M18 7h2M4 12h3M11 12h9M4 17h12M20 17h0"/><circle cx="16" cy="7" r="2"/><circle cx="9" cy="12" r="2"/><circle cx="18" cy="17" r="2"/></svg>
+    <span id="fbadge"></span>
+  </button>
   <div class="attr">Map data © <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a> contributors</div>
 
   <section class="card" id="card" aria-live="polite"></section>
@@ -322,7 +426,7 @@ const LM = [ // curated landmarks: [name, lat, lng, type]
 const LM_TYPE = {office:"Tech park", mall:"Mall", metro:"Metro", rail:"Station", area:"Area", pin:"Pin"};
 const QUICK = ["ITPL","RMZ Ecoworld","Embassy TechVillage","Bagmane Tech Park","Prestige Tech Park"];
 const kmBetween = (a,b,c,d) => { const R = 6371, p = Math.PI/180, x = Math.sin((c-a)*p/2)**2 + Math.cos(a*p)*Math.cos(c*p)*Math.sin((d-b)*p/2)**2; return 2*R*Math.asin(Math.sqrt(x)); };
-let PLACES = [], picking = false, originMarker = null, LABELS = [], lmOff = new Set();
+let PLACES = [], picking = false, originMarker = null, LABELS = [], lmOff = new Set(["office","mall"]);
 const bucket = b => b >= 5 ? 5 : Math.floor(b);
 
 const S0 = () => ({q:"", kind:new Set(), bhk:new Set(), pmax:null, sq:0, cor:new Set(), st:new Set(), sold:false, am:new Set(), metro:0, near:null, nearKm:5, dev:"", poss:"", sort:"best"});
@@ -382,35 +486,47 @@ function chipGroup(el, items, set, labelOf){
   });
 }
 function syncUI(){
-  $("q").value = S.q; $("sold").checked = S.sold;
+  $("sold").checked = S.sold;
   $("pmax").value = S.pmax == null ? 20 : BUDGET.indexOf(S.pmax); $("pmax-v").textContent = S.pmax == null ? "Any" : money(S.pmax);
   $("sq").value = S.sq; $("sq-v").textContent = S.sq ? S.sq.toLocaleString("en-IN") + " sq ft" : "Any";
   $("metro").value = S.metro; $("metro-v").textContent = S.metro ? S.metro + " km" : "Any";
   $("near").value = S.near ? S.near.n : ""; $("nearx").hidden = !S.near; $("nearkmrow").hidden = !S.near; $("nearkm").value = S.nearKm; $("nearkm-v").textContent = S.nearKm + " km";
   for (const b of $("nearquick").children) b.setAttribute("aria-pressed", b.dataset.pick ? picking : !!(S.near && S.near.n === b.dataset.n));
-  $("dev").value = S.dev; $("poss").value = S.poss; $("sort").value = S.sort;
+  $("dev-btn").textContent = S.dev || "Any builder"; $("dev-btn").classList.toggle("set", !!S.dev);
+  const am = [...S.am].map(a => AMEN[a]); $("am-btn").textContent = am.length ? am.slice(0,2).join(", ") + (am.length > 2 ? " +" + (am.length-2) : "") : "Any amenities"; $("am-btn").classList.toggle("set", am.length > 0);
+  $("poss").value = S.poss; $("sort").value = S.sort;
   const sets = {"f-kind":S.kind,"f-bhk":S.bhk,"f-cor":S.cor,"f-st":S.st,"f-am":S.am};
   for (const id in sets) for (const b of $(id).children){ let v = b.dataset.v; if (id === "f-bhk") v = +v; b.setAttribute("aria-pressed", sets[id].has(v)); }
 }
 function buildUI(){
   chipGroup($("f-kind"), Object.keys(KIND), () => S.kind, v => KIND[v]);
+  const TC = {apt:"#38bdf8", villa:"#2fd08a", plot:"#ff7a5c"}; for (const b of $("f-kind").children) b.insertAdjacentHTML("afterbegin", `<i class="tdot" style="background:${TC[b.dataset.v]};box-shadow:0 0 0 1.5px var(--night)"></i>`);
   chipGroup($("f-bhk"), [1,2,3,4,5], () => S.bhk, v => v === 5 ? "5+" : v);
   chipGroup($("f-cor"), [...new Set(P.map(p => p.cor))].sort(), () => S.cor, v => v);
   chipGroup($("f-st"), Object.keys(STAGE), () => S.st, v => STAGE[v]);
-  chipGroup($("f-am"), AMEN_TOP, () => S.am, v => AMEN[v]);
+  chipGroup($("f-am"), Object.keys(AMEN), () => S.am, v => AMEN[v]);
   const devs = {}; P.forEach(p => { if (!p.sold && p.brand) devs[p.brand] = (devs[p.brand]||0)+1; });
-  $("dev").insertAdjacentHTML("beforeend", Object.entries(devs).filter(e => e[1] >= 2).sort((a,b) => a[0].localeCompare(b[0])).map(e => `<option value="${esc(e[0])}">${esc(e[0])} (${e[1]})</option>`).join(""));
-  $("q").addEventListener("input", e => { S.q = e.target.value.trim(); apply(); });
+  const DEVS = Object.entries(devs).sort((a,b) => a[0].localeCompare(b[0]));
+  const devList = () => { const q = $("dev-q").value.trim().toLowerCase(), hits = DEVS.filter(e => e[0].toLowerCase().includes(q));
+    $("dev-list").innerHTML = `<button type="button" class="chip" data-v="" aria-pressed="${!S.dev}">Any builder</button>` + (hits.map(e => `<button type="button" class="chip" data-v="${esc(e[0])}" aria-pressed="${S.dev === e[0]}">${esc(e[0])} <small>${e[1]}</small></button>`).join("") || `<p class="hint" style="margin:8px 10px">No builder by that name.</p>`); };
+  $("dev-q").addEventListener("input", devList);
+  $("dev-list").addEventListener("click", e => { const b = e.target.closest(".chip"); if (!b) return; S.dev = b.dataset.v; closeDD(); syncUI(); apply(); });
+  const closeDD = () => document.querySelectorAll(".dd").forEach(d => { d.querySelector(".ddpanel").hidden = true; d.querySelector(".ddbtn").setAttribute("aria-expanded", "false"); });
+  document.querySelectorAll(".dd .ddbtn").forEach(b => b.addEventListener("click", () => { const p = b.parentNode.querySelector(".ddpanel"), open = p.hidden; closeDD(); p.hidden = !open; b.setAttribute("aria-expanded", open);
+    if (open && b.id === "dev-btn"){ $("dev-q").value = ""; devList(); $("dev-q").focus(); } }));
+  document.addEventListener("click", e => { if (!e.target.closest(".dd")) closeDD(); });
+  document.addEventListener("keydown", e => { if (e.key === "Escape") closeDD(); });
+  $("f-am").addEventListener("click", () => syncUI());
   $("pmax").addEventListener("input", e => { S.pmax = BUDGET[+e.target.value]; syncUI(); apply(); });
   $("sq").addEventListener("input", e => { S.sq = +e.target.value; syncUI(); apply(); });
   $("metro").addEventListener("input", e => { S.metro = +e.target.value; syncUI(); apply(); });
   $("sold").addEventListener("change", e => { S.sold = e.target.checked; apply(); });
-  for (const [id,k] of [["dev","dev"],["poss","poss"],["sort","sort"]]) $(id).addEventListener("change", e => { S[k] = e.target.value; apply(); });
+  for (const [id,k] of [["poss","poss"],["sort","sort"]]) $(id).addEventListener("change", e => { S[k] = e.target.value; apply(); });
   $("reset").addEventListener("click", () => { S = S0(); syncUI(); apply(); renderNear(false); });
   // places people start from
   const areas = {}; P.forEach(p => { (areas[p.loc] = areas[p.loc] || []).push(p); });
   PLACES = [...LM.map(l => ({n:l[0], lat:l[1], lng:l[2], t:l[3]})),
-    ...BASE.stations.map(s => ({n:s[2] + " metro", lat:s[1], lng:s[0], t:"metro"})),
+    ...BASE.stations.map(s => ({n:s[2] + " metro" + (s[4] === 0 ? " (opening later)" : ""), lat:s[1], lng:s[0], t:"metro", ln:s[3]})),
     ...Object.entries(areas).filter(e => e[1].length >= 3).map(([n,a]) => ({n, lat:a.reduce((x,p) => x+p.lat,0)/a.length, lng:a.reduce((x,p) => x+p.lng,0)/a.length, t:"area"}))];
   $("nearquick").innerHTML = QUICK.map(n => `<button type="button" class="chip" data-n="${esc(n)}" aria-pressed="false">${esc(n)}</button>`).join("") + `<button type="button" class="chip" data-pick="1" aria-pressed="false">Drop a pin on the map</button>`;
   $("nearquick").addEventListener("click", e => { const b = e.target.closest(".chip"); if (!b) return;
@@ -418,7 +534,7 @@ function buildUI(){
     S.near && S.near.n === b.dataset.n ? setNear(null) : setNear(PLACES.find(p => p.n === b.dataset.n)); });
   const sugg = () => { const q = $("near").value.trim().toLowerCase(), ws = q.split(/\s+/).filter(Boolean);
     const hits = (q ? PLACES.filter(p => ws.every(w => (p.n + " " + LM_TYPE[p.t]).toLowerCase().includes(w))) : PLACES.filter(p => p.t === "office")).slice(0, 9);
-    $("nearlist").innerHTML = hits.map((p,i) => `<li data-i="${PLACES.indexOf(p)}" class="${i ? "" : "on"}"><span>${esc(p.n)}</span><span>${LM_TYPE[p.t]}</span></li>`).join("") || `<li><span>No match. Drop a pin on the map instead.</span><span></span></li>`;
+    $("nearlist").innerHTML = hits.map((p,i) => `<li data-i="${PLACES.indexOf(p)}" class="${i ? "" : "on"}"><span>${esc(p.n)}</span><span>${p.ln ? p.ln[0].toUpperCase() + p.ln.slice(1) + " Line" : LM_TYPE[p.t]}</span></li>`).join("") || `<li><span>No match. Drop a pin on the map instead.</span><span></span></li>`;
     $("nearlist").hidden = false; $("near").setAttribute("aria-expanded", "true"); };
   $("near").addEventListener("input", sugg); $("near").addEventListener("focus", sugg);
   $("near").addEventListener("keydown", e => { if (e.key === "Enter"){ const li = $("nearlist").querySelector("li[data-i]"); if (li) setNear(PLACES[+li.dataset.i]); } if (e.key === "Escape") hideSugg(); });
@@ -426,10 +542,10 @@ function buildUI(){
   $("nearlist").addEventListener("mousedown", e => { const li = e.target.closest("li[data-i]"); if (li){ e.preventDefault(); setNear(PLACES[+li.dataset.i]); } });
   $("nearx").addEventListener("click", () => setNear(null));
   $("nearkm").addEventListener("input", e => { S.nearKm = +e.target.value; syncUI(); apply(); renderNear(false); });
-  document.querySelectorAll(".lt").forEach(b => b.addEventListener("click", () => { const on = b.getAttribute("aria-pressed") !== "true"; b.setAttribute("aria-pressed", on); on ? lmOff.delete(b.dataset.c) : lmOff.add(b.dataset.c); declutter(); }));
+  document.querySelectorAll(".lt").forEach(b => b.addEventListener("click", () => { const on = b.getAttribute("aria-pressed") !== "true"; b.setAttribute("aria-pressed", on); on ? lmOff.delete(b.dataset.c) : lmOff.add(b.dataset.c); if (b.dataset.c === "metro" && map.getLayer("stn")) map.setLayoutProperty("stn", "visibility", on ? "visible" : "none"); declutter(); }));
   $("more").addEventListener("click", () => { shown += 40; renderList(); });
   $("list").addEventListener("click", e => { const b = e.target.closest(".item"); if (b) openCard(+b.dataset.id, true); });
-  $("b3d").addEventListener("click", () => { const on = $("b3d").getAttribute("aria-pressed") !== "true"; $("b3d").setAttribute("aria-pressed", on); map.easeTo({pitch: on ? 58 : 0, bearing: on ? -14 : 0, duration: 700}); });
+  $("b3d").addEventListener("click", () => { const on = $("b3d").getAttribute("aria-pressed") !== "true"; $("b3d").setAttribute("aria-pressed", on); $("b3d").textContent = on ? "2D" : "3D"; map.easeTo({pitch: on ? 58 : 0, bearing: on ? -14 : 0, duration: 700}); });
   $("bfit").addEventListener("click", fitResults);
   $("bsat").addEventListener("click", () => { const on = $("bsat").getAttribute("aria-pressed") !== "true"; $("bsat").setAttribute("aria-pressed", on); if (map.getLayer("sat")) map.setLayoutProperty("sat", "visibility", on ? "visible" : "none"); });
   $("foot").innerHTML = `${P.length} projects in East Bangalore, ${P.filter(p => !p.sold).length} with homes still available. Prices are indicative as of ${esc(CONFIG.dataDate)} and change often, so confirm with ${esc(CONFIG.brand)} before you decide. Distances are straight-line. Nearby places from OpenStreetMap.`;
@@ -440,6 +556,7 @@ function setNear(pl){
   S.near = pl ? {n:pl.n, lat:pl.lat, lng:pl.lng, t:pl.t} : null; picking = false; $("map").classList.remove("picking"); hideSugg(); $("near").blur();
   if (S.near){ for (const p of P) p.d = Math.round(kmBetween(S.near.lat, S.near.lng, p.lat, p.lng)*10)/10; if (S.sort === "best" || S.sort === "metro") S.sort = "best"; }
   syncUI(); apply(); renderNear(true);
+  if (pl && phone()){ setSheet(false); $("filters").classList.remove("open"); }
 }
 function renderNear(fit){
   if (!map || !map.getSource("near")) return;
@@ -450,7 +567,7 @@ function renderNear(fit){
   map.getSource("near").setData(fc([{type:"Feature", geometry:{type:"Polygon", coordinates:[ring]}, properties:{}}]));
   const el = document.createElement("div"); el.className = "origin"; el.innerHTML = `<b>${esc(S.near.n)}</b><i></i><u></u>`;
   originMarker = new maplibregl.Marker({element:el, anchor:"bottom"}).setLngLat([S.near.lng, S.near.lat]).addTo(map);
-  if (fit){ const b = new maplibregl.LngLatBounds(); ring.forEach(c => b.extend(c)); map.fitBounds(b, {padding:{top:70,bottom:50,left:innerWidth > 860 ? 410 : 30,right:50}, maxZoom:14.5, duration:800, pitch:map.getPitch(), bearing:map.getBearing()}); }
+  if (fit){ const b = new maplibregl.LngLatBounds(); ring.forEach(c => b.extend(c)); map.fitBounds(b, {padding:{top:70,bottom:innerWidth > 860 ? 50 : 140,left:innerWidth > 860 ? 410 : 30,right:50}, maxZoom:14.5, duration:800, pitch:map.getPitch(), bearing:map.getBearing()}); }
   declutter();
 }
 /* Landmark names never overlap: higher-priority names are placed first and anything that would collide is hidden until you zoom in. */
@@ -464,10 +581,15 @@ function declutter(){
   if (!map) return; const z = map.getZoom(), placed = [], W = map.getContainer().clientWidth, H = map.getContainer().clientHeight;
   if (originMarker){ const o = map.project(originMarker.getLngLat()); placed.push([o.x-70, o.y-46, o.x+70, o.y+6]); }
   for (const L of LABELS){
-    let show = z >= L.minZ && !lmOff.has(L.cat) && !(S.near && S.near.n === L.text);
+    let show = !lmOff.has(L.cat === "rail" ? "office" : L.cat) && !(S.near && S.near.n === L.text);   // railway stations follow the Offices pill
+    const mini = show && z < L.minZ;   // zoomed out: keep the marker, drop the name
+    if (mini && (L.cat === "office" || L.cat === "mall" || L.cat === "rail")){ const p = map.project([L.lng, L.lat]); L.el.classList.add("mini"); L.el.style.display = p.x > -20 && p.x < W + 20 && p.y > -20 && p.y < H + 20 ? "" : "none"; continue; }
+    L.el.classList.remove("mini"); if (mini) show = false;
     if (show){ const p = map.project([L.lng, L.lat]), x0 = L.cat === "area" ? p.x - L.w/2 : p.x - 4, box = [x0, p.y - 9, x0 + L.w, p.y + 9];
       show = p.x > -40 && p.x < W + 40 && p.y > -20 && p.y < H + 20 && !placed.some(b => box[0] < b[2] + 6 && box[2] > b[0] - 6 && box[1] < b[3] + 3 && box[3] > b[1] - 3);
-      if (show) placed.push(box); }
+      const onScreen = p.x > -20 && p.x < W + 20 && p.y > -20 && p.y < H + 20;
+      if (show) placed.push(box);
+      else if (onScreen && (L.cat === "office" || L.cat === "mall" || L.cat === "rail")){ L.el.classList.add("mini"); show = true; } }   // no room for the name: keep the marker
     L.el.style.display = show ? "" : "none";
   }
 }
@@ -488,13 +610,16 @@ function apply(){
 }
 function renderList(){
   const fits = RES.filter(p => p.m === 2).length, likely = RES.length - fits;
-  $("count").innerHTML = `${RES.length}<span>${RES.length === 1 ? "project" : "projects"}${likely ? ` · ${fits} fit, ${likely} likely` : ""}</span>`;
+  $("count").innerHTML = `${RES.length}<span>${RES.length === 1 ? "project found" : "projects found"}${likely ? ` · ${fits} fit, ${likely} likely` : ""}</span>`;
   $("list").innerHTML = RES.slice(0, shown).map(p => `
     <button type="button" class="item${p.id === openId ? " on" : ""}" data-id="${p.id}">
       <span class="n">${esc(p.name)}</span><span class="p">${money(fromPrice(p))}+</span>
       <span class="s">${p.sold ? '<i class="pill sold">Sold out</i>' : p.m === 1 ? '<i class="pill likely">Likely</i>' : `<i class="pill ${p.st}">${STAGE[p.st]}</i>`}${esc(p.loc)} · ${p.bhk.length ? esc(p.bhk.join(", ")) + " BHK" : KIND[p.kind]}${S.near ? " · " + p.d + " km from " + esc(S.near.n) : p.metro[0] <= 2 ? " · metro " + p.metro[0] + " km" : ""}</span>
     </button>`).join("") || `<p class="hint">Nothing fits these filters. Raise the budget, drop an amenity, or clear all filters.</p>`;
   $("more").hidden = RES.length <= shown;
+  const nf = (S.near ? 1 : 0) + S.kind.size + S.bhk.size + (S.pmax != null ? 1 : 0) + (S.sq ? 1 : 0) + S.cor.size + S.st.size + (S.sold ? 1 : 0) + S.am.size + (S.metro ? 1 : 0) + (S.dev ? 1 : 0) + (S.poss ? 1 : 0);
+  $("fbadge").textContent = nf || ""; $("bfilters").setAttribute("aria-label", "Filters" + (nf ? ", " + nf + " on" : "")); $("fshow").textContent = "Show " + RES.length + (RES.length === 1 ? " project" : " projects");
+  $("peekcount").textContent = RES.length + (RES.length === 1 ? " project found" : " projects found"); peekHint();
   const ps = RES.filter(p => p.psf).map(p => p.psf);
   $("sum").textContent = RES.length ? `From ${money(Math.min(...RES.map(fromPrice)))} to ${money(Math.max(...RES.map(p => p.pmax)))}${ps.length >= 3 ? " · typical ₹" + median(ps).toLocaleString("en-IN") + " per sq ft" : ""}` : "";
   const sv = P.filter(p => saved.has(p.id));
@@ -527,9 +652,11 @@ const FOOT = [
   [[-.42,-1],[.42,-1],[.42,-.42],[1,-.42],[1,.42],[.42,.42],[.42,1],[-.42,1],[-.42,.42],[-1,.42],[-1,-.42],[-.42,-.42]],
   [[-1,-.7],[1,-.7],[1,.7],[.42,.7],[.42,-.1],[-.42,-.1],[-.42,.7],[-1,.7]]
 ];
-const SKIN = { // glass, floor line, podium, crown
-  2:["#f2a91f","#fff1cc","#6b4a12","#ffd77a"], 1:["#3fa9d9","#dff5ff","#1d4f66","#9be0ff"],
-  0:["#2a3559","#3e4b7a","#1c2440","#465488"], 3:["#7a8199","#b3b8cc","#454a5e","#c3c7d6"]
+const SKIN = { // per home type: [glass, floor line, podium, crown] for a fit, then for a likely match
+  apt:  {2:["#38bdf8","#e0f6ff","#0f4a66","#a5e4ff"], 1:["#3f7f99","#bcdbe6","#1c4252","#74aec4"]},
+  villa:{2:["#2fd08a","#d6ffe9","#11523a","#8df0c0"], 1:["#3c8468","#b9dccb","#1d4334","#6fb89a"]},
+  plot: {2:["#ff7a5c","#ffe0d6","#7a2c1c","#ffb09c"], 1:["#a8604f","#e6c4ba","#55281e","#c98f80"]},
+  none:["#343a4c","#4a5166","#232735","#555d75"], sold:["#7a8199","#b3b8cc","#454a5e","#c3c7d6"]
 };
 function scaleK(){ const mpp = 78271.5 * Math.cos(12.95*Math.PI/180) / Math.pow(2, map ? map.getZoom() : 11); return Math.max(1, 9*mpp/27); }
 let lastK = 0, PADS = fc([]);
@@ -541,7 +668,7 @@ function projFC(){
   for (const p of P){
     if (!inView(p)) continue;
     const sh = shape(p), m = p.m||0, kk = m ? k : Math.max(1, k*.6), sel = p.id === openId ? 1 : 0;
-    const skin = SKIN[m && p.sold ? 3 : m], a = (p.id % 50 - 25) * Math.PI/180, ca = Math.cos(a), sa = Math.sin(a), cl = Math.cos(p.lat*Math.PI/180);
+    const skin = !m ? SKIN.none : p.sold ? SKIN.sold : SKIN[p.kind][m], a = (p.id % 50 - 25) * Math.PI/180, ca = Math.cos(a), sa = Math.sin(a), cl = Math.cos(p.lat*Math.PI/180);
     const ll = (x,y) => [p.lng + (x*ca - y*sa)/(111320*cl), p.lat + (x*sa + y*ca)/111320];
     const poly = (pts, base, top, c) => { const r = pts.map(q => ll(q[0],q[1])); r.push(r[0]); feats.push({type:"Feature", geometry:{type:"Polygon", coordinates:[r]}, properties:{id:p.id, b:base, h:top, c}}); };
     const foot = (f, cx, cy, hw, hd) => f.map(q => [cx + q[0]*hw, cy + q[1]*hd]);
@@ -603,15 +730,17 @@ function priceLabels(){
     const q = map.project([p.lng,p.lat]), box = [q.x-36, q.y-40, q.x+36, q.y-14];
     if (p.id !== openId && placed.some(b => box[0] < b[2] && box[2] > b[0] && box[1] < b[3] && box[3] > b[1])) continue;
     placed.push(box);
-    const el = document.createElement("div"); el.className = "price" + (p.m === 1 ? " likely" : ""); el.textContent = money(fromPrice(p)) + "+";
+    const el = document.createElement("div"); el.className = "price k-" + p.kind + (p.m === 1 ? " likely" : ""); el.textContent = money(fromPrice(p)) + "+";
     el.addEventListener("click", ev => { ev.stopPropagation(); openCard(p.id, false); });
     labelMarkers.push(new maplibregl.Marker({element:el, anchor:"bottom"}).setLngLat([p.lng,p.lat]).addTo(map));
   }
 }
-function fitResults(){
+function fitResults(closer){ // closer: extra zoom levels on top of the view that fits every result (used for the opening view)
   if (!RES.length) return;
   const b = new maplibregl.LngLatBounds(); RES.forEach(p => b.extend([p.lng,p.lat]));
-  map.fitBounds(b, {padding:{top:80,bottom:60,left:innerWidth > 860 ? 420 : 40,right:60}, maxZoom:14.5, duration:700, pitch:map.getPitch(), bearing:map.getBearing()});
+  const pad = {top:80,bottom:innerWidth > 860 ? 60 : 150,left:innerWidth > 860 ? 420 : 40,right:60};
+  if (typeof closer === "number" && closer){ const cam = map.cameraForBounds(b, {padding:pad, maxZoom:14.5, bearing:map.getBearing()}); if (cam){ map.easeTo({center:cam.center, zoom:cam.zoom + closer, pitch:map.getPitch(), bearing:map.getBearing(), duration:700, offset:[Math.round(innerWidth * (innerWidth > 860 ? .06 : .17)), -Math.round(innerHeight * (innerWidth > 860 ? .05 : .1))]}); return; } }
+  map.fitBounds(b, {padding:pad, maxZoom:14.5, duration:700, pitch:map.getPitch(), bearing:map.getBearing()});
 }
 function addOverlays(){
   const B = BASE;
@@ -632,10 +761,15 @@ function addOverlays(){
     if (src && !map.getLayer("b3d")) map.addLayer({id:"b3d", type:"fill-extrusion", source:src, "source-layer":"building", minzoom:13.5, paint:{"fill-extrusion-color":"#1a2240","fill-extrusion-height":["coalesce",["get","render_height"],8],"fill-extrusion-base":["coalesce",["get","render_min_height"],0],"fill-extrusion-opacity":.7}});
     $("bsat").hidden = false;
   }
-  map.addSource("metro", {type:"geojson", data:lines(B.metro)});
-  map.addLayer({id:"metro", type:"line", source:"metro", paint:{"line-color":"#ff5d8f","line-width":["interpolate",["linear"],["zoom"],10,1.2,14,3],"line-opacity":.85}});
-  map.addSource("stn", {type:"geojson", data:fc(B.stations.map(s => ({type:"Feature", geometry:{type:"Point", coordinates:[s[0],s[1]]}, properties:{n:s[2]+" metro"}})))});
-  map.addLayer({id:"stn", type:"circle", source:"stn", minzoom:11, paint:{"circle-radius":["interpolate",["linear"],["zoom"],11,2,15,5],"circle-color":"#0a0f1e","circle-stroke-color":"#ff5d8f","circle-stroke-width":1.5}});
+  // metro lines in their own colours; dashed = not open yet
+  const LN = B.lines || [{k:"metro", n:"Metro", c:"#ff5d8f", open:1, g:B.metro}];
+  LN.slice().sort((a,b) => a.open - b.open).forEach((l,i) => {
+    map.addSource("ml"+i, {type:"geojson", data:lines(l.g)});
+    map.addLayer({id:"ml"+i, type:"line", source:"ml"+i, layout:{"line-cap": l.open ? "round" : "butt", "line-join":"round"}, paint:Object.assign({"line-color":l.c, "line-width":["interpolate",["linear"],["zoom"],10,1.6,14,3.6], "line-opacity": l.open ? .95 : .9}, l.open ? {} : {"line-dasharray":[2,2]})});
+  });
+  const lcol = k => (LN.find(l => l.k === k) || {c:"#ff5d8f"}).c;
+  map.addSource("stn", {type:"geojson", data:fc(B.stations.map(s => ({type:"Feature", geometry:{type:"Point", coordinates:[s[0],s[1]]}, properties:{n:s[2] + " metro" + (s[4] === 0 ? " (opening later)" : ""), c:lcol(s[3]), o:s[4] === 0 ? 0 : 1}})))});
+  map.addLayer({id:"stn", type:"circle", source:"stn", minzoom:9, paint:{"circle-radius":["interpolate",["linear"],["zoom"],9,1.6,11,2.4,15,5],"circle-color":"#0a0f1e","circle-stroke-color":["get","c"],"circle-stroke-width":1.5,"circle-opacity":["case",["==",["get","o"],1],1,.6],"circle-stroke-opacity":["case",["==",["get","o"],1],1,.6]}});
   map.addSource("near", {type:"geojson", data:fc([])});
   map.addLayer({id:"near-f", type:"fill", source:"near", paint:{"fill-color":"#6fd3ff","fill-opacity":.07}});
   map.addLayer({id:"near-l", type:"line", source:"near", paint:{"line-color":"#6fd3ff","line-width":1.5,"line-dasharray":[3,3],"line-opacity":.9}});
@@ -650,10 +784,10 @@ function addOverlays(){
   const loc = {}; P.forEach(p => { (loc[p.loc] = loc[p.loc] || []).push(p); });
   Object.entries(loc).filter(e => e[1].length >= 5).sort((a,b) => b[1].length - a[1].length).forEach(([n,a]) => addLabel(n, a.reduce((s,p) => s+p.lng,0)/a.length, a.reduce((s,p) => s+p.lat,0)/a.length + .006, "area", 1, 0));
   const lmPlace = l => PLACES.find(p => p.n === l[0]);
-  LM.filter(l => l[3] === "office").forEach(l => addLabel(l[0], l[2], l[1], "office", 2, 11.4, lmPlace(l)));
+  LM.filter(l => l[3] === "office").forEach(l => addLabel(l[0], l[2], l[1], "office", 2, 11.2, lmPlace(l)));
   LM.filter(l => l[3] === "rail" && l[1] < 13.1).forEach(l => addLabel(l[0], l[2], l[1], "rail", 3, 12.2, lmPlace(l)));
-  LM.filter(l => l[3] === "mall").forEach(l => addLabel(l[0], l[2], l[1], "mall", 4, 12.2, lmPlace(l)));
-  B.stations.forEach(s => addLabel(s[2], s[0], s[1], "metro", 5, 13, PLACES.find(p => p.n === s[2] + " metro")));
+  LM.filter(l => l[3] === "mall").forEach(l => addLabel(l[0], l[2], l[1], "mall", 4, 11.8, lmPlace(l)));
+  B.stations.forEach(s => { addLabel(s[2], s[0], s[1], "metro", 5, 12.4, PLACES.find(p => p.lat === s[1] && p.lng === s[0])); LABELS[LABELS.length-1].el.style.setProperty("--dot", lcol(s[3])); });
   map.on("click", e => { if (!picking) return; setNear({n:"Dropped pin", lat:Math.round(e.lngLat.lat*1e5)/1e5, lng:Math.round(e.lngLat.lng*1e5)/1e5, t:"pin"}); });
   const pop = new maplibregl.Popup({closeButton:false, closeOnClick:false, offset:12});
   for (const id of ["pad","p2"]){
@@ -675,8 +809,9 @@ async function initMap(){
   } catch(e) {}
   const [S_,W,N,E] = BASE.bbox;
   map = new maplibregl.Map({container:"map", style, center:[77.725,12.945], zoom:11.2, pitch:52, bearing:-14, minZoom:9.5, maxZoom:18, maxBounds:[[W-.25,S_-.2],[E+.25,N+.2]], attributionControl:false, maxPitch:70});
-  map.addControl(new maplibregl.NavigationControl({visualizePitch:true}), "bottom-right");
-  map.on("load", () => { addOverlays(); paint(); fitResults(); renderNear(false); if (location.hash.startsWith("#p-")) openCard(+location.hash.slice(3), true); });
+  map.addControl(new maplibregl.NavigationControl({visualizePitch:true}), "top-right");
+  map.addControl({onAdd(){ const d = document.createElement("div"); d.className = "maplibregl-ctrl maplibregl-ctrl-group"; d.append($("bfit"), $("b3d")); return d; }, onRemove(){}}, "top-right");
+  map.on("load", () => { addOverlays(); paint(); fitResults(1); renderNear(false); if (location.hash.startsWith("#p-")) openCard(+location.hash.slice(3), true); });
 }
 
 /* ---------- project card ---------- */
@@ -757,19 +892,54 @@ function openCard(id, fly){
   const hi = $("hero").querySelector("img"); if (hi) hi.onerror = () => { $("hero").innerHTML = heroSVG(p) + "<figcaption>Illustration from tower and floor counts</figcaption>"; };
   $("cx").onclick = closeCard;
   $("sv").onclick = () => { saved.has(id) ? saved.delete(id) : saved.add(id); persist(); $("sv").setAttribute("aria-pressed", saved.has(id)); $("sv").textContent = saved.has(id) ? "Saved" : "Save"; renderList(); };
-  $("fly3d").onclick = () => { $("b3d").setAttribute("aria-pressed", true); map.flyTo({center:[p.lng,p.lat], zoom:15.6, pitch:66, bearing:25, duration:1600, padding:{right:innerWidth > 860 ? 430 : 0, left:innerWidth > 860 ? 372 : 0}}); if (innerWidth <= 860) closeCard(); };
+  $("fly3d").onclick = () => { $("b3d").setAttribute("aria-pressed", true); $("b3d").textContent = "2D"; map.flyTo({center:[p.lng,p.lat], zoom:15.6, pitch:66, bearing:25, duration:1600, padding:{right:innerWidth > 860 ? 430 : 0, left:innerWidth > 860 ? 372 : 0}}); if (innerWidth <= 860) closeCard(); };
   if (fly && map) map.flyTo({center:[p.lng,p.lat], zoom:Math.max(map.getZoom(), 14), duration:900, padding:{right:innerWidth > 860 ? 430 : 0, left:innerWidth > 860 ? 372 : 0}});
   renderList(); paint();
 }
 function closeCard(){ openId = null; $("card").classList.remove("open"); try { history.replaceState(null, "", location.pathname + location.search); } catch(e) {} renderList(); paint(); }
 document.addEventListener("keydown", e => { if (e.key === "Escape" && openId) closeCard(); });
 
+/* ---------- phone sheet: swipe up for filters and list, swipe down for the map ---------- */
+const phone = () => matchMedia("(max-width:860px)").matches;
+function placeFilters(){ // on a phone the filters are their own screen, opened from the Filters pill; on desktop they sit in the side panel
+  const f = $("filters"), sc = document.querySelector(".scroll");
+  if (phone()){ if (f.parentNode !== $("app")) $("app").appendChild(f); }
+  else { if (f.parentNode !== sc) sc.insertBefore(f, sc.firstChild); f.classList.remove("open"); }
+}
+function openFilters(open){ $("filters").classList.toggle("open", open); if (open) setSheet(false); }
+function peekHint(){ const open = $("sheet").classList.contains("full"); $("peekhint").textContent = open ? "Swipe down to see the map" : (S.near ? "Near " + S.near.n + " · swipe up" : "Swipe up for the full list"); }
+function setSheet(open){
+  const sh = $("sheet"); sh.style.transition = ""; sh.style.transform = ""; sh.classList.toggle("full", open);
+  $("grab").setAttribute("aria-expanded", open); peekHint();
+}
+(function(){
+  const sh = $("sheet"), peek = 78; let y0 = null, base = 0, dy = 0, moved = false, tLast = 0;
+  const down = e => { if (!phone()) return; y0 = (e.touches ? e.touches[0] : e).clientY; base = sh.classList.contains("full") ? 0 : sh.offsetHeight - peek; dy = 0; moved = false; sh.style.transition = "none"; };
+  const move = e => { if (y0 == null) return; dy = (e.touches ? e.touches[0] : e).clientY - y0; if (Math.abs(dy) > 6) moved = true; sh.style.transform = `translateY(${Math.min(Math.max(base + dy, 0), sh.offsetHeight - peek)}px)`; if (e.cancelable) e.preventDefault(); };
+  const up = () => { if (y0 == null) return; y0 = null; const wasOpen = sh.classList.contains("full");
+    setSheet(!moved ? !wasOpen : dy < -45 ? true : dy > 45 ? false : wasOpen); };
+  for (const el of [$("grab")]){
+    el.addEventListener("touchstart", down, {passive:true}); el.addEventListener("touchmove", move, {passive:false}); el.addEventListener("touchend", () => { tLast = Date.now(); up(); });
+    el.addEventListener("mousedown", e => { if (Date.now() - tLast < 800) return; down(e); const mm = ev => move(ev), mu = () => { up(); removeEventListener("mousemove", mm); removeEventListener("mouseup", mu); }; addEventListener("mousemove", mm); addEventListener("mouseup", mu); });
+  }
+  for (const ev of ["touchstart","mousedown","touchend"]) $("logo").addEventListener(ev, e => e.stopPropagation(), {passive:true});
+  $("grab").addEventListener("keydown", e => { if (e.key === "Enter" || e.key === " "){ e.preventDefault(); setSheet(!sh.classList.contains("full")); } });
+  // pulling down from the top of the list also closes the sheet
+  const sc = document.querySelector(".scroll"); let sy = null, top0 = false;
+  sc.addEventListener("touchstart", e => { sy = e.touches[0].clientY; top0 = sc.scrollTop <= 0; }, {passive:true});
+  sc.addEventListener("touchend", e => { if (phone() && top0 && sy != null && e.changedTouches[0].clientY - sy > 90 && sc.scrollTop <= 0) setSheet(false); sy = null; });
+  addEventListener("resize", () => { placeFilters(); if (!phone()) setSheet(false); });
+  $("bfilters").addEventListener("click", () => openFilters(true));
+  $("fclose").addEventListener("click", () => openFilters(false)); $("fshow").addEventListener("click", () => openFilters(false));
+  document.addEventListener("keydown", e => { if (e.key === "Escape") openFilters(false); });
+})();
+
 /* ---------- start ---------- */
 (async function(){
   try {
     [P, BASE] = await Promise.all([fetch("projects.json").then(r => r.json()), fetch("basemap.json").then(r => r.json())]);
   } catch(e) { $("list").innerHTML = `<p class="hint">The project data did not load. Refresh the page to try again.</p>`; return; }
-  prep(); buildUI(); syncUI(); apply(); initMap();
+  placeFilters(); prep(); buildUI(); syncUI(); apply(); initMap();
 })();
 </script>
 </body>
