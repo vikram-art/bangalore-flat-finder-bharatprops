@@ -1,0 +1,552 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Bangalore Flat Finder by BharatProps</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="maplibre-gl.css">
+<style>
+/* Layout idea: full-bleed night map; filter rail on the left, project card slides in on the right. Single dark theme by choice. */
+:root{
+  color-scheme:dark;
+  --night:#0a0f1e;      /* map ground */
+  --panel:#111830;      /* rails and cards */
+  --raise:#1a2342;      /* controls */
+  --line:#2a3560;       /* borders */
+  --ink:#eef1fb;        /* main text */
+  --mute:#9aa6cc;       /* secondary text */
+  --sun:#ffb72b;        /* accent: a match */
+  --sun-ink:#231700;
+  --likely:#6fd3ff;     /* likely match */
+  --sold:#6b7391;
+  --good:#58d68d;
+  --f-display:"Bricolage Grotesque","Trebuchet MS",sans-serif;
+  --f-body:"IBM Plex Sans","Segoe UI",system-ui,sans-serif;
+}
+*{box-sizing:border-box}
+html,body{height:100%;margin:0}
+body{background:var(--night);color:var(--ink);font:14px/1.45 var(--f-body);overflow:hidden}
+button,input,select{font:inherit;color:inherit}
+button{cursor:pointer}
+:focus-visible{outline:2px solid var(--sun);outline-offset:2px}
+#app{position:relative;height:100%;display:flex}
+#map{position:absolute;inset:0}
+.rail{position:relative;z-index:3;width:372px;max-width:100%;height:100%;display:flex;flex-direction:column;background:var(--panel);border-right:1px solid var(--line)}
+.brand{padding:14px 18px 10px;border-bottom:1px solid var(--line)}
+.brand small{display:block;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--mute)}
+.brand h1{font:700 23px/1.1 var(--f-display);margin:4px 0 0;text-wrap:balance}
+.brand h1 em{font-style:normal;color:var(--sun)}
+.scroll{flex:1;overflow-y:auto;padding:12px 18px 20px;display:flex;flex-direction:column;gap:14px}
+.search{width:100%;padding:10px 12px;border-radius:10px;border:1px solid var(--line);background:var(--raise)}
+.search::placeholder{color:var(--mute)}
+.grp{display:flex;flex-direction:column;gap:7px}
+.lab{font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--mute);display:flex;justify-content:space-between;gap:8px}
+.lab b{font-weight:600;color:var(--ink);letter-spacing:0;text-transform:none;font-size:12.5px;font-variant-numeric:tabular-nums}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{padding:6px 11px;border-radius:999px;border:1px solid var(--line);background:var(--raise);font-size:13px;white-space:nowrap}
+.chip[aria-pressed="true"]{background:var(--sun);border-color:var(--sun);color:var(--sun-ink);font-weight:600}
+.chip:hover{border-color:var(--mute)}
+input[type=range]{width:100%;accent-color:var(--sun);margin:0}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+select{width:100%;padding:8px 10px;border-radius:10px;border:1px solid var(--line);background:var(--raise)}
+.tog{display:flex;align-items:center;gap:8px;font-size:13px}
+.tog input{accent-color:var(--sun);width:16px;height:16px}
+.reset{align-self:flex-start;background:none;border:0;color:var(--likely);padding:0;text-decoration:underline;font-size:13px}
+.resbar{display:flex;align-items:baseline;justify-content:space-between;gap:10px;padding-top:12px;border-top:1px solid var(--line)}
+.count{font:700 26px/1 var(--f-display);font-variant-numeric:tabular-nums}
+.count span{font:400 12.5px var(--f-body);color:var(--mute);margin-left:6px}
+.resbar select{width:auto;font-size:12.5px;padding:6px 8px}
+.list{display:flex;flex-direction:column;gap:6px}
+.item{display:grid;grid-template-columns:1fr auto;gap:2px 10px;text-align:left;padding:10px 12px;border-radius:12px;border:1px solid var(--line);background:var(--raise);width:100%}
+.item:hover,.item.on{border-color:var(--sun)}
+.item .n{font-weight:600;overflow-wrap:anywhere}
+.item .p{font-weight:600;font-variant-numeric:tabular-nums;white-space:nowrap}
+.item .s{grid-column:1/-1;font-size:12.5px;color:var(--mute)}
+.pill{font-style:normal;display:inline-block;padding:1px 8px;border-radius:999px;font-size:11px;font-weight:600;vertical-align:1px;margin-right:6px}
+.pill.fit{background:var(--sun);color:var(--sun-ink)}
+.pill.likely{background:transparent;color:var(--likely);border:1px solid var(--likely)}
+.pill.sold{background:transparent;color:var(--sold);border:1px solid var(--sold)}
+.pill.new{background:#23365f;color:#bcd4ff}
+.pill.uc{background:#3a2f55;color:#dccbff}
+.pill.ready{background:#17402e;color:#a5efc6}
+.more{align-self:center;background:none;border:1px solid var(--line);border-radius:999px;padding:7px 16px}
+.foot{font-size:11.5px;color:var(--mute)}
+.foot a{color:var(--mute)}
+/* map controls */
+.mapbar{position:absolute;z-index:2;top:12px;left:384px;right:12px;display:flex;gap:8px;flex-wrap:wrap;pointer-events:none}
+.mapbar>*{pointer-events:auto}
+.mbtn{padding:8px 13px;border-radius:999px;border:1px solid var(--line);background:rgba(17,24,48,.92);font-size:13px}
+.mbtn[aria-pressed="true"]{border-color:var(--sun);color:var(--sun)}
+.legend{margin-left:auto;display:flex;gap:12px;align-items:center;padding:8px 13px;border-radius:999px;border:1px solid var(--line);background:rgba(17,24,48,.92);font-size:12px;color:var(--mute);flex-wrap:wrap}
+.dot{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:5px;vertical-align:-1px}
+.attr{position:absolute;z-index:2;right:8px;bottom:6px;font-size:10.5px;color:var(--mute);background:rgba(10,15,30,.7);padding:2px 6px;border-radius:6px}
+.attr a{color:inherit}
+/* markers */
+.plabel{font:600 11px var(--f-body);color:#c9d3f5;letter-spacing:.08em;text-transform:uppercase;text-shadow:0 0 4px var(--night),0 0 4px var(--night);pointer-events:none;white-space:nowrap}
+.hlabel{font:500 10.5px var(--f-body);color:var(--mute);text-shadow:0 0 4px var(--night),0 0 4px var(--night);pointer-events:none;white-space:nowrap}
+.hlabel::before{content:"";display:inline-block;width:6px;height:6px;transform:rotate(45deg);background:var(--likely);margin-right:5px}
+.price{pointer-events:auto;font:600 11px var(--f-body);background:var(--sun);color:var(--sun-ink);padding:2px 7px;border-radius:999px;white-space:nowrap;cursor:pointer;transform:translateY(-16px);box-shadow:0 2px 8px rgba(0,0,0,.5)}
+.price.likely{background:var(--panel);color:var(--likely);border:1px solid var(--likely)}
+.z-lo .hlabel,.z-lo .price{display:none}
+.maplibregl-popup-content{background:var(--panel);color:var(--ink);border:1px solid var(--line);border-radius:10px;padding:8px 11px;font:13px var(--f-body)}
+.maplibregl-popup-tip{display:none}
+/* project card */
+.card{position:absolute;z-index:4;top:0;right:0;bottom:0;width:430px;max-width:100%;background:var(--panel);border-left:1px solid var(--line);display:none;flex-direction:column}
+.card.open{display:flex}
+.chead{padding:16px 18px 12px;border-bottom:1px solid var(--line);display:grid;grid-template-columns:1fr auto;gap:6px 10px}
+.chead h2{font:700 22px/1.15 var(--f-display);margin:0;text-wrap:balance;overflow-wrap:anywhere}
+.chead .sub{grid-column:1/-1;color:var(--mute);font-size:13px}
+.x{border:1px solid var(--line);background:var(--raise);border-radius:999px;width:34px;height:34px;font-size:18px;line-height:1}
+.cbody{flex:1;overflow-y:auto;padding:14px 18px 18px;display:flex;flex-direction:column;gap:16px}
+.big{font:700 26px/1.1 var(--f-display);font-variant-numeric:tabular-nums}
+.big small{font:400 12.5px var(--f-body);color:var(--mute);display:block;margin-top:3px}
+.facts{display:grid;grid-template-columns:1fr 1fr;gap:10px 14px;margin:0}
+.facts div{min-width:0}
+.facts dt{font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--mute)}
+.facts dd{margin:1px 0 0;font-weight:500;overflow-wrap:anywhere}
+h3{font:600 12px var(--f-body);letter-spacing:.12em;text-transform:uppercase;color:var(--mute);margin:0 0 7px}
+.tw{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:13px;font-variant-numeric:tabular-nums}
+th{font-weight:500;color:var(--mute);text-align:left;padding:4px 8px 6px 0;border-bottom:1px solid var(--line);font-size:11.5px}
+td{padding:6px 8px 6px 0;border-bottom:1px solid rgba(42,53,96,.5)}
+td.r,th.r{text-align:right;padding-right:0}
+tr.hit td{color:var(--sun)}
+.tags{display:flex;flex-wrap:wrap;gap:5px}
+.tag{padding:3px 9px;border-radius:999px;border:1px solid var(--line);font-size:12px;color:#cfd7f3}
+.near{display:grid;gap:5px;margin:0;padding:0;list-style:none;font-size:13px}
+.near li{display:flex;justify-content:space-between;gap:10px}
+.near span:last-child{color:var(--mute);text-align:right;font-variant-numeric:tabular-nums}
+.view3d{display:grid;grid-template-columns:1fr 1fr;gap:7px}
+.view3d a,.view3d button{display:block;text-align:center;padding:9px 8px;border-radius:10px;border:1px solid var(--line);background:var(--raise);text-decoration:none;color:var(--ink);font-size:13px}
+.view3d a:hover,.view3d button:hover{border-color:var(--sun)}
+.view3d .wide{grid-column:1/-1;border-color:var(--likely);color:var(--likely);font-weight:600}
+.sat{width:100%;height:230px;border:1px solid var(--line);border-radius:12px;background:var(--night)}
+.cfoot{padding:12px 18px;border-top:1px solid var(--line);display:flex;gap:8px}
+.cta{flex:1;text-align:center;padding:12px;border-radius:12px;background:var(--sun);color:var(--sun-ink);font-weight:600;text-decoration:none;border:0}
+.save{padding:12px 14px;border-radius:12px;border:1px solid var(--line);background:var(--raise)}
+.save[aria-pressed="true"]{border-color:var(--sun);color:var(--sun)}
+.hint{font-size:12px;color:var(--mute)}
+.listbar{display:flex;gap:8px;flex-wrap:wrap;align-items:center;font-size:13px}
+.listbar a{color:var(--likely)}
+@media (max-width:860px){
+  body{overflow:auto}
+  #app{flex-direction:column;height:auto;min-height:100%}
+  #map{position:relative;inset:auto;height:46vh;min-height:300px;order:1}
+  .rail{order:2;width:100%;height:auto;border-right:0;border-top:1px solid var(--line)}
+  .scroll{overflow:visible}
+  .mapbar{left:12px;top:10px}
+  .legend{display:none}
+  .card{position:fixed;width:100%}
+  .attr{bottom:auto;top:calc(46vh - 24px);position:absolute}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+</style>
+</head>
+<body>
+<div id="app">
+  <div id="map" class="z-lo" aria-label="Map of East Bangalore projects"></div>
+
+  <aside class="rail" aria-label="Filters and results">
+    <div class="brand">
+      <small>Bangalore Flat Finder · by BharatProps · East Bangalore</small>
+      <h1>Find the flat that <em>fits</em>.</h1>
+    </div>
+    <div class="scroll">
+      <input id="q" class="search" type="search" placeholder="Search project, builder or area" autocomplete="off">
+
+      <div class="grp"><div class="lab">Type</div><div class="chips" id="f-kind"></div></div>
+      <div class="grp"><div class="lab">BHK</div><div class="chips" id="f-bhk"></div></div>
+
+      <div class="grp">
+        <div class="lab"><label for="pmax">Budget up to</label><b id="pmax-v">Any</b></div>
+        <input id="pmax" type="range" min="0" max="20" step="1" value="20">
+      </div>
+      <div class="grp">
+        <div class="lab"><label for="sq">Home size at least</label><b id="sq-v">Any</b></div>
+        <input id="sq" type="range" min="0" max="4000" step="100" value="0">
+      </div>
+
+      <div class="grp"><div class="lab">Corridor</div><div class="chips" id="f-cor"></div></div>
+      <div class="grp"><div class="lab">Stage</div><div class="chips" id="f-st"></div>
+        <label class="tog"><input id="sold" type="checkbox"> Also show sold-out projects</label>
+      </div>
+
+      <div class="grp"><div class="lab">Amenities</div><div class="chips" id="f-am"></div></div>
+
+      <div class="grp">
+        <div class="lab"><label for="metro">Metro station within</label><b id="metro-v">Any</b></div>
+        <input id="metro" type="range" min="0" max="5" step="1" value="0">
+      </div>
+      <div class="grp">
+        <div class="lab">Close to work</div>
+        <div class="row2">
+          <select id="off" aria-label="Tech park"><option value="">Any tech park</option></select>
+          <select id="offkm" aria-label="Distance to tech park"><option value="3">within 3 km</option><option value="5" selected>within 5 km</option><option value="8">within 8 km</option><option value="12">within 12 km</option></select>
+        </div>
+      </div>
+      <div class="grp">
+        <div class="lab">Builder and possession</div>
+        <div class="row2">
+          <select id="dev" aria-label="Builder"><option value="">Any builder</option></select>
+          <select id="poss" aria-label="Possession by"><option value="">Any possession</option><option value="2026">By 2026</option><option value="2027">By 2027</option><option value="2028">By 2028</option><option value="2029">By 2029</option><option value="2030">By 2030</option></select>
+        </div>
+      </div>
+      <button class="reset" id="reset" type="button">Clear all filters</button>
+
+      <div class="resbar">
+        <div class="count" id="count">0<span>projects</span></div>
+        <select id="sort" aria-label="Sort results">
+          <option value="best">Best match</option>
+          <option value="plow">Price, low to high</option>
+          <option value="phigh">Price, high to low</option>
+          <option value="poss">Possession, soonest</option>
+          <option value="metro">Nearest metro</option>
+          <option value="land">Largest land parcel</option>
+        </select>
+      </div>
+      <div class="listbar" id="listbar"></div>
+      <div class="list" id="list"></div>
+      <button class="more" id="more" type="button" hidden>Show more</button>
+      <p class="foot" id="foot"></p>
+    </div>
+  </aside>
+
+  <div class="mapbar">
+    <button class="mbtn" id="b3d" type="button" aria-pressed="true">3D view</button>
+    <button class="mbtn" id="bsat" type="button" aria-pressed="false" hidden>Satellite</button>
+    <button class="mbtn" id="bfit" type="button">Fit results</button>
+    <div class="legend">
+      <span><i class="dot" style="background:var(--sun);border-radius:2px"></i>Fits</span>
+      <span><i class="dot" style="background:var(--likely);border-radius:2px"></i>Likely</span>
+      <span><i class="dot" style="background:#3a4672;border-radius:2px"></i>Doesn't match</span>
+      <span><i class="dot" style="background:#ff5d8f"></i>Metro</span>
+    </div>
+  </div>
+  <div class="attr">Map data © <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a> contributors</div>
+
+  <section class="card" id="card" aria-live="polite"></section>
+</div>
+
+<script src="maplibre-gl.js"></script>
+<script>
+"use strict";
+/* ---------- settings you can change ---------- */
+const CONFIG = {
+  whatsapp: "917760942976",            // BharatProps WhatsApp number with country code, digits only, e.g. "9198XXXXXXXX"
+  brand: "BharatProps",
+  dataDate: "Nov 2026"
+};
+
+/* ---------- helpers ---------- */
+const $ = id => document.getElementById(id);
+const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const money = l => l == null ? "" : (l >= 100 ? "₹" + (l/100).toFixed(l % 100 === 0 ? 0 : 2).replace(/0$/,"").replace(/\.$/,"") + " Cr" : "₹" + Math.round(l) + " L");
+const BUDGET = [40,50,60,75,90,100,125,150,175,200,250,300,350,400,500,600,750,1000,1500,2000,null]; // lakhs, last = Any
+const KIND = {apt:"Apartments", villa:"Villas", plot:"Plots"};
+const STAGE = {new:"New launch", uc:"Under construction", ready:"Ready to move"};
+const AMEN = {pool:"Pool",gym:"Gym",clubhouse:"Clubhouse",kids:"Kids play",jogging:"Jogging track",courts:"Sports courts",tennis:"Tennis",basketball:"Basketball",badminton:"Badminton",squash:"Squash",cricket:"Cricket",indoor:"Indoor games",spa:"Spa or sauna",yoga:"Yoga",amphi:"Amphitheatre",theatre:"Mini theatre",pet:"Pet park",cowork:"Co-working",party:"Party hall",retail:"Shops inside",cycling:"Cycling track",library:"Library"};
+const AMEN_TOP = ["pool","gym","clubhouse","kids","jogging","courts","tennis","basketball","indoor","spa","yoga","pet","cowork","theatre"];
+const bucket = b => b >= 5 ? 5 : Math.floor(b);
+
+const S0 = () => ({q:"", kind:new Set(), bhk:new Set(), pmax:null, sq:0, cor:new Set(), st:new Set(), sold:false, am:new Set(), metro:0, off:"", offkm:5, dev:"", poss:"", sort:"best"});
+let S = S0(), P = [], BASE = null, map = null, online = false, shown = 40, openId = null, labelMarkers = [];
+let saved = new Set();
+try { saved = new Set(JSON.parse(localStorage.getItem("bp-list") || "[]")); } catch(e) {}
+const persist = () => { try { localStorage.setItem("bp-list", JSON.stringify([...saved])); } catch(e) {} };
+
+/* ---------- matching: 2 = fits, 1 = likely, 0 = no ---------- */
+function unitFit(u){
+  // u = [name, beds, sqft, priceLakh]; returns 2 fits, 1 unknown, 0 fails
+  let r = 2;
+  if (S.bhk.size){ if (u[1] == null) return 0; if (!S.bhk.has(bucket(u[1]))) return 0; }
+  if (S.pmax != null){ if (u[3] == null) r = 1; else if (u[3] > S.pmax) return 0; }
+  if (S.sq){ if (u[2] == null) r = 1; else if (u[2] < S.sq) return 0; }
+  return r;
+}
+function match(p){
+  if (p.sold && !S.sold) return 0;
+  if (S.kind.size && !S.kind.has(p.kind)) return 0;
+  if (S.cor.size && !S.cor.has(p.cor)) return 0;
+  if (S.st.size && !S.st.has(p.st)) return 0;
+  for (const a of S.am) if (!p.am.includes(a)) return 0;
+  if (S.metro && p.metro[0] > S.metro) return 0;
+  if (S.off){ const o = p.off.find(x => x[1] === S.off); if (!o || o[0] > S.offkm) return 0; }
+  if (S.dev && p.brand !== S.dev) return 0;
+  if (S.poss){ if (p.st !== "ready" && (!p.py || p.py > +S.poss)) return 0; }
+  if (S.q){ const h = (p.name + " " + p.dev + " " + p.loc + " " + p.cor).toLowerCase(); for (const w of S.q.toLowerCase().split(/\s+/)) if (w && !h.includes(w)) return 0; }
+  if (!S.bhk.size && S.pmax == null && !S.sq) return 2;
+  let best = 0;
+  for (const u of p.u){ const f = unitFit(u); if (f > best) best = f; if (best === 2) break; }
+  if (best === 1 && S.pmax != null && p.pmin > S.pmax) best = 0; // unit price not listed and even the cheapest home is over budget
+  if (best) return best;
+  // fall back to the project's stated range when unit rows are missing
+  if (!p.u.length || p.u.every(u => u[3] == null && u[2] == null)){
+    if (S.bhk.size && !p.bhk.some(b => S.bhk.has(bucket(b)))) return 0;
+    if (S.pmax != null && p.pmin > S.pmax) return 0;
+    return 1;
+  }
+  return 0;
+}
+function fromPrice(p){
+  // lowest price among units that satisfy BHK and size, else project minimum
+  let m = null;
+  if (S.bhk.size || S.sq) for (const u of p.u){ if (u[3] != null && unitFit(u)) m = m == null ? u[3] : Math.min(m, u[3]); }
+  return m ?? p.pmin;
+}
+
+/* ---------- filter UI ---------- */
+function chipGroup(el, items, set, labelOf){
+  el.innerHTML = items.map(v => `<button type="button" class="chip" data-v="${esc(v)}" aria-pressed="false">${esc(labelOf(v))}</button>`).join("");
+  el.addEventListener("click", e => {
+    const b = e.target.closest(".chip"); if (!b) return;
+    let v = b.dataset.v; if (el.id === "f-bhk") v = +v;
+    set().has(v) ? set().delete(v) : set().add(v);
+    b.setAttribute("aria-pressed", set().has(v)); apply();
+  });
+}
+function syncUI(){
+  $("q").value = S.q; $("sold").checked = S.sold;
+  $("pmax").value = S.pmax == null ? 20 : BUDGET.indexOf(S.pmax); $("pmax-v").textContent = S.pmax == null ? "Any" : money(S.pmax);
+  $("sq").value = S.sq; $("sq-v").textContent = S.sq ? S.sq.toLocaleString("en-IN") + " sq ft" : "Any";
+  $("metro").value = S.metro; $("metro-v").textContent = S.metro ? S.metro + " km" : "Any";
+  $("off").value = S.off; $("offkm").value = S.offkm; $("dev").value = S.dev; $("poss").value = S.poss; $("sort").value = S.sort;
+  const sets = {"f-kind":S.kind,"f-bhk":S.bhk,"f-cor":S.cor,"f-st":S.st,"f-am":S.am};
+  for (const id in sets) for (const b of $(id).children){ let v = b.dataset.v; if (id === "f-bhk") v = +v; b.setAttribute("aria-pressed", sets[id].has(v)); }
+}
+function buildUI(){
+  chipGroup($("f-kind"), Object.keys(KIND), () => S.kind, v => KIND[v]);
+  chipGroup($("f-bhk"), [1,2,3,4,5], () => S.bhk, v => v === 5 ? "5+" : v);
+  chipGroup($("f-cor"), [...new Set(P.map(p => p.cor))].sort(), () => S.cor, v => v);
+  chipGroup($("f-st"), Object.keys(STAGE), () => S.st, v => STAGE[v]);
+  chipGroup($("f-am"), AMEN_TOP, () => S.am, v => AMEN[v]);
+  const offs = [...new Set(P.flatMap(p => p.off.map(o => o[1])))].sort();
+  $("off").insertAdjacentHTML("beforeend", offs.map(o => `<option>${esc(o)}</option>`).join(""));
+  const devs = {}; P.forEach(p => { if (!p.sold && p.brand) devs[p.brand] = (devs[p.brand]||0)+1; });
+  $("dev").insertAdjacentHTML("beforeend", Object.entries(devs).filter(e => e[1] >= 2).sort((a,b) => a[0].localeCompare(b[0])).map(e => `<option value="${esc(e[0])}">${esc(e[0])} (${e[1]})</option>`).join(""));
+  $("q").addEventListener("input", e => { S.q = e.target.value.trim(); apply(); });
+  $("pmax").addEventListener("input", e => { S.pmax = BUDGET[+e.target.value]; syncUI(); apply(); });
+  $("sq").addEventListener("input", e => { S.sq = +e.target.value; syncUI(); apply(); });
+  $("metro").addEventListener("input", e => { S.metro = +e.target.value; syncUI(); apply(); });
+  $("sold").addEventListener("change", e => { S.sold = e.target.checked; apply(); });
+  for (const [id,k] of [["off","off"],["dev","dev"],["poss","poss"],["sort","sort"]]) $(id).addEventListener("change", e => { S[k] = e.target.value; apply(); });
+  $("offkm").addEventListener("change", e => { S.offkm = +e.target.value; apply(); });
+  $("reset").addEventListener("click", () => { S = S0(); syncUI(); apply(); });
+  $("more").addEventListener("click", () => { shown += 40; renderList(); });
+  $("list").addEventListener("click", e => { const b = e.target.closest(".item"); if (b) openCard(+b.dataset.id, true); });
+  $("b3d").addEventListener("click", () => { const on = $("b3d").getAttribute("aria-pressed") !== "true"; $("b3d").setAttribute("aria-pressed", on); map.easeTo({pitch: on ? 58 : 0, bearing: on ? -14 : 0, duration: 700}); });
+  $("bfit").addEventListener("click", fitResults);
+  $("bsat").addEventListener("click", () => { const on = $("bsat").getAttribute("aria-pressed") !== "true"; $("bsat").setAttribute("aria-pressed", on); if (map.getLayer("sat")) map.setLayoutProperty("sat", "visibility", on ? "visible" : "none"); });
+  $("foot").innerHTML = `${P.length} projects in East Bangalore, ${P.filter(p => !p.sold).length} with homes still available. Prices are indicative as of ${esc(CONFIG.dataDate)} and change often, so confirm with ${esc(CONFIG.brand)} before you decide. Distances are straight-line. Nearby places from OpenStreetMap.`;
+}
+
+/* ---------- results ---------- */
+let RES = [];
+function apply(){
+  RES = [];
+  for (const p of P){ p.m = match(p); if (p.m) RES.push(p); }
+  const by = {
+    best: (a,b) => (b.m - a.m) || ((a.sold?1:0) - (b.sold?1:0)) || (b.id - a.id),
+    plow: (a,b) => fromPrice(a) - fromPrice(b),
+    phigh: (a,b) => b.pmax - a.pmax,
+    poss: (a,b) => (a.st === "ready" ? 0 : a.py || 9999) - (b.st === "ready" ? 0 : b.py || 9999),
+    metro: (a,b) => a.metro[0] - b.metro[0],
+    land: (a,b) => (b.acres || 0) - (a.acres || 0)
+  }[S.sort];
+  RES.sort(by); shown = 40; renderList(); paint();
+}
+function renderList(){
+  const fits = RES.filter(p => p.m === 2).length, likely = RES.length - fits;
+  $("count").innerHTML = `${RES.length}<span>${RES.length === 1 ? "project" : "projects"}${likely ? ` · ${fits} fit, ${likely} likely` : ""}</span>`;
+  $("list").innerHTML = RES.slice(0, shown).map(p => `
+    <button type="button" class="item${p.id === openId ? " on" : ""}" data-id="${p.id}">
+      <span class="n">${esc(p.name)}</span><span class="p">${money(fromPrice(p))}+</span>
+      <span class="s">${p.sold ? '<i class="pill sold">Sold out</i>' : p.m === 1 ? '<i class="pill likely">Likely</i>' : `<i class="pill ${p.st}">${STAGE[p.st]}</i>`}${esc(p.loc)} · ${p.bhk.length ? esc(p.bhk.join(", ")) + " BHK" : KIND[p.kind]}${p.metro[0] <= 2 ? " · metro " + p.metro[0] + " km" : ""}</span>
+    </button>`).join("") || `<p class="hint">Nothing fits these filters. Raise the budget, drop an amenity, or clear all filters.</p>`;
+  $("more").hidden = RES.length <= shown;
+  const sv = P.filter(p => saved.has(p.id));
+  $("listbar").innerHTML = sv.length ? `<span>My shortlist: ${sv.length}</span><a href="${waLink("My shortlist from the " + CONFIG.brand + " Flat Finder:\n" + sv.map(p => "• " + p.name + ", " + p.loc + " (" + money(p.pmin) + " onwards)").join("\n") + "\nPlease share price sheets and site visit slots.")}" target="_blank" rel="noopener">Send to ${esc(CONFIG.brand)} on WhatsApp</a>` : "";
+}
+function waLink(text){ return "https://wa.me/" + CONFIG.whatsapp + "?text=" + encodeURIComponent(text); }
+function need(){
+  const b = [];
+  if (S.bhk.size) b.push([...S.bhk].sort().map(x => x === 5 ? "5+" : x).join("/") + " BHK");
+  if (S.pmax != null) b.push("budget up to " + money(S.pmax));
+  if (S.sq) b.push("at least " + S.sq + " sq ft");
+  return b.length ? " My requirement: " + b.join(", ") + "." : "";
+}
+
+/* ---------- map ---------- */
+const fc = feats => ({type:"FeatureCollection", features:feats});
+const lines = arr => fc(arr.map(c => ({type:"Feature", geometry:{type:"LineString", coordinates:c}, properties:{}})));
+/* Every project is drawn as 3D buildings. Shapes are approximate: tower and floor counts come from the project facts,
+   and the blocks are scaled up when you zoom out so they stay visible. */
+function shape(p){
+  if (p.kind === "plot") return {n:1, fl:0.6, w:44};
+  if (p.kind === "villa") return {n:Math.min(Math.max(Math.round((p.units||24)/6),4),16), fl:Math.min(p.floors||2,3), w:13};
+  const fl = p.floors || 12;
+  return {n:p.towers || Math.min(Math.max(Math.round((p.units||150)/(fl*6)),1),8), fl, w:26};
+}
+function scaleK(){ const mpp = 78271.5 * Math.cos(12.95*Math.PI/180) / Math.pow(2, map ? map.getZoom() : 11); return Math.max(1, 9*mpp/26); }
+let lastK = 0;
+function projFC(){
+  const k = scaleK(); lastK = Math.round(k*4)/4;
+  const feats = [];
+  for (const p of P){
+    const sh = shape(p), m = p.m||0, kk = m ? k : Math.max(1, k*.6);
+    const n = kk > 3 ? 1 : kk > 1.6 ? Math.min(sh.n,4) : Math.min(sh.n,16);
+    const w = (n === 1 && kk > 3 ? 26 : sh.w) * kk, gap = w*1.9, cols = Math.ceil(Math.sqrt(n)), rows = Math.ceil(n/cols);
+    const h = Math.max(sh.fl*3.1, 2) * kk * (kk > 3 && p.kind !== "apt" ? .5 : 1);
+    const a = (p.id % 60) * Math.PI/180, ca = Math.cos(a), sa = Math.sin(a), cl = Math.cos(p.lat*Math.PI/180);
+    for (let i = 0; i < n; i++){
+      const cx = ((i % cols) - (cols-1)/2) * gap, cy = (Math.floor(i/cols) - (rows-1)/2) * gap;
+      const ring = [[-1,-1],[1,-1],[1,1],[-1,1],[-1,-1]].map(([dx,dy]) => { const x = cx + dx*w/2, y = cy + dy*w/2; return [p.lng + (x*ca - y*sa)/(111320*cl), p.lat + (x*sa + y*ca)/111320]; });
+      feats.push({type:"Feature", geometry:{type:"Polygon", coordinates:[ring]}, properties:{id:p.id, m, sel:p.id===openId?1:0, sold:p.sold?1:0, h}});
+    }
+  }
+  return fc(feats);
+}
+function paint(){
+  if (!map || !map.getSource("proj")) return;
+  map.getSource("proj").setData(projFC()); priceLabels();
+}
+function priceLabels(){
+  labelMarkers.forEach(m => m.remove()); labelMarkers = [];
+  if (!map || map.getZoom() < 12.2) return;
+  const b = map.getBounds(), vis = RES.filter(p => b.contains([p.lng,p.lat]));
+  if (vis.length > 45) return;
+  for (const p of vis){
+    const el = document.createElement("div"); el.className = "price" + (p.m === 1 ? " likely" : ""); el.textContent = money(fromPrice(p)) + "+";
+    el.addEventListener("click", ev => { ev.stopPropagation(); openCard(p.id, false); });
+    labelMarkers.push(new maplibregl.Marker({element:el, anchor:"bottom"}).setLngLat([p.lng,p.lat]).addTo(map));
+  }
+}
+function fitResults(){
+  if (!RES.length) return;
+  const b = new maplibregl.LngLatBounds(); RES.forEach(p => b.extend([p.lng,p.lat]));
+  map.fitBounds(b, {padding:{top:80,bottom:60,left:innerWidth > 860 ? 420 : 40,right:60}, maxZoom:14.5, duration:700, pitch:map.getPitch(), bearing:map.getBearing()});
+}
+function addOverlays(){
+  const B = BASE;
+  if (!online){
+    map.addSource("water", {type:"geojson", data:fc(B.water.map(r => ({type:"Feature", geometry:{type:"Polygon", coordinates:r}, properties:{}})))});
+    map.addLayer({id:"water", type:"fill", source:"water", paint:{"fill-color":"#14294d"}});
+    for (const [k,col,w] of [["c","#1c2748",[10,.4,14,1.6]],["b","#2a3a6b",[10,.8,14,3]],["a","#3b4f8c",[10,1.4,14,4.5]]]){
+      map.addSource("r"+k, {type:"geojson", data:lines(B.roads[k])});
+      map.addLayer({id:"r"+k, type:"line", source:"r"+k, layout:{"line-cap":"round","line-join":"round"}, paint:{"line-color":col, "line-width":["interpolate",["linear"],["zoom"],...w]}});
+    }
+    map.addSource("rail", {type:"geojson", data:lines(B.rail)});
+    map.addLayer({id:"rail", type:"line", source:"rail", paint:{"line-color":"#55608a","line-width":1,"line-dasharray":[3,3]}});
+  } else {
+    map.addSource("sat", {type:"raster", tiles:["https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}"], tileSize:256, maxzoom:18, attribution:"Imagery © Esri"});
+    const first = map.getStyle().layers.find(l => l.type === "line" || l.type === "symbol");
+    map.addLayer({id:"sat", type:"raster", source:"sat", layout:{visibility:"none"}}, first && first.id);
+    const src = Object.keys(map.getStyle().sources).find(s => map.getStyle().sources[s].type === "vector");
+    if (src && !map.getLayer("b3d")) map.addLayer({id:"b3d", type:"fill-extrusion", source:src, "source-layer":"building", minzoom:13.5, paint:{"fill-extrusion-color":"#2b3766","fill-extrusion-height":["coalesce",["get","render_height"],8],"fill-extrusion-base":["coalesce",["get","render_min_height"],0],"fill-extrusion-opacity":.85}});
+    $("bsat").hidden = false;
+  }
+  map.addSource("metro", {type:"geojson", data:lines(B.metro)});
+  map.addLayer({id:"metro", type:"line", source:"metro", paint:{"line-color":"#ff5d8f","line-width":["interpolate",["linear"],["zoom"],10,1.2,14,3],"line-opacity":.85}});
+  map.addSource("stn", {type:"geojson", data:fc(B.stations.map(s => ({type:"Feature", geometry:{type:"Point", coordinates:[s[0],s[1]]}, properties:{n:s[2]+" metro"}})))});
+  map.addLayer({id:"stn", type:"circle", source:"stn", minzoom:11, paint:{"circle-radius":["interpolate",["linear"],["zoom"],11,2,15,5],"circle-color":"#0a0f1e","circle-stroke-color":"#ff5d8f","circle-stroke-width":1.5}});
+  map.addSource("proj", {type:"geojson", data:projFC()});
+  const col = ["case",["==",["get","sel"],1],"#ffffff",["==",["get","m"],1],"#6fd3ff",["==",["get","sold"],1],"#8d94b0","#ffb72b"];
+  map.addLayer({id:"p0", type:"fill-extrusion", source:"proj", filter:["==",["get","m"],0], paint:{"fill-extrusion-color":["case",["==",["get","sel"],1],"#ffffff","#3a4672"],"fill-extrusion-height":["get","h"],"fill-extrusion-opacity":.55}});
+  map.addLayer({id:"p2", type:"fill-extrusion", source:"proj", filter:[">",["get","m"],0], paint:{"fill-extrusion-color":col,"fill-extrusion-height":["get","h"],"fill-extrusion-opacity":.95,"fill-extrusion-vertical-gradient":true}});
+  // area names from where the projects cluster
+  const loc = {}; P.forEach(p => { (loc[p.loc] = loc[p.loc] || []).push(p); });
+  Object.entries(loc).filter(e => e[1].length >= 5).forEach(([n,a]) => {
+    const el = document.createElement("div"); el.className = "plabel"; el.textContent = n;
+    new maplibregl.Marker({element:el}).setLngLat([a.reduce((s,p) => s+p.lng,0)/a.length, a.reduce((s,p) => s+p.lat,0)/a.length + .006]).addTo(map);
+  });
+  B.hubs.filter(h => h[3] === "w").forEach(h => { const el = document.createElement("div"); el.className = "hlabel"; el.textContent = h[2]; new maplibregl.Marker({element:el, anchor:"left"}).setLngLat([h[0],h[1]]).addTo(map); });
+  const pop = new maplibregl.Popup({closeButton:false, closeOnClick:false, offset:12});
+  for (const id of ["p0","p2"]){
+    map.on("mousemove", id, e => { const p = P.find(x => x.id === e.features[0].properties.id); map.getCanvas().style.cursor = "pointer"; pop.setLngLat([p.lng,p.lat]).setHTML(`<b>${esc(p.name)}</b><br>${esc(p.loc)} · ${money(p.pmin)} onwards${p.sold ? " · sold out" : ""}`).addTo(map); });
+    map.on("mouseleave", id, () => { map.getCanvas().style.cursor = ""; pop.remove(); });
+    map.on("click", id, e => openCard(e.features[0].properties.id, false));
+  }
+  map.on("mousemove", "stn", e => { pop.setLngLat(e.lngLat).setHTML(esc(e.features[0].properties.n)).addTo(map); });
+  map.on("mouseleave", "stn", () => pop.remove());
+  const z = () => $("map").classList.toggle("z-lo", map.getZoom() < 11.6);
+  map.on("zoom", () => { z(); if (Math.round(scaleK()*4)/4 !== lastK) map.getSource("proj").setData(projFC()); }); z(); map.on("moveend", priceLabels);
+}
+async function initMap(){
+  let style = {version:8, sources:{}, layers:[{id:"bg", type:"background", paint:{"background-color":"#0a0f1e"}}]};
+  try { // on your own domain the live street map, satellite and 3D buildings switch on; inside previews this is blocked and the built-in map is used
+    const c = new AbortController(); setTimeout(() => c.abort(), 2500);
+    const r = await fetch("https://tiles.openfreemap.org/styles/dark", {signal:c.signal});
+    if (r.ok){ style = await r.json(); online = true; }
+  } catch(e) {}
+  const [S_,W,N,E] = BASE.bbox;
+  map = new maplibregl.Map({container:"map", style, center:[77.725,12.945], zoom:11.2, pitch:52, bearing:-14, minZoom:9.5, maxZoom:18, maxBounds:[[W-.25,S_-.2],[E+.25,N+.2]], attributionControl:false, maxPitch:70});
+  map.addControl(new maplibregl.NavigationControl({visualizePitch:true}), "bottom-right");
+  map.on("load", () => { addOverlays(); paint(); fitResults(); if (location.hash.startsWith("#p-")) openCard(+location.hash.slice(3), true); });
+}
+
+/* ---------- project card ---------- */
+function openCard(id, fly){
+  const p = P.find(x => x.id === id); if (!p) return;
+  openId = id; try { history.replaceState(null, "", "#p-" + id); } catch(e) { location.hash = "p-" + id; }
+  const g = `${p.lat},${p.lng}`, q = encodeURIComponent(p.name + " " + p.loc + " Bangalore");
+  const earth = `https://earth.google.com/web/@${p.lat},${p.lng},880a,650d,35y,20h,62t,0r`;
+  const units = p.u.filter(u => u[2] || u[3]);
+  const rows = units.slice(0, 14).map(u => `<tr class="${(S.bhk.size || S.pmax != null || S.sq) && unitFit(u) === 2 ? "hit" : ""}"><td>${esc(u[0])}</td><td class="r">${u[2] ? u[2].toLocaleString("en-IN") : "–"}</td><td class="r">${u[3] ? money(u[3]) : "On request"}</td><td class="r">${u[2] && u[3] ? "₹" + Math.round(u[3]*1e5/u[2]).toLocaleString("en-IN") : "–"}</td></tr>`).join("");
+  const near = [
+    ["Metro", `${esc(p.metro[1])} · ${p.metro[0]} km`],
+    ...p.off.slice(0,3).map(o => [esc(o[1]), o[0] + " km"]),
+    ["Schools within 1 km", p.near.school[0] ? p.near.school[0] + (p.near.school[2] ? " · nearest " + esc(p.near.school[2]) : "") : "none mapped"],
+    ["Hospitals within 2 km", p.near.hospital[0] ? p.near.hospital[0] + (p.near.hospital[2] ? " · nearest " + esc(p.near.hospital[2]) : "") : "none mapped"],
+    ["Supermarket or mall within 1.5 km", p.near.shop[0] ? String(p.near.shop[0]) : "none mapped"]
+  ];
+  const facts = [
+    ["Stage", p.sold ? "Sold out by builder" : STAGE[p.st]], ["Possession", p.poss || "–"],
+    ["Homes", p.bhk.length ? p.bhk.join(", ") + " BHK" : KIND[p.kind]], ["Land and towers", p.land || "–"],
+    ["Units", p.units_txt || "–"], ["RERA", p.rera ? p.rera : (p.rera_st === "ok" ? "Registered" : p.rera_st === "pending" ? "Awaited" : "–")]
+  ];
+  $("card").innerHTML = `
+    <div class="chead"><h2>${esc(p.name)}</h2><button class="x" id="cx" type="button" aria-label="Close">×</button>
+      <div class="sub">${esc(p.dev)} · ${esc(p.loc)}, ${esc(p.cor)}</div></div>
+    <div class="cbody">
+      <div class="big">${money(p.pmin)}${p.pmax > p.pmin ? " to " + money(p.pmax) : ""}<small>Indicative price, ${esc(CONFIG.dataDate)}</small></div>
+      <dl class="facts">${facts.map(f => `<div><dt>${f[0]}</dt><dd>${esc(f[1])}</dd></div>`).join("")}</dl>
+      <div><h3>See the location in 3D</h3>
+        <div class="view3d">
+          <a class="wide" href="${earth}" target="_blank" rel="noopener">Open 3D view in Google Earth</a>
+          <button type="button" id="fly3d">See the towers in 3D</button>
+          <a href="https://www.google.com/maps/@?api=1&map_action=map&center=${g}&zoom=18&basemap=satellite" target="_blank" rel="noopener">Satellite on Google Maps</a>
+          <a href="https://www.google.com/maps/@?api=1&map_action=pano&viewpoint=${g}" target="_blank" rel="noopener">Street View</a>
+          <a href="https://www.google.com/maps/dir/?api=1&destination=${g}" target="_blank" rel="noopener">Directions</a>
+        </div>
+        ${online ? `<iframe class="sat" style="margin-top:8px" loading="lazy" title="Satellite view of ${esc(p.name)}" src="https://maps.google.com/maps?q=${g}&t=k&z=17&output=embed"></iframe>` : ""}
+        <p class="hint" style="margin:7px 0 0">${p.st === "ready" ? "Google shows the area and the finished buildings where its imagery is recent." : "This project is still being built, so Google shows the land and the neighbourhood, not the finished towers."} Buildings on this map are approximate shapes drawn from the tower and floor counts. <a style="color:inherit" href="https://www.google.com/maps/search/?api=1&query=${q}" target="_blank" rel="noopener">Photos and reviews on Google Maps</a></p>
+      </div>
+      ${rows ? `<div><h3>Unit sizes and prices</h3><div class="tw"><table><thead><tr><th>Type</th><th class="r">Sq ft</th><th class="r">Price</th><th class="r">Per sq ft</th></tr></thead><tbody>${rows}</tbody></table></div>${units.length > 14 ? `<p class="hint">${units.length - 14} more unit types on request.</p>` : ""}</div>` : ""}
+      <div><h3>What is nearby</h3><ul class="near">${near.map(n => `<li><span>${n[0]}</span><span>${n[1]}</span></li>`).join("")}</ul></div>
+      ${p.amraw.length ? `<div><h3>Amenities</h3><div class="tags">${p.amraw.slice(0,24).map(a => `<span class="tag">${esc(a)}</span>`).join("")}</div></div>` : ""}
+    </div>
+    <div class="cfoot">
+      <a class="cta" href="${waLink(`Hi ${CONFIG.brand}, I am interested in ${p.name}, ${p.loc}. Please share the price sheet and available units.${need()}`)}" target="_blank" rel="noopener">Get price sheet on WhatsApp</a>
+      <button class="save" id="sv" type="button" aria-pressed="${saved.has(id)}">${saved.has(id) ? "Saved" : "Save"}</button>
+    </div>`;
+  $("card").classList.add("open");
+  $("cx").onclick = closeCard;
+  $("sv").onclick = () => { saved.has(id) ? saved.delete(id) : saved.add(id); persist(); $("sv").setAttribute("aria-pressed", saved.has(id)); $("sv").textContent = saved.has(id) ? "Saved" : "Save"; renderList(); };
+  $("fly3d").onclick = () => { $("b3d").setAttribute("aria-pressed", true); map.flyTo({center:[p.lng,p.lat], zoom:15.6, pitch:66, bearing:25, duration:1600, padding:{right:innerWidth > 860 ? 430 : 0, left:innerWidth > 860 ? 372 : 0}}); if (innerWidth <= 860) closeCard(); };
+  if (fly && map) map.flyTo({center:[p.lng,p.lat], zoom:Math.max(map.getZoom(), 14), duration:900, padding:{right:innerWidth > 860 ? 430 : 0, left:innerWidth > 860 ? 372 : 0}});
+  renderList(); paint();
+}
+function closeCard(){ openId = null; $("card").classList.remove("open"); try { history.replaceState(null, "", location.pathname + location.search); } catch(e) {} renderList(); paint(); }
+document.addEventListener("keydown", e => { if (e.key === "Escape" && openId) closeCard(); });
+
+/* ---------- start ---------- */
+(async function(){
+  try {
+    [P, BASE] = await Promise.all([fetch("projects.json").then(r => r.json()), fetch("basemap.json").then(r => r.json())]);
+  } catch(e) { $("list").innerHTML = `<p class="hint">The project data did not load. Refresh the page to try again.</p>`; return; }
+  buildUI(); syncUI(); apply(); initMap();
+})();
+</script>
+</body>
+</html>
