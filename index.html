@@ -100,6 +100,7 @@ select{width:100%;padding:8px 10px;border-radius:10px;border:1px solid var(--lin
 .chead .sub{grid-column:1/-1;color:var(--mute);font-size:13px}
 .x{border:1px solid var(--line);background:var(--raise);border-radius:999px;width:34px;height:34px;font-size:18px;line-height:1}
 .cbody{flex:1;overflow-y:auto;padding:14px 18px 18px;display:flex;flex-direction:column;gap:16px}
+.cbody>*{flex:none}
 .big{font:700 26px/1.1 var(--f-display);font-variant-numeric:tabular-nums}
 .big small{font:400 12.5px var(--f-body);color:var(--mute);display:block;margin-top:3px}
 .facts{display:grid;grid-template-columns:1fr 1fr;gap:10px 14px;margin:0}
@@ -122,6 +123,32 @@ tr.hit td{color:var(--sun)}
 .view3d a,.view3d button{display:block;text-align:center;padding:9px 8px;border-radius:10px;border:1px solid var(--line);background:var(--raise);text-decoration:none;color:var(--ink);font-size:13px}
 .view3d a:hover,.view3d button:hover{border-color:var(--sun)}
 .view3d .wide{grid-column:1/-1;border-color:var(--likely);color:var(--likely);font-weight:600}
+.bplink{display:block;text-align:center;padding:11px;border-radius:12px;border:1px solid var(--sun);color:var(--sun);font-weight:600;text-decoration:none}.bplink:hover{background:rgba(255,183,43,.1)}
+.hero{flex:none;position:relative;margin:-14px -18px 0;height:190px;background:linear-gradient(#0d1533,#1b2550 70%,#16382b 70%,#122a22);overflow:hidden}
+.hero img,.hero svg{width:100%;height:100%;display:block;object-fit:cover}
+.hero figcaption{position:absolute;left:10px;bottom:8px;font-size:11px;color:#dfe5fb;background:rgba(10,15,30,.72);padding:2px 8px;border-radius:999px}
+figure{margin:0}
+.tiles{display:grid;grid-template-columns:repeat(4,1fr);gap:7px}
+.tile{background:var(--raise);border:1px solid var(--line);border-radius:12px;padding:9px 6px;text-align:center;min-width:0}
+.tile b{display:block;font:700 19px/1.1 var(--f-display);font-variant-numeric:tabular-nums}
+.tile span{font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--mute)}
+.meter{position:relative;height:10px;border-radius:999px;background:linear-gradient(90deg,#1f6b4a,#8a7a1f,#8a3b2a);margin:16px 0 6px}
+.meter i{position:absolute;top:-5px;width:4px;height:20px;border-radius:2px;background:#fff;transform:translateX(-2px)}
+.meter u{position:absolute;top:-3px;width:2px;height:16px;background:rgba(255,255,255,.45);text-decoration:none}
+.scale{display:flex;justify-content:space-between;font-size:11.5px;color:var(--mute);font-variant-numeric:tabular-nums}
+.bars{display:grid;gap:8px;margin:0;padding:0;list-style:none;font-size:13px}
+.bars .top{display:flex;justify-content:space-between;gap:10px}
+.bars .top span:last-child{font-variant-numeric:tabular-nums;color:var(--mute)}
+.bar{height:6px;border-radius:999px;background:var(--raise);margin-top:4px;overflow:hidden}
+.bar i{display:block;height:100%;border-radius:999px;background:var(--likely)}
+.bar i.ok{background:var(--good)}
+.checks{display:grid;grid-template-columns:1fr 1fr;gap:5px 14px;margin:0;padding:0;list-style:none;font-size:13px}
+.checks li{display:flex;gap:8px;align-items:center}
+.checks li.no{color:var(--sold)}
+.checks i{font-style:normal;width:18px;height:18px;border-radius:50%;display:inline-grid;place-items:center;font-size:11px;font-weight:700;background:#17402e;color:#a5efc6;flex:none}
+.checks li.no i{background:var(--raise);color:var(--sold)}
+details summary{cursor:pointer;color:var(--mute);font-size:12.5px;margin-top:8px}
+.stats{font-size:12.5px;color:var(--mute);font-variant-numeric:tabular-nums}
 .sat{width:100%;height:230px;border:1px solid var(--line);border-radius:12px;background:var(--night)}
 .cfoot{padding:12px 18px;border-top:1px solid var(--line);display:flex;gap:8px}
 .cta{flex:1;text-align:center;padding:12px;border-radius:12px;background:var(--sun);color:var(--sun-ink);font-weight:600;text-decoration:none;border:0}
@@ -206,6 +233,7 @@ tr.hit td{color:var(--sun)}
           <option value="land">Largest land parcel</option>
         </select>
       </div>
+      <div class="stats" id="sum"></div>
       <div class="listbar" id="listbar"></div>
       <div class="list" id="list"></div>
       <button class="more" id="more" type="button" hidden>Show more</button>
@@ -240,6 +268,9 @@ const CONFIG = {
 };
 
 /* ---------- helpers ---------- */
+const BP = {"111222":"cloud-forest-alembic-city","107165":"evergreen-at-prestige-raintree-park","104237":"adarsh-euphoria","104964":"assetz-66-shibui","105430":"sobha-crystal-meadows","105703":"vaswani-starlight","105651":"jrc-palladio","105464":"mana-the-right-life","106236":"godrej-woodscapes","101641":"rohan-ekanta","106184":"sbr-minara","105505":"provident-botanico","106482":"sowparnika-euphoria","103901":"adarsh-welkin-park-villas-sarjapur-road-bangalore","104018":"sobha-neopolis","103996":"spectra-parijatha","103928":"arvind-forest-trails-sarjapur-bangalore-villas","103597":"orchid-platinum","103258":"sumadhura-sarang","105542":"assetz-melodies-of-life","104116":"mana-dale","104757":"prestige-somerville","103317":"prestige-serenity-shores","103953":"prestige-glenbrook","104214":"abhee-celestial-city","103149":"prestige-park-grove","84402":"adarsh-park-heights-phase-2","103542":"orchid-bloomsberry","103841":"abhee-silicon-shine-phase-2","104337":"adarsh-parkland","104582":"orchid-life","104060":"brigade-sanctuary","115803":"brigade-granada"}; // project id -> page on bharatprops.com
+const BP_SITE = "https://www.bharatprops.com";
+const BP_IMG = {"cloud-forest-alembic-city":"https://www.bharatprops.com/cms-api/media/file/hero-wide-1602.webp","evergreen-at-prestige-raintree-park":"https://www.bharatprops.com/cms-api/media/file/hero-wide-1600.webp","adarsh-euphoria":"https://www.bharatprops.com/cms-api/media/file/adarsh-euphoria-hero.webp","assetz-66-shibui":"https://www.bharatprops.com/cms-api/media/file/assetz-66-shibui-hero.webp","sobha-crystal-meadows":"https://www.bharatprops.com/cms-api/media/file/sobha-crystal-meadows-hero-hd.webp","vaswani-starlight":"https://www.bharatprops.com/cms-api/media/file/vaswani-starlight-hero.webp","jrc-palladio":"https://www.bharatprops.com/cms-api/media/file/jrc-palladio-hero.webp","mana-the-right-life":"https://www.bharatprops.com/cms-api/media/file/mana-the-right-life-hero.webp","godrej-woodscapes":"https://www.bharatprops.com/cms-api/media/file/godrej-woodscapes-hero.webp","rohan-ekanta":"https://www.bharatprops.com/cms-api/media/file/rohan-ekanta-hero.webp","sbr-minara":"https://www.bharatprops.com/cms-api/media/file/sbr-minara-hero-hd.webp","provident-botanico":"https://www.bharatprops.com/cms-api/media/file/provident-botanico-hero-hd.webp","sowparnika-euphoria":"https://www.bharatprops.com/cms-api/media/file/sowparnika-euphoria-hero-hd.webp","adarsh-welkin-park-villas-sarjapur-road-bangalore":"https://www.bharatprops.com/cms-api/media/file/adarsh-welkin-park-villas-sarjapur-road-bangalore-hero.webp","sobha-neopolis":"https://www.bharatprops.com/cms-api/media/file/sobha-neopolis-hero.webp","spectra-parijatha":"https://www.bharatprops.com/wp-content/uploads/2024/01/g3.webp","arvind-forest-trails-sarjapur-bangalore-villas":"https://www.bharatprops.com/cms-api/media/file/arvind-forest-trails-sarjapur-bangalore-villas-hero.webp","orchid-platinum":"https://www.bharatprops.com/cms-api/media/file/orchid-platinum-hero-hd.webp","sumadhura-sarang":"https://www.bharatprops.com/cms-api/media/file/sumadhura-sarang-hero.webp","assetz-melodies-of-life":"https://www.bharatprops.com/cms-api/media/file/assetz-melodies-of-life-hero.webp","mana-dale":"https://www.bharatprops.com/cms-api/media/file/mana-dale-hero.webp","prestige-somerville":"https://www.bharatprops.com/cms-api/media/file/prestige-somerville-hero.webp","prestige-serenity-shores":"https://www.bharatprops.com/cms-api/media/file/prestige-serenity-shores-hero.webp","prestige-glenbrook":"https://www.bharatprops.com/cms-api/media/file/prestige-glenbrook-hero.webp","abhee-celestial-city":"https://www.bharatprops.com/cms-api/media/file/abhee-celestial-city-hero.webp","prestige-park-grove":"https://www.bharatprops.com/cms-api/media/file/prestige-park-grove-hero-hz.webp","adarsh-park-heights-phase-2":"https://www.bharatprops.com/cms-api/media/file/adarsh-park-heights-phase-2-hero.webp","orchid-bloomsberry":"https://www.bharatprops.com/cms-api/media/file/orchid-bloomsberry-hero-hd.webp","abhee-silicon-shine-phase-2":"https://www.bharatprops.com/cms-api/media/file/abhee-silicon-shine-phase-2-hero.webp","adarsh-parkland":"https://www.bharatprops.com/cms-api/media/file/adarsh-parkland-hero.webp","orchid-life":"https://www.bharatprops.com/cms-api/media/file/orchid-life-hero-hz.webp","brigade-sanctuary":"https://www.bharatprops.com/cms-api/media/file/brigade-sanctuary-hero-hd.webp","brigade-granada":"https://www.bharatprops.com/cms-api/media/file/brigade-granada-hero-hd.webp"}; // page slug -> BharatProps hero image
 const $ = id => document.getElementById(id);
 const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 const money = l => l == null ? "" : (l >= 100 ? "₹" + (l/100).toFixed(l % 100 === 0 ? 0 : 2).replace(/0$/,"").replace(/\.$/,"") + " Cr" : "₹" + Math.round(l) + " L");
@@ -347,7 +378,7 @@ function apply(){
   RES = [];
   for (const p of P){ p.m = match(p); if (p.m) RES.push(p); }
   const by = {
-    best: (a,b) => (b.m - a.m) || ((a.sold?1:0) - (b.sold?1:0)) || (b.id - a.id),
+    best: (a,b) => (b.m - a.m) || ((BP[b.id]?1:0) - (BP[a.id]?1:0)) || ((a.sold?1:0) - (b.sold?1:0)) || (b.id - a.id),
     plow: (a,b) => fromPrice(a) - fromPrice(b),
     phigh: (a,b) => b.pmax - a.pmax,
     poss: (a,b) => (a.st === "ready" ? 0 : a.py || 9999) - (b.st === "ready" ? 0 : b.py || 9999),
@@ -365,6 +396,8 @@ function renderList(){
       <span class="s">${p.sold ? '<i class="pill sold">Sold out</i>' : p.m === 1 ? '<i class="pill likely">Likely</i>' : `<i class="pill ${p.st}">${STAGE[p.st]}</i>`}${esc(p.loc)} · ${p.bhk.length ? esc(p.bhk.join(", ")) + " BHK" : KIND[p.kind]}${p.metro[0] <= 2 ? " · metro " + p.metro[0] + " km" : ""}</span>
     </button>`).join("") || `<p class="hint">Nothing fits these filters. Raise the budget, drop an amenity, or clear all filters.</p>`;
   $("more").hidden = RES.length <= shown;
+  const ps = RES.filter(p => p.psf).map(p => p.psf);
+  $("sum").textContent = RES.length ? `From ${money(Math.min(...RES.map(fromPrice)))} to ${money(Math.max(...RES.map(p => p.pmax)))}${ps.length >= 3 ? " · typical ₹" + median(ps).toLocaleString("en-IN") + " per sq ft" : ""}` : "";
   const sv = P.filter(p => saved.has(p.id));
   $("listbar").innerHTML = sv.length ? `<span>My shortlist: ${sv.length}</span><a href="${waLink("My shortlist from the " + CONFIG.brand + " Flat Finder:\n" + sv.map(p => "• " + p.name + ", " + p.loc + " (" + money(p.pmin) + " onwards)").join("\n") + "\nPlease share price sheets and site visit slots.")}" target="_blank" rel="noopener">Send to ${esc(CONFIG.brand)} on WhatsApp</a>` : "";
 }
@@ -380,36 +413,85 @@ function need(){
 /* ---------- map ---------- */
 const fc = feats => ({type:"FeatureCollection", features:feats});
 const lines = arr => fc(arr.map(c => ({type:"Feature", geometry:{type:"LineString", coordinates:c}, properties:{}})));
-/* Every project is drawn as 3D buildings. Shapes are approximate: tower and floor counts come from the project facts,
-   and the blocks are scaled up when you zoom out so they stay visible. */
+/* Every project is drawn as a 3D model: site pad, podium, towers with floor bands, and a crown.
+   Models are illustrations built from each project's land size, tower count and floor count. They are scaled up as you zoom out so they stay visible. */
 function shape(p){
-  if (p.kind === "plot") return {n:1, fl:0.6, w:44};
-  if (p.kind === "villa") return {n:Math.min(Math.max(Math.round((p.units||24)/6),4),16), fl:Math.min(p.floors||2,3), w:13};
+  if (p.kind === "plot") return {n:Math.min(Math.max(p.units||24,8),36), fl:0, w:16};
+  if (p.kind === "villa") return {n:Math.min(Math.max(p.units||24,6),40), fl:Math.min(p.floors||2,3), w:11};
   const fl = p.floors || 12;
-  return {n:p.towers || Math.min(Math.max(Math.round((p.units||150)/(fl*6)),1),8), fl, w:26};
+  return {n:p.towers || Math.min(Math.max(Math.round((p.units||150)/(fl*6)),1),8), fl, w:27};
 }
-function scaleK(){ const mpp = 78271.5 * Math.cos(12.95*Math.PI/180) / Math.pow(2, map ? map.getZoom() : 11); return Math.max(1, 9*mpp/26); }
-let lastK = 0;
+const FOOT = [
+  [[-1,-.62],[1,-.62],[1,.62],[-1,.62]],
+  [[-.62,-1],[.62,-1],[1,-.62],[1,.62],[.62,1],[-.62,1],[-1,.62],[-1,-.62]],
+  [[-.42,-1],[.42,-1],[.42,-.42],[1,-.42],[1,.42],[.42,.42],[.42,1],[-.42,1],[-.42,.42],[-1,.42],[-1,-.42],[-.42,-.42]],
+  [[-1,-.7],[1,-.7],[1,.7],[.42,.7],[.42,-.1],[-.42,-.1],[-.42,.7],[-1,.7]]
+];
+const SKIN = { // glass, floor line, podium, crown
+  2:["#f2a91f","#fff1cc","#6b4a12","#ffd77a"], 1:["#3fa9d9","#dff5ff","#1d4f66","#9be0ff"],
+  0:["#2a3559","#3e4b7a","#1c2440","#465488"], 3:["#7a8199","#b3b8cc","#454a5e","#c3c7d6"]
+};
+function scaleK(){ const mpp = 78271.5 * Math.cos(12.95*Math.PI/180) / Math.pow(2, map ? map.getZoom() : 11); return Math.max(1, 9*mpp/27); }
+let lastK = 0, PADS = fc([]);
 function projFC(){
   const k = scaleK(); lastK = Math.round(k*4)/4;
-  const feats = [];
+  const feats = [], pads = [], detail = k <= 1.6;
+  const view = map && detail ? map.getBounds() : null;
+  const inView = p => !view || (p.lng > view.getWest()-.02 && p.lng < view.getEast()+.02 && p.lat > view.getSouth()-.02 && p.lat < view.getNorth()+.02);
   for (const p of P){
-    const sh = shape(p), m = p.m||0, kk = m ? k : Math.max(1, k*.6);
-    const n = kk > 3 ? 1 : kk > 1.6 ? Math.min(sh.n,4) : Math.min(sh.n,16);
-    const w = (n === 1 && kk > 3 ? 26 : sh.w) * kk, gap = w*1.9, cols = Math.ceil(Math.sqrt(n)), rows = Math.ceil(n/cols);
-    const h = Math.max(sh.fl*3.1, 2) * kk * (kk > 3 && p.kind !== "apt" ? .5 : 1);
-    const a = (p.id % 60) * Math.PI/180, ca = Math.cos(a), sa = Math.sin(a), cl = Math.cos(p.lat*Math.PI/180);
-    for (let i = 0; i < n; i++){
-      const cx = ((i % cols) - (cols-1)/2) * gap, cy = (Math.floor(i/cols) - (rows-1)/2) * gap;
-      const ring = [[-1,-1],[1,-1],[1,1],[-1,1],[-1,-1]].map(([dx,dy]) => { const x = cx + dx*w/2, y = cy + dy*w/2; return [p.lng + (x*ca - y*sa)/(111320*cl), p.lat + (x*sa + y*ca)/111320]; });
-      feats.push({type:"Feature", geometry:{type:"Polygon", coordinates:[ring]}, properties:{id:p.id, m, sel:p.id===openId?1:0, sold:p.sold?1:0, h}});
+    if (!inView(p)) continue;
+    const sh = shape(p), m = p.m||0, kk = m ? k : Math.max(1, k*.6), sel = p.id === openId ? 1 : 0;
+    const skin = SKIN[m && p.sold ? 3 : m], a = (p.id % 50 - 25) * Math.PI/180, ca = Math.cos(a), sa = Math.sin(a), cl = Math.cos(p.lat*Math.PI/180);
+    const ll = (x,y) => [p.lng + (x*ca - y*sa)/(111320*cl), p.lat + (x*sa + y*ca)/111320];
+    const poly = (pts, base, top, c) => { const r = pts.map(q => ll(q[0],q[1])); r.push(r[0]); feats.push({type:"Feature", geometry:{type:"Polygon", coordinates:[r]}, properties:{id:p.id, b:base, h:top, c}}); };
+    const foot = (f, cx, cy, hw, hd) => f.map(q => [cx + q[0]*hw, cy + q[1]*hd]);
+    const tower = (cx, cy, w, fl, f, bands) => {
+      const fh = 3.1*kk, total = fl*fh, hw = w/2;
+      if (bands > 2) poly(foot(FOOT[0], cx, cy, hw*1.22, hw*1.0), 0, 2*fh, sel ? "#ffffff" : skin[2]);     // podium
+      const base = bands > 2 ? 2*fh : 0, step = (total - base)/bands;
+      for (let i = 0; i < bands; i++){
+        const b0 = base + i*step;
+        poly(foot(f, cx, cy, hw, hw), b0, b0 + step*.84, skin[0]);                                          // glass floors
+        poly(foot(f, cx, cy, hw*1.05, hw*1.05), b0 + step*.84, b0 + step, sel ? "#ffffff" : skin[1]);        // floor line
+      }
+      poly(foot(FOOT[0], cx, cy, hw*.5, hw*.34), total, total + 2.2*fh, sel ? "#ffffff" : skin[3]);          // crown
+    };
+    if (p.kind === "apt"){
+      const n = kk > 3 ? 1 : kk > 1.6 ? Math.min(sh.n,4) : Math.min(sh.n,18);
+      const w = sh.w*kk, cols = Math.ceil(Math.sqrt(n)), rows = Math.ceil(n/cols);
+      const side = detail ? Math.min(Math.max(Math.sqrt((p.acres||4)*4047), cols*w*1.7, 70), 520) : 0;
+      const gap = detail ? Math.max(w*1.7, Math.min(w*4, side/(cols+.4))) : w*1.9;
+      if (detail){
+        const hs = Math.max(side, gap*cols + w*.6)/2, hd = Math.max(side*.8, gap*rows + w*.6)/2, r = [[-hs,-hd],[hs,-hd],[hs,hd],[-hs,hd]].map(q => ll(q[0],q[1])); r.push(r[0]);
+        pads.push({type:"Feature", geometry:{type:"Polygon", coordinates:[r]}, properties:{id:p.id, m, sel}});
+        poly(foot(FOOT[0], hs - 24, -hd + 16, 17, 10), 0, 7, sel ? "#ffffff" : skin[3]);                      // clubhouse
+      }
+      const bands = detail ? Math.max(3, Math.ceil(sh.fl/2)) : kk > 3 ? 3 : 5, f = FOOT[p.id % 4];
+      for (let i = 0; i < n; i++){
+        const cx = ((i % cols) - (cols-1)/2) * gap, cy = (Math.floor(i/cols) - (rows-1)/2) * gap;
+        tower(cx, cy, w, Math.max(sh.fl + (detail ? ((i*7 + p.id) % 3) - 1 : 0), 3), f, bands);
+      }
+    } else if (!detail){
+      const w = 30*kk; poly(foot(FOOT[0], 0, 0, w/2, w/2*.62), 0, (p.kind === "plot" ? 1.2 : 5)*kk, skin[0]);
+      if (p.kind === "villa") poly(foot(FOOT[0], 0, 0, w/2*.7, w/2*.4), 5*kk, 7.5*kk, skin[3]);
+    } else {
+      const n = sh.n, cols = Math.ceil(Math.sqrt(n*1.4)), rows = Math.ceil(n/cols), gx = sh.w*1.9, gy = sh.w*1.7;
+      const hs = cols*gx/2 + 8, hd = rows*gy/2 + 8, r = [[-hs,-hd],[hs,-hd],[hs,hd],[-hs,hd]].map(q => ll(q[0],q[1])); r.push(r[0]);
+      pads.push({type:"Feature", geometry:{type:"Polygon", coordinates:[r]}, properties:{id:p.id, m, sel}});
+      for (let i = 0; i < n; i++){
+        const cx = ((i % cols) - (cols-1)/2) * gx, cy = (Math.floor(i/cols) - (rows-1)/2) * gy;
+        if (p.kind === "plot") poly(foot(FOOT[0], cx, cy, sh.w/2, sh.w/2*.72), 0, .7, skin[0]);
+        else { poly(foot(FOOT[0], cx, cy, sh.w/2, sh.w/2*.8), 0, sh.fl*3.1, skin[0]); poly(foot(FOOT[0], cx, cy, sh.w/2*1.08, sh.w/2*.5), sh.fl*3.1, sh.fl*3.1 + 2.2, sel ? "#ffffff" : skin[1]); }
+      }
     }
   }
+  PADS = fc(pads);
   return fc(feats);
 }
+function selFC(){ const p = P.find(x => x.id === openId); return fc(p ? [{type:"Feature", geometry:{type:"Point", coordinates:[p.lng,p.lat]}, properties:{}}] : []); }
 function paint(){
   if (!map || !map.getSource("proj")) return;
-  map.getSource("proj").setData(projFC()); priceLabels();
+  map.getSource("proj").setData(projFC()); map.getSource("pad").setData(PADS); map.getSource("sel").setData(selFC()); priceLabels();
 }
 function priceLabels(){
   labelMarkers.forEach(m => m.remove()); labelMarkers = [];
@@ -443,17 +525,20 @@ function addOverlays(){
     const first = map.getStyle().layers.find(l => l.type === "line" || l.type === "symbol");
     map.addLayer({id:"sat", type:"raster", source:"sat", layout:{visibility:"none"}}, first && first.id);
     const src = Object.keys(map.getStyle().sources).find(s => map.getStyle().sources[s].type === "vector");
-    if (src && !map.getLayer("b3d")) map.addLayer({id:"b3d", type:"fill-extrusion", source:src, "source-layer":"building", minzoom:13.5, paint:{"fill-extrusion-color":"#2b3766","fill-extrusion-height":["coalesce",["get","render_height"],8],"fill-extrusion-base":["coalesce",["get","render_min_height"],0],"fill-extrusion-opacity":.85}});
+    if (src && !map.getLayer("b3d")) map.addLayer({id:"b3d", type:"fill-extrusion", source:src, "source-layer":"building", minzoom:13.5, paint:{"fill-extrusion-color":"#1a2240","fill-extrusion-height":["coalesce",["get","render_height"],8],"fill-extrusion-base":["coalesce",["get","render_min_height"],0],"fill-extrusion-opacity":.7}});
     $("bsat").hidden = false;
   }
   map.addSource("metro", {type:"geojson", data:lines(B.metro)});
   map.addLayer({id:"metro", type:"line", source:"metro", paint:{"line-color":"#ff5d8f","line-width":["interpolate",["linear"],["zoom"],10,1.2,14,3],"line-opacity":.85}});
   map.addSource("stn", {type:"geojson", data:fc(B.stations.map(s => ({type:"Feature", geometry:{type:"Point", coordinates:[s[0],s[1]]}, properties:{n:s[2]+" metro"}})))});
   map.addLayer({id:"stn", type:"circle", source:"stn", minzoom:11, paint:{"circle-radius":["interpolate",["linear"],["zoom"],11,2,15,5],"circle-color":"#0a0f1e","circle-stroke-color":"#ff5d8f","circle-stroke-width":1.5}});
+  map.addSource("sel", {type:"geojson", data:selFC()});
+  map.addLayer({id:"sel", type:"circle", source:"sel", paint:{"circle-radius":["interpolate",["linear"],["zoom"],10,14,13,26,16,90],"circle-color":"#ffffff","circle-opacity":.1,"circle-stroke-color":"#ffffff","circle-stroke-width":1.5,"circle-pitch-alignment":"map"}});
   map.addSource("proj", {type:"geojson", data:projFC()});
-  const col = ["case",["==",["get","sel"],1],"#ffffff",["==",["get","m"],1],"#6fd3ff",["==",["get","sold"],1],"#8d94b0","#ffb72b"];
-  map.addLayer({id:"p0", type:"fill-extrusion", source:"proj", filter:["==",["get","m"],0], paint:{"fill-extrusion-color":["case",["==",["get","sel"],1],"#ffffff","#3a4672"],"fill-extrusion-height":["get","h"],"fill-extrusion-opacity":.55}});
-  map.addLayer({id:"p2", type:"fill-extrusion", source:"proj", filter:[">",["get","m"],0], paint:{"fill-extrusion-color":col,"fill-extrusion-height":["get","h"],"fill-extrusion-opacity":.95,"fill-extrusion-vertical-gradient":true}});
+  map.addSource("pad", {type:"geojson", data:PADS});
+  map.addLayer({id:"pad", type:"fill", source:"pad", paint:{"fill-color":["case",[">",["get","m"],0],"#1f4a36","#182540"],"fill-opacity":.85,"fill-outline-color":["case",["==",["get","sel"],1],"#ffffff",[">",["get","m"],0],"#58d68d","#33406b"]}});
+  map.addLayer({id:"p2", type:"fill-extrusion", source:"proj", paint:{"fill-extrusion-color":["get","c"],"fill-extrusion-base":["get","b"],"fill-extrusion-height":["get","h"],"fill-extrusion-opacity":.96,"fill-extrusion-vertical-gradient":true}});
+  map.setLight({anchor:"viewport", color:"#ffffff", intensity:.42, position:[1.4,215,38]});
   // area names from where the projects cluster
   const loc = {}; P.forEach(p => { (loc[p.loc] = loc[p.loc] || []).push(p); });
   Object.entries(loc).filter(e => e[1].length >= 5).forEach(([n,a]) => {
@@ -462,7 +547,7 @@ function addOverlays(){
   });
   B.hubs.filter(h => h[3] === "w").forEach(h => { const el = document.createElement("div"); el.className = "hlabel"; el.textContent = h[2]; new maplibregl.Marker({element:el, anchor:"left"}).setLngLat([h[0],h[1]]).addTo(map); });
   const pop = new maplibregl.Popup({closeButton:false, closeOnClick:false, offset:12});
-  for (const id of ["p0","p2"]){
+  for (const id of ["pad","p2"]){
     map.on("mousemove", id, e => { const p = P.find(x => x.id === e.features[0].properties.id); map.getCanvas().style.cursor = "pointer"; pop.setLngLat([p.lng,p.lat]).setHTML(`<b>${esc(p.name)}</b><br>${esc(p.loc)} · ${money(p.pmin)} onwards${p.sold ? " · sold out" : ""}`).addTo(map); });
     map.on("mouseleave", id, () => { map.getCanvas().style.cursor = ""; pop.remove(); });
     map.on("click", id, e => openCard(e.features[0].properties.id, false));
@@ -470,7 +555,7 @@ function addOverlays(){
   map.on("mousemove", "stn", e => { pop.setLngLat(e.lngLat).setHTML(esc(e.features[0].properties.n)).addTo(map); });
   map.on("mouseleave", "stn", () => pop.remove());
   const z = () => $("map").classList.toggle("z-lo", map.getZoom() < 11.6);
-  map.on("zoom", () => { z(); if (Math.round(scaleK()*4)/4 !== lastK) map.getSource("proj").setData(projFC()); }); z(); map.on("moveend", priceLabels);
+  map.on("zoom", () => { z(); if (Math.round(scaleK()*4)/4 !== lastK) paint(); }); z(); map.on("moveend", () => { if (scaleK() <= 1.6) paint(); else priceLabels(); });
 }
 async function initMap(){
   let style = {version:8, sources:{}, layers:[{id:"bg", type:"background", paint:{"background-color":"#0a0f1e"}}]};
@@ -486,6 +571,29 @@ async function initMap(){
 }
 
 /* ---------- project card ---------- */
+const median = a => { const b = [...a].sort((x,y) => x-y); return b.length ? b[Math.floor(b.length/2)] : null; };
+function prep(){
+  for (const p of P){ const v = p.u.filter(u => u[2] && u[3]).map(u => u[3]*1e5/u[2]); p.psf = v.length ? Math.round(median(v)) : null; }
+}
+function corridorPsf(p){
+  const v = P.filter(x => x.cor === p.cor && x.kind === p.kind && x.psf && !x.sold).map(x => x.psf).sort((a,b) => a-b);
+  return v.length >= 5 ? {lo:v[Math.floor(v.length*.05)], mid:median(v), hi:v[Math.floor(v.length*.95)], n:v.length} : null;
+}
+function heroSVG(p){
+  const W = 430, H = 190, G = 150, sh = shape(p); let g = "";
+  if (p.kind === "apt"){
+    const n = Math.min(sh.n, 9), tw = Math.min(40, (W-50)/n - 8), x0 = (W - n*(tw+8) + 8)/2, top = Math.max(sh.fl, 14);
+    for (let i = 0; i < n; i++){
+      const fl = Math.max(sh.fl + ((i*7 + p.id) % 3) - 1, 3), h = fl/top*(G-44), x = x0 + i*(tw+8), y = G - h;
+      g += `<rect x="${x-3}" y="${G-9}" width="${tw+6}" height="9" fill="#6b4a12"/><rect x="${x}" y="${y}" width="${tw}" height="${h-9}" fill="url(#win)"/><rect x="${x}" y="${y}" width="${tw}" height="${h-9}" fill="none" stroke="#fff1cc" stroke-width=".6"/><rect x="${x+tw*.3}" y="${y-6}" width="${tw*.4}" height="6" fill="#ffd77a"/>`;
+    }
+  } else if (p.kind === "villa"){
+    for (let i = 0; i < 7; i++){ const x = 28 + i*56; g += `<rect x="${x}" y="${G-34}" width="40" height="34" fill="url(#win)"/><path d="M${x-5} ${G-34} L${x+20} ${G-54} L${x+45} ${G-34}Z" fill="#ffd77a"/>`; }
+  } else {
+    for (let r = 0; r < 3; r++) for (let c = 0; c < 8; c++) g += `<path d="M${40+c*46-r*14} ${G-70+r*26} h38 l-12 20 h-38z" fill="none" stroke="#ffd77a" stroke-width="1.2"/>`;
+  }
+  return `<svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="xMidYMax slice" role="img" aria-label="Illustration of ${esc(p.name)}"><defs><linearGradient id="sky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#0b1230"/><stop offset="1" stop-color="#27356b"/></linearGradient><pattern id="win" width="8" height="7" patternUnits="userSpaceOnUse"><rect width="8" height="7" fill="#b9801a"/><rect x="1.5" y="1.5" width="5" height="3.4" fill="#ffd77a"/></pattern></defs><rect width="${W}" height="${H}" fill="url(#sky)"/><circle cx="${W-56}" cy="38" r="15" fill="#fff1cc" opacity=".85"/><rect y="${G}" width="${W}" height="${H-G}" fill="#16382b"/>${g}</svg>`;
+}
 function openCard(id, fly){
   const p = P.find(x => x.id === id); if (!p) return;
   openId = id; try { history.replaceState(null, "", "#p-" + id); } catch(e) { location.hash = "p-" + id; }
@@ -493,44 +601,51 @@ function openCard(id, fly){
   const earth = `https://earth.google.com/web/@${p.lat},${p.lng},880a,650d,35y,20h,62t,0r`;
   const units = p.u.filter(u => u[2] || u[3]);
   const rows = units.slice(0, 14).map(u => `<tr class="${(S.bhk.size || S.pmax != null || S.sq) && unitFit(u) === 2 ? "hit" : ""}"><td>${esc(u[0])}</td><td class="r">${u[2] ? u[2].toLocaleString("en-IN") : "–"}</td><td class="r">${u[3] ? money(u[3]) : "On request"}</td><td class="r">${u[2] && u[3] ? "₹" + Math.round(u[3]*1e5/u[2]).toLocaleString("en-IN") : "–"}</td></tr>`).join("");
-  const near = [
-    ["Metro", `${esc(p.metro[1])} · ${p.metro[0]} km`],
-    ...p.off.slice(0,3).map(o => [esc(o[1]), o[0] + " km"]),
-    ["Schools within 1 km", p.near.school[0] ? p.near.school[0] + (p.near.school[2] ? " · nearest " + esc(p.near.school[2]) : "") : "none mapped"],
-    ["Hospitals within 2 km", p.near.hospital[0] ? p.near.hospital[0] + (p.near.hospital[2] ? " · nearest " + esc(p.near.hospital[2]) : "") : "none mapped"],
-    ["Supermarket or mall within 1.5 km", p.near.shop[0] ? String(p.near.shop[0]) : "none mapped"]
-  ];
+  const sh = shape(p), cp = p.psf ? corridorPsf(p) : null, img = BP[p.id] && BP_IMG[BP[p.id]];
   const facts = [
     ["Stage", p.sold ? "Sold out by builder" : STAGE[p.st]], ["Possession", p.poss || "–"],
-    ["Homes", p.bhk.length ? p.bhk.join(", ") + " BHK" : KIND[p.kind]], ["Land and towers", p.land || "–"],
-    ["Units", p.units_txt || "–"], ["RERA", p.rera ? p.rera : (p.rera_st === "ok" ? "Registered" : p.rera_st === "pending" ? "Awaited" : "–")]
+    ["Homes", p.bhk.length ? p.bhk.join(", ") + " BHK" : KIND[p.kind]], ["RERA", p.rera ? p.rera : (p.rera_st === "ok" ? "Registered" : p.rera_st === "pending" ? "Awaited" : "–")]
   ];
+  const tiles = [[p.acres ? p.acres + " ac" : "–", "Land"], [p.kind === "apt" ? (p.towers || "–") : KIND[p.kind].slice(0,-1), p.kind === "apt" ? "Towers" : "Type"], [p.floors ? "G+" + p.floors : "–", "Floors"], [p.units ? p.units.toLocaleString("en-IN") : "–", "Units"]];
+  const dist = [["Metro: " + esc(p.metro[1]), p.metro[0], 2], ...p.off.slice(0,3).map(o => [esc(o[1]), o[0], 5])];
+  const checks = ["pool","gym","clubhouse","kids","jogging","courts","indoor","spa","yoga","pet","cowork","theatre"];
+  const pos = cp ? Math.min(Math.max((p.psf - cp.lo)/Math.max(cp.hi - cp.lo, 1), 0), 1)*100 : 0, mpos = cp ? Math.min(Math.max((cp.mid - cp.lo)/Math.max(cp.hi - cp.lo, 1), 0), 1)*100 : 0;
   $("card").innerHTML = `
     <div class="chead"><h2>${esc(p.name)}</h2><button class="x" id="cx" type="button" aria-label="Close">×</button>
       <div class="sub">${esc(p.dev)} · ${esc(p.loc)}, ${esc(p.cor)}</div></div>
     <div class="cbody">
-      <div class="big">${money(p.pmin)}${p.pmax > p.pmin ? " to " + money(p.pmax) : ""}<small>Indicative price, ${esc(CONFIG.dataDate)}</small></div>
+      <figure class="hero" id="hero">${img ? `<img src="${img}" alt="${esc(p.name)}" referrerpolicy="no-referrer"><figcaption>Photo: BharatProps</figcaption>` : heroSVG(p) + `<figcaption>Illustration from tower and floor counts</figcaption>`}</figure>
+      <div class="big">${money(p.pmin)}${p.pmax > p.pmin ? " to " + money(p.pmax) : ""}<small>Indicative price, ${esc(CONFIG.dataDate)}${p.psf ? " · about ₹" + p.psf.toLocaleString("en-IN") + " per sq ft" : ""}</small></div>
+      <div class="tiles">${tiles.map(t => `<div class="tile"><b>${esc(t[0])}</b><span>${t[1]}</span></div>`).join("")}</div>
       <dl class="facts">${facts.map(f => `<div><dt>${f[0]}</dt><dd>${esc(f[1])}</dd></div>`).join("")}</dl>
+      <a class="bplink" href="${BP[p.id] ? BP_SITE + "/project/" + BP[p.id] : BP_SITE + "/projects"}" target="_blank" rel="noopener">${BP[p.id] ? "See photos and full details on BharatProps" : "Browse projects with photos on BharatProps"} →</a>
+      ${cp ? `<div><h3>Price against ${esc(p.cor)}</h3>
+        <div class="meter"><u style="left:${mpos}%"></u><i style="left:${pos}%"></i></div>
+        <div class="scale"><span>₹${cp.lo.toLocaleString("en-IN")}</span><span>typical ₹${cp.mid.toLocaleString("en-IN")}</span><span>₹${cp.hi.toLocaleString("en-IN")}</span></div>
+        <p class="hint" style="margin:6px 0 0">This project is ${p.psf > cp.mid*1.05 ? Math.round((p.psf/cp.mid-1)*100) + "% above" : p.psf < cp.mid*.95 ? Math.round((1-p.psf/cp.mid)*100) + "% below" : "in line with"} the typical price per sq ft of ${cp.n} available ${({apt:"apartment",villa:"villa",plot:"plot"})[p.kind]} projects in this corridor.</p></div>` : ""}
       <div><h3>See the location in 3D</h3>
         <div class="view3d">
           <a class="wide" href="${earth}" target="_blank" rel="noopener">Open 3D view in Google Earth</a>
-          <button type="button" id="fly3d">See the towers in 3D</button>
+          <button type="button" id="fly3d">See the 3D model on the map</button>
           <a href="https://www.google.com/maps/@?api=1&map_action=map&center=${g}&zoom=18&basemap=satellite" target="_blank" rel="noopener">Satellite on Google Maps</a>
           <a href="https://www.google.com/maps/@?api=1&map_action=pano&viewpoint=${g}" target="_blank" rel="noopener">Street View</a>
           <a href="https://www.google.com/maps/dir/?api=1&destination=${g}" target="_blank" rel="noopener">Directions</a>
         </div>
         ${online ? `<iframe class="sat" style="margin-top:8px" loading="lazy" title="Satellite view of ${esc(p.name)}" src="https://maps.google.com/maps?q=${g}&t=k&z=17&output=embed"></iframe>` : ""}
-        <p class="hint" style="margin:7px 0 0">${p.st === "ready" ? "Google shows the area and the finished buildings where its imagery is recent." : "This project is still being built, so Google shows the land and the neighbourhood, not the finished towers."} Buildings on this map are approximate shapes drawn from the tower and floor counts. <a style="color:inherit" href="https://www.google.com/maps/search/?api=1&query=${q}" target="_blank" rel="noopener">Photos and reviews on Google Maps</a></p>
+        <p class="hint" style="margin:7px 0 0">The 3D model on the map is an illustration built from this project's land, tower and floor counts. <a style="color:inherit" href="https://www.google.com/maps/search/?api=1&query=${q}" target="_blank" rel="noopener">Photos and reviews on Google Maps</a></p>
       </div>
       ${rows ? `<div><h3>Unit sizes and prices</h3><div class="tw"><table><thead><tr><th>Type</th><th class="r">Sq ft</th><th class="r">Price</th><th class="r">Per sq ft</th></tr></thead><tbody>${rows}</tbody></table></div>${units.length > 14 ? `<p class="hint">${units.length - 14} more unit types on request.</p>` : ""}</div>` : ""}
-      <div><h3>What is nearby</h3><ul class="near">${near.map(n => `<li><span>${n[0]}</span><span>${n[1]}</span></li>`).join("")}</ul></div>
-      ${p.amraw.length ? `<div><h3>Amenities</h3><div class="tags">${p.amraw.slice(0,24).map(a => `<span class="tag">${esc(a)}</span>`).join("")}</div></div>` : ""}
+      <div><h3>Getting around</h3><ul class="bars">${dist.map(d => `<li><div class="top"><span>${d[0]}</span><span>${d[1]} km</span></div><div class="bar"><i class="${d[1] <= d[2] ? "ok" : ""}" style="width:${Math.max(Math.min(d[1]/15,1)*100,3)}%"></i></div></li>`).join("")}</ul>
+        <p class="stats" style="margin:9px 0 0">${p.near.school[0]} schools within 1 km · ${p.near.hospital[0]} hospitals within 2 km · ${p.near.shop[0]} supermarkets or malls within 1.5 km</p></div>
+      ${p.am.length ? `<div><h3>Amenities</h3><ul class="checks">${checks.map(c => `<li class="${p.am.includes(c) ? "" : "no"}"><i>${p.am.includes(c) ? "✓" : "–"}</i>${AMEN[c]}</li>`).join("")}</ul>
+        <details><summary>Full list from the builder (${p.amraw.length})</summary><div class="tags" style="margin-top:8px">${p.amraw.map(a => `<span class="tag">${esc(a)}</span>`).join("")}</div></details></div>` : ""}
     </div>
     <div class="cfoot">
       <a class="cta" href="${waLink(`Hi ${CONFIG.brand}, I am interested in ${p.name}, ${p.loc}. Please share the price sheet and available units.${need()}`)}" target="_blank" rel="noopener">Get price sheet on WhatsApp</a>
       <button class="save" id="sv" type="button" aria-pressed="${saved.has(id)}">${saved.has(id) ? "Saved" : "Save"}</button>
     </div>`;
   $("card").classList.add("open");
+  const hi = $("hero").querySelector("img"); if (hi) hi.onerror = () => { $("hero").innerHTML = heroSVG(p) + "<figcaption>Illustration from tower and floor counts</figcaption>"; };
   $("cx").onclick = closeCard;
   $("sv").onclick = () => { saved.has(id) ? saved.delete(id) : saved.add(id); persist(); $("sv").setAttribute("aria-pressed", saved.has(id)); $("sv").textContent = saved.has(id) ? "Saved" : "Save"; renderList(); };
   $("fly3d").onclick = () => { $("b3d").setAttribute("aria-pressed", true); map.flyTo({center:[p.lng,p.lat], zoom:15.6, pitch:66, bearing:25, duration:1600, padding:{right:innerWidth > 860 ? 430 : 0, left:innerWidth > 860 ? 372 : 0}}); if (innerWidth <= 860) closeCard(); };
@@ -545,7 +660,7 @@ document.addEventListener("keydown", e => { if (e.key === "Escape" && openId) cl
   try {
     [P, BASE] = await Promise.all([fetch("projects.json").then(r => r.json()), fetch("basemap.json").then(r => r.json())]);
   } catch(e) { $("list").innerHTML = `<p class="hint">The project data did not load. Refresh the page to try again.</p>`; return; }
-  buildUI(); syncUI(); apply(); initMap();
+  prep(); buildUI(); syncUI(); apply(); initMap();
 })();
 </script>
 </body>
