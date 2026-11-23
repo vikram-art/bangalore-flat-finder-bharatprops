@@ -84,12 +84,32 @@ select{width:100%;padding:8px 10px;border-radius:10px;border:1px solid var(--lin
 .attr{position:absolute;z-index:2;right:8px;bottom:6px;font-size:10.5px;color:var(--mute);background:rgba(10,15,30,.7);padding:2px 6px;border-radius:6px}
 .attr a{color:inherit}
 /* markers */
-.plabel{font:600 11px var(--f-body);color:#c9d3f5;letter-spacing:.08em;text-transform:uppercase;text-shadow:0 0 4px var(--night),0 0 4px var(--night);pointer-events:none;white-space:nowrap}
-.hlabel{font:500 10.5px var(--f-body);color:var(--mute);text-shadow:0 0 4px var(--night),0 0 4px var(--night);pointer-events:none;white-space:nowrap}
-.hlabel::before{content:"";display:inline-block;width:6px;height:6px;transform:rotate(45deg);background:var(--likely);margin-right:5px}
+.lm-area{font:600 11px var(--f-body);color:#c9d3f5;letter-spacing:.08em;text-transform:uppercase;text-shadow:0 0 4px var(--night),0 0 4px var(--night);pointer-events:none;white-space:nowrap}
 .price{pointer-events:auto;font:600 11px var(--f-body);background:var(--sun);color:var(--sun-ink);padding:2px 7px;border-radius:999px;white-space:nowrap;cursor:pointer;transform:translateY(-16px);box-shadow:0 2px 8px rgba(0,0,0,.5)}
 .price.likely{background:var(--panel);color:var(--likely);border:1px solid var(--likely)}
-.z-lo .hlabel,.z-lo .price{display:none}
+.z-lo .price{display:none}
+.lm{font:500 10.5px var(--f-body);color:#b9c4ea;text-shadow:0 0 4px var(--night),0 0 4px var(--night),0 0 2px var(--night);white-space:nowrap;cursor:pointer;display:flex;align-items:center;gap:5px}
+.lm::before{content:"";flex:none;width:7px;height:7px}
+.lm-office::before{transform:rotate(45deg);background:var(--likely)}
+.lm-mall::before{border-radius:2px;background:#c79bff}
+.lm-metro::before{border-radius:50%;border:1.5px solid #ff5d8f;width:5px;height:5px}
+.lm-rail::before{background:#9aa6cc;height:3px;width:9px}
+.lm:hover{color:#fff}
+.origin{display:flex;flex-direction:column;align-items:center;pointer-events:none}
+.origin b{font:600 11.5px var(--f-body);background:#fff;color:#0a0f1e;padding:3px 9px;border-radius:999px;white-space:nowrap;box-shadow:0 2px 10px rgba(0,0,0,.6)}
+.origin i{width:2px;height:16px;background:#fff}
+.origin u{width:10px;height:10px;border-radius:50%;background:#fff;border:3px solid var(--likely);text-decoration:none}
+.nearbox{background:var(--raise);border:1px solid var(--line);border-radius:14px;padding:12px}
+.nearbox .search{background:var(--panel)}
+.nearwrap{position:relative}
+.nearwrap .x2{position:absolute;right:6px;top:6px;width:28px;height:28px;border-radius:50%;border:0;background:var(--line);font-size:15px;line-height:1}
+.sugg{position:absolute;z-index:6;left:0;right:0;top:calc(100% + 4px);margin:0;padding:4px;list-style:none;background:var(--panel);border:1px solid var(--line);border-radius:12px;box-shadow:0 12px 30px rgba(0,0,0,.5);max-height:290px;overflow-y:auto}
+.sugg li{display:flex;justify-content:space-between;gap:10px;padding:8px 10px;border-radius:8px;cursor:pointer;font-size:13.5px}
+.sugg li:hover,.sugg li.on{background:var(--raise)}
+.sugg li span:last-child{color:var(--mute);font-size:11.5px;white-space:nowrap}
+.nearbox .chip{background:var(--panel);font-size:12.5px;padding:5px 10px}
+.nearbox .chip[aria-pressed="true"]{background:var(--sun)}
+.picking .maplibregl-canvas{cursor:crosshair!important}
 .maplibregl-popup-content{background:var(--panel);color:var(--ink);border:1px solid var(--line);border-radius:10px;padding:8px 11px;font:13px var(--f-body)}
 .maplibregl-popup-tip{display:none}
 /* project card */
@@ -181,6 +201,19 @@ details summary{cursor:pointer;color:var(--mute);font-size:12.5px;margin-top:8px
       <h1>Find the flat that <em>fits</em>.</h1>
     </div>
     <div class="scroll">
+      <div class="grp nearbox">
+        <div class="lab"><label for="near">Start from your office, metro or mall</label></div>
+        <div class="nearwrap">
+          <input id="near" class="search" type="text" placeholder="Try ITPL, Ecoworld, Hoodi metro, Phoenix" autocomplete="off" role="combobox" aria-expanded="false" aria-controls="nearlist">
+          <button class="x2" id="nearx" type="button" aria-label="Clear starting place" hidden>×</button>
+          <ul class="sugg" id="nearlist" hidden></ul>
+        </div>
+        <div class="chips" id="nearquick"></div>
+        <div class="grp" id="nearkmrow" hidden>
+          <div class="lab"><label for="nearkm">Show homes within</label><b id="nearkm-v">5 km</b></div>
+          <input id="nearkm" type="range" min="1" max="20" step="1" value="5">
+        </div>
+      </div>
       <input id="q" class="search" type="search" placeholder="Search project, builder or area" autocomplete="off">
 
       <div class="grp"><div class="lab">Type</div><div class="chips" id="f-kind"></div></div>
@@ -203,15 +236,8 @@ details summary{cursor:pointer;color:var(--mute);font-size:12.5px;margin-top:8px
       <div class="grp"><div class="lab">Amenities</div><div class="chips" id="f-am"></div></div>
 
       <div class="grp">
-        <div class="lab"><label for="metro">Metro station within</label><b id="metro-v">Any</b></div>
+        <div class="lab"><label for="metro">Any metro station within</label><b id="metro-v">Any</b></div>
         <input id="metro" type="range" min="0" max="5" step="1" value="0">
-      </div>
-      <div class="grp">
-        <div class="lab">Close to work</div>
-        <div class="row2">
-          <select id="off" aria-label="Tech park"><option value="">Any tech park</option></select>
-          <select id="offkm" aria-label="Distance to tech park"><option value="3">within 3 km</option><option value="5" selected>within 5 km</option><option value="8">within 8 km</option><option value="12">within 12 km</option></select>
-        </div>
       </div>
       <div class="grp">
         <div class="lab">Builder and possession</div>
@@ -245,6 +271,9 @@ details summary{cursor:pointer;color:var(--mute);font-size:12.5px;margin-top:8px
     <button class="mbtn" id="b3d" type="button" aria-pressed="true">3D view</button>
     <button class="mbtn" id="bsat" type="button" aria-pressed="false" hidden>Satellite</button>
     <button class="mbtn" id="bfit" type="button">Fit results</button>
+    <button class="mbtn lt" data-c="office" type="button" aria-pressed="true">Offices</button>
+    <button class="mbtn lt" data-c="mall" type="button" aria-pressed="true">Malls</button>
+    <button class="mbtn lt" data-c="metro" type="button" aria-pressed="true">Metro stops</button>
     <div class="legend">
       <span><i class="dot" style="background:var(--sun);border-radius:2px"></i>Fits</span>
       <span><i class="dot" style="background:var(--likely);border-radius:2px"></i>Likely</span>
@@ -268,9 +297,9 @@ const CONFIG = {
 };
 
 /* ---------- helpers ---------- */
-const BP = {"111222":"cloud-forest-alembic-city","107165":"evergreen-at-prestige-raintree-park","104237":"adarsh-euphoria","104964":"assetz-66-shibui","105430":"sobha-crystal-meadows","105703":"vaswani-starlight","105651":"jrc-palladio","105464":"mana-the-right-life","106236":"godrej-woodscapes","101641":"rohan-ekanta","106184":"sbr-minara","105505":"provident-botanico","106482":"sowparnika-euphoria","103901":"adarsh-welkin-park-villas-sarjapur-road-bangalore","104018":"sobha-neopolis","103996":"spectra-parijatha","103928":"arvind-forest-trails-sarjapur-bangalore-villas","103597":"orchid-platinum","103258":"sumadhura-sarang","105542":"assetz-melodies-of-life","104116":"mana-dale","104757":"prestige-somerville","103317":"prestige-serenity-shores","103953":"prestige-glenbrook","104214":"abhee-celestial-city","103149":"prestige-park-grove","84402":"adarsh-park-heights-phase-2","103542":"orchid-bloomsberry","103841":"abhee-silicon-shine-phase-2","104337":"adarsh-parkland","104582":"orchid-life","104060":"brigade-sanctuary","115803":"brigade-granada"}; // project id -> page on bharatprops.com
+const BP = {"111222":"cloud-forest-alembic-city","107165":"evergreen-at-prestige-raintree-park","104237":"adarsh-euphoria","104964":"assetz-66-shibui","105430":"sobha-crystal-meadows","105703":"vaswani-starlight","105651":"jrc-palladio","105464":"mana-the-right-life","106236":"godrej-woodscapes","101641":"rohan-ekanta","106184":"sbr-minara","105505":"provident-botanico","106482":"sowparnika-euphoria","103901":"adarsh-welkin-park-villas-sarjapur-road-bangalore","104018":"sobha-neopolis","103996":"spectra-parijatha","103928":"arvind-forest-trails-sarjapur-bangalore-villas","103597":"orchid-platinum","103258":"sumadhura-sarang","105542":"assetz-melodies-of-life","104116":"mana-dale","104757":"prestige-somerville","103317":"prestige-serenity-shores","103953":"prestige-glenbrook","104214":"abhee-celestial-city","103149":"prestige-park-grove","84402":"adarsh-park-heights-phase-2","103542":"orchid-bloomsberry","103841":"abhee-silicon-shine-phase-2","104337":"adarsh-parkland","104582":"orchid-life","104060":"brigade-sanctuary","115803":"brigade-granada","900001":"the-berries-for-birds","900003":"sumadhura-folium-phase-3","112455":"tru-lake-sky","105619":"purva-plots-in-sarjapur"}; // project id -> page on bharatprops.com
 const BP_SITE = "https://www.bharatprops.com";
-const BP_IMG = {"cloud-forest-alembic-city":"https://www.bharatprops.com/cms-api/media/file/hero-wide-1602.webp","evergreen-at-prestige-raintree-park":"https://www.bharatprops.com/cms-api/media/file/hero-wide-1600.webp","adarsh-euphoria":"https://www.bharatprops.com/cms-api/media/file/adarsh-euphoria-hero.webp","assetz-66-shibui":"https://www.bharatprops.com/cms-api/media/file/assetz-66-shibui-hero.webp","sobha-crystal-meadows":"https://www.bharatprops.com/cms-api/media/file/sobha-crystal-meadows-hero-hd.webp","vaswani-starlight":"https://www.bharatprops.com/cms-api/media/file/vaswani-starlight-hero.webp","jrc-palladio":"https://www.bharatprops.com/cms-api/media/file/jrc-palladio-hero.webp","mana-the-right-life":"https://www.bharatprops.com/cms-api/media/file/mana-the-right-life-hero.webp","godrej-woodscapes":"https://www.bharatprops.com/cms-api/media/file/godrej-woodscapes-hero.webp","rohan-ekanta":"https://www.bharatprops.com/cms-api/media/file/rohan-ekanta-hero.webp","sbr-minara":"https://www.bharatprops.com/cms-api/media/file/sbr-minara-hero-hd.webp","provident-botanico":"https://www.bharatprops.com/cms-api/media/file/provident-botanico-hero-hd.webp","sowparnika-euphoria":"https://www.bharatprops.com/cms-api/media/file/sowparnika-euphoria-hero-hd.webp","adarsh-welkin-park-villas-sarjapur-road-bangalore":"https://www.bharatprops.com/cms-api/media/file/adarsh-welkin-park-villas-sarjapur-road-bangalore-hero.webp","sobha-neopolis":"https://www.bharatprops.com/cms-api/media/file/sobha-neopolis-hero.webp","spectra-parijatha":"https://www.bharatprops.com/wp-content/uploads/2024/01/g3.webp","arvind-forest-trails-sarjapur-bangalore-villas":"https://www.bharatprops.com/cms-api/media/file/arvind-forest-trails-sarjapur-bangalore-villas-hero.webp","orchid-platinum":"https://www.bharatprops.com/cms-api/media/file/orchid-platinum-hero-hd.webp","sumadhura-sarang":"https://www.bharatprops.com/cms-api/media/file/sumadhura-sarang-hero.webp","assetz-melodies-of-life":"https://www.bharatprops.com/cms-api/media/file/assetz-melodies-of-life-hero.webp","mana-dale":"https://www.bharatprops.com/cms-api/media/file/mana-dale-hero.webp","prestige-somerville":"https://www.bharatprops.com/cms-api/media/file/prestige-somerville-hero.webp","prestige-serenity-shores":"https://www.bharatprops.com/cms-api/media/file/prestige-serenity-shores-hero.webp","prestige-glenbrook":"https://www.bharatprops.com/cms-api/media/file/prestige-glenbrook-hero.webp","abhee-celestial-city":"https://www.bharatprops.com/cms-api/media/file/abhee-celestial-city-hero.webp","prestige-park-grove":"https://www.bharatprops.com/cms-api/media/file/prestige-park-grove-hero-hz.webp","adarsh-park-heights-phase-2":"https://www.bharatprops.com/cms-api/media/file/adarsh-park-heights-phase-2-hero.webp","orchid-bloomsberry":"https://www.bharatprops.com/cms-api/media/file/orchid-bloomsberry-hero-hd.webp","abhee-silicon-shine-phase-2":"https://www.bharatprops.com/cms-api/media/file/abhee-silicon-shine-phase-2-hero.webp","adarsh-parkland":"https://www.bharatprops.com/cms-api/media/file/adarsh-parkland-hero.webp","orchid-life":"https://www.bharatprops.com/cms-api/media/file/orchid-life-hero-hz.webp","brigade-sanctuary":"https://www.bharatprops.com/cms-api/media/file/brigade-sanctuary-hero-hd.webp","brigade-granada":"https://www.bharatprops.com/cms-api/media/file/brigade-granada-hero-hd.webp"}; // page slug -> BharatProps hero image
+const BP_IMG = {"cloud-forest-alembic-city":"https://www.bharatprops.com/cms-api/media/file/hero-wide-1602.webp","evergreen-at-prestige-raintree-park":"https://www.bharatprops.com/cms-api/media/file/hero-wide-1600.webp","adarsh-euphoria":"https://www.bharatprops.com/cms-api/media/file/adarsh-euphoria-hero.webp","assetz-66-shibui":"https://www.bharatprops.com/cms-api/media/file/assetz-66-shibui-hero.webp","sobha-crystal-meadows":"https://www.bharatprops.com/cms-api/media/file/sobha-crystal-meadows-hero-hd.webp","vaswani-starlight":"https://www.bharatprops.com/cms-api/media/file/vaswani-starlight-hero.webp","jrc-palladio":"https://www.bharatprops.com/cms-api/media/file/jrc-palladio-hero.webp","mana-the-right-life":"https://www.bharatprops.com/cms-api/media/file/mana-the-right-life-hero.webp","godrej-woodscapes":"https://www.bharatprops.com/cms-api/media/file/godrej-woodscapes-hero.webp","rohan-ekanta":"https://www.bharatprops.com/cms-api/media/file/rohan-ekanta-hero.webp","sbr-minara":"https://www.bharatprops.com/cms-api/media/file/sbr-minara-hero-hd.webp","provident-botanico":"https://www.bharatprops.com/cms-api/media/file/provident-botanico-hero-hd.webp","sowparnika-euphoria":"https://www.bharatprops.com/cms-api/media/file/sowparnika-euphoria-hero-hd.webp","adarsh-welkin-park-villas-sarjapur-road-bangalore":"https://www.bharatprops.com/cms-api/media/file/adarsh-welkin-park-villas-sarjapur-road-bangalore-hero.webp","sobha-neopolis":"https://www.bharatprops.com/cms-api/media/file/sobha-neopolis-hero.webp","spectra-parijatha":"https://www.bharatprops.com/wp-content/uploads/2024/01/g3.webp","arvind-forest-trails-sarjapur-bangalore-villas":"https://www.bharatprops.com/cms-api/media/file/arvind-forest-trails-sarjapur-bangalore-villas-hero.webp","orchid-platinum":"https://www.bharatprops.com/cms-api/media/file/orchid-platinum-hero-hd.webp","sumadhura-sarang":"https://www.bharatprops.com/cms-api/media/file/sumadhura-sarang-hero.webp","assetz-melodies-of-life":"https://www.bharatprops.com/cms-api/media/file/assetz-melodies-of-life-hero.webp","mana-dale":"https://www.bharatprops.com/cms-api/media/file/mana-dale-hero.webp","prestige-somerville":"https://www.bharatprops.com/cms-api/media/file/prestige-somerville-hero.webp","prestige-serenity-shores":"https://www.bharatprops.com/cms-api/media/file/prestige-serenity-shores-hero.webp","prestige-glenbrook":"https://www.bharatprops.com/cms-api/media/file/prestige-glenbrook-hero.webp","abhee-celestial-city":"https://www.bharatprops.com/cms-api/media/file/abhee-celestial-city-hero.webp","prestige-park-grove":"https://www.bharatprops.com/cms-api/media/file/prestige-park-grove-hero-hz.webp","adarsh-park-heights-phase-2":"https://www.bharatprops.com/cms-api/media/file/adarsh-park-heights-phase-2-hero.webp","orchid-bloomsberry":"https://www.bharatprops.com/cms-api/media/file/orchid-bloomsberry-hero-hd.webp","abhee-silicon-shine-phase-2":"https://www.bharatprops.com/cms-api/media/file/abhee-silicon-shine-phase-2-hero.webp","adarsh-parkland":"https://www.bharatprops.com/cms-api/media/file/adarsh-parkland-hero.webp","orchid-life":"https://www.bharatprops.com/cms-api/media/file/orchid-life-hero-hz.webp","brigade-sanctuary":"https://www.bharatprops.com/cms-api/media/file/brigade-sanctuary-hero-hd.webp","brigade-granada":"https://www.bharatprops.com/cms-api/media/file/brigade-granada-hero-hd.webp","the-berries-for-birds":"https://www.bharatprops.com/cms-api/media/file/hero-wide-1601.webp","sumadhura-folium-phase-3":"https://www.bharatprops.com/cms-api/media/file/sumadhura-folium-phase-3-hero.webp","tru-lake-sky":"https://www.bharatprops.com/cms-api/media/file/tru-lake-sky-hero.webp","purva-plots-in-sarjapur":"https://www.bharatprops.com/cms-api/media/file/purva-plots-sarjapur-banner.jpg"}; // page slug -> BharatProps hero image
 const $ = id => document.getElementById(id);
 const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 const money = l => l == null ? "" : (l >= 100 ? "₹" + (l/100).toFixed(l % 100 === 0 ? 0 : 2).replace(/0$/,"").replace(/\.$/,"") + " Cr" : "₹" + Math.round(l) + " L");
@@ -279,9 +308,24 @@ const KIND = {apt:"Apartments", villa:"Villas", plot:"Plots"};
 const STAGE = {new:"New launch", uc:"Under construction", ready:"Ready to move"};
 const AMEN = {pool:"Pool",gym:"Gym",clubhouse:"Clubhouse",kids:"Kids play",jogging:"Jogging track",courts:"Sports courts",tennis:"Tennis",basketball:"Basketball",badminton:"Badminton",squash:"Squash",cricket:"Cricket",indoor:"Indoor games",spa:"Spa or sauna",yoga:"Yoga",amphi:"Amphitheatre",theatre:"Mini theatre",pet:"Pet park",cowork:"Co-working",party:"Party hall",retail:"Shops inside",cycling:"Cycling track",library:"Library"};
 const AMEN_TOP = ["pool","gym","clubhouse","kids","jogging","courts","tennis","basketball","indoor","spa","yoga","pet","cowork","theatre"];
+const LM = [ // curated landmarks: [name, lat, lng, type]
+  ["ITPL",12.9877,77.7369,"office"],["EPIP Zone, Whitefield",12.9782,77.7247,"office"],["GR Tech Park",12.9865,77.7448,"office"],["Kalyani Platina Tech Park",12.9714,77.7175,"office"],
+  ["Brigade Tech Gardens",12.9638,77.7201,"office"],["RMZ NXT",12.9783,77.7119,"office"],["Prestige Shantiniketan",12.9893,77.7267,"office"],["Bagmane WTC, Mahadevapura",12.9842,77.6942,"office"],
+  ["Bagmane Tech Park",12.9788,77.6589,"office"],["Embassy Golf Links",12.9534,77.6442,"office"],["RMZ Ecoworld",12.9298,77.6846,"office"],["RMZ Ecospace",12.9283,77.6812,"office"],
+  ["Embassy TechVillage",12.9307,77.6914,"office"],["Embassy Tech Square",12.9351,77.6935,"office"],["Cessna Business Park",12.9369,77.6951,"office"],["Prestige Tech Park",12.9423,77.6936,"office"],
+  ["RGA Tech Park, Sarjapur Road",12.9023,77.7059,"office"],["Electronic City",12.85,77.67,"office"],["Manyata Tech Park",13.0502,77.6234,"office"],
+  ["Phoenix Marketcity",12.9970,77.6967,"mall"],["VR Bengaluru",12.9963,77.6955,"mall"],["Nexus Shantiniketan",12.9897,77.7281,"mall"],["Nexus Whitefield",12.9597,77.7480,"mall"],
+  ["Park Square Mall, ITPL",12.9870,77.7364,"mall"],["Brookefield Mall",12.9661,77.7179,"mall"],["Orion Uptown Mall",13.0554,77.7637,"mall"],["Gopalan Grand Mall",12.9934,77.6641,"mall"],
+  ["Nexus Koramangala",12.9348,77.6113,"mall"],["Market Square Mall",12.9219,77.6204,"mall"],["M5 ECity Mall",12.8419,77.6770,"mall"],
+  ["KR Puram Railway Station",13.00065,77.67533,"rail"],["Whitefield Railway Station",12.9957,77.7579,"rail"],["SMVT Railway Terminal",12.9997,77.6412,"rail"],["Bengaluru Airport",13.19889,77.70556,"rail"]
+];
+const LM_TYPE = {office:"Tech park", mall:"Mall", metro:"Metro", rail:"Station", area:"Area", pin:"Pin"};
+const QUICK = ["ITPL","RMZ Ecoworld","Embassy TechVillage","Bagmane Tech Park","Prestige Tech Park"];
+const kmBetween = (a,b,c,d) => { const R = 6371, p = Math.PI/180, x = Math.sin((c-a)*p/2)**2 + Math.cos(a*p)*Math.cos(c*p)*Math.sin((d-b)*p/2)**2; return 2*R*Math.asin(Math.sqrt(x)); };
+let PLACES = [], picking = false, originMarker = null, LABELS = [], lmOff = new Set();
 const bucket = b => b >= 5 ? 5 : Math.floor(b);
 
-const S0 = () => ({q:"", kind:new Set(), bhk:new Set(), pmax:null, sq:0, cor:new Set(), st:new Set(), sold:false, am:new Set(), metro:0, off:"", offkm:5, dev:"", poss:"", sort:"best"});
+const S0 = () => ({q:"", kind:new Set(), bhk:new Set(), pmax:null, sq:0, cor:new Set(), st:new Set(), sold:false, am:new Set(), metro:0, near:null, nearKm:5, dev:"", poss:"", sort:"best"});
 let S = S0(), P = [], BASE = null, map = null, online = false, shown = 40, openId = null, labelMarkers = [];
 let saved = new Set();
 try { saved = new Set(JSON.parse(localStorage.getItem("bp-list") || "[]")); } catch(e) {}
@@ -303,7 +347,7 @@ function match(p){
   if (S.st.size && !S.st.has(p.st)) return 0;
   for (const a of S.am) if (!p.am.includes(a)) return 0;
   if (S.metro && p.metro[0] > S.metro) return 0;
-  if (S.off){ const o = p.off.find(x => x[1] === S.off); if (!o || o[0] > S.offkm) return 0; }
+  if (S.near && p.d > S.nearKm) return 0;
   if (S.dev && p.brand !== S.dev) return 0;
   if (S.poss){ if (p.st !== "ready" && (!p.py || p.py > +S.poss)) return 0; }
   if (S.q){ const h = (p.name + " " + p.dev + " " + p.loc + " " + p.cor).toLowerCase(); for (const w of S.q.toLowerCase().split(/\s+/)) if (w && !h.includes(w)) return 0; }
@@ -342,7 +386,9 @@ function syncUI(){
   $("pmax").value = S.pmax == null ? 20 : BUDGET.indexOf(S.pmax); $("pmax-v").textContent = S.pmax == null ? "Any" : money(S.pmax);
   $("sq").value = S.sq; $("sq-v").textContent = S.sq ? S.sq.toLocaleString("en-IN") + " sq ft" : "Any";
   $("metro").value = S.metro; $("metro-v").textContent = S.metro ? S.metro + " km" : "Any";
-  $("off").value = S.off; $("offkm").value = S.offkm; $("dev").value = S.dev; $("poss").value = S.poss; $("sort").value = S.sort;
+  $("near").value = S.near ? S.near.n : ""; $("nearx").hidden = !S.near; $("nearkmrow").hidden = !S.near; $("nearkm").value = S.nearKm; $("nearkm-v").textContent = S.nearKm + " km";
+  for (const b of $("nearquick").children) b.setAttribute("aria-pressed", b.dataset.pick ? picking : !!(S.near && S.near.n === b.dataset.n));
+  $("dev").value = S.dev; $("poss").value = S.poss; $("sort").value = S.sort;
   const sets = {"f-kind":S.kind,"f-bhk":S.bhk,"f-cor":S.cor,"f-st":S.st,"f-am":S.am};
   for (const id in sets) for (const b of $(id).children){ let v = b.dataset.v; if (id === "f-bhk") v = +v; b.setAttribute("aria-pressed", sets[id].has(v)); }
 }
@@ -352,8 +398,6 @@ function buildUI(){
   chipGroup($("f-cor"), [...new Set(P.map(p => p.cor))].sort(), () => S.cor, v => v);
   chipGroup($("f-st"), Object.keys(STAGE), () => S.st, v => STAGE[v]);
   chipGroup($("f-am"), AMEN_TOP, () => S.am, v => AMEN[v]);
-  const offs = [...new Set(P.flatMap(p => p.off.map(o => o[1])))].sort();
-  $("off").insertAdjacentHTML("beforeend", offs.map(o => `<option>${esc(o)}</option>`).join(""));
   const devs = {}; P.forEach(p => { if (!p.sold && p.brand) devs[p.brand] = (devs[p.brand]||0)+1; });
   $("dev").insertAdjacentHTML("beforeend", Object.entries(devs).filter(e => e[1] >= 2).sort((a,b) => a[0].localeCompare(b[0])).map(e => `<option value="${esc(e[0])}">${esc(e[0])} (${e[1]})</option>`).join(""));
   $("q").addEventListener("input", e => { S.q = e.target.value.trim(); apply(); });
@@ -361,9 +405,28 @@ function buildUI(){
   $("sq").addEventListener("input", e => { S.sq = +e.target.value; syncUI(); apply(); });
   $("metro").addEventListener("input", e => { S.metro = +e.target.value; syncUI(); apply(); });
   $("sold").addEventListener("change", e => { S.sold = e.target.checked; apply(); });
-  for (const [id,k] of [["off","off"],["dev","dev"],["poss","poss"],["sort","sort"]]) $(id).addEventListener("change", e => { S[k] = e.target.value; apply(); });
-  $("offkm").addEventListener("change", e => { S.offkm = +e.target.value; apply(); });
-  $("reset").addEventListener("click", () => { S = S0(); syncUI(); apply(); });
+  for (const [id,k] of [["dev","dev"],["poss","poss"],["sort","sort"]]) $(id).addEventListener("change", e => { S[k] = e.target.value; apply(); });
+  $("reset").addEventListener("click", () => { S = S0(); syncUI(); apply(); renderNear(false); });
+  // places people start from
+  const areas = {}; P.forEach(p => { (areas[p.loc] = areas[p.loc] || []).push(p); });
+  PLACES = [...LM.map(l => ({n:l[0], lat:l[1], lng:l[2], t:l[3]})),
+    ...BASE.stations.map(s => ({n:s[2] + " metro", lat:s[1], lng:s[0], t:"metro"})),
+    ...Object.entries(areas).filter(e => e[1].length >= 3).map(([n,a]) => ({n, lat:a.reduce((x,p) => x+p.lat,0)/a.length, lng:a.reduce((x,p) => x+p.lng,0)/a.length, t:"area"}))];
+  $("nearquick").innerHTML = QUICK.map(n => `<button type="button" class="chip" data-n="${esc(n)}" aria-pressed="false">${esc(n)}</button>`).join("") + `<button type="button" class="chip" data-pick="1" aria-pressed="false">Drop a pin on the map</button>`;
+  $("nearquick").addEventListener("click", e => { const b = e.target.closest(".chip"); if (!b) return;
+    if (b.dataset.pick){ picking = !picking; $("map").classList.toggle("picking", picking); syncUI(); return; }
+    S.near && S.near.n === b.dataset.n ? setNear(null) : setNear(PLACES.find(p => p.n === b.dataset.n)); });
+  const sugg = () => { const q = $("near").value.trim().toLowerCase(), ws = q.split(/\s+/).filter(Boolean);
+    const hits = (q ? PLACES.filter(p => ws.every(w => (p.n + " " + LM_TYPE[p.t]).toLowerCase().includes(w))) : PLACES.filter(p => p.t === "office")).slice(0, 9);
+    $("nearlist").innerHTML = hits.map((p,i) => `<li data-i="${PLACES.indexOf(p)}" class="${i ? "" : "on"}"><span>${esc(p.n)}</span><span>${LM_TYPE[p.t]}</span></li>`).join("") || `<li><span>No match. Drop a pin on the map instead.</span><span></span></li>`;
+    $("nearlist").hidden = false; $("near").setAttribute("aria-expanded", "true"); };
+  $("near").addEventListener("input", sugg); $("near").addEventListener("focus", sugg);
+  $("near").addEventListener("keydown", e => { if (e.key === "Enter"){ const li = $("nearlist").querySelector("li[data-i]"); if (li) setNear(PLACES[+li.dataset.i]); } if (e.key === "Escape") hideSugg(); });
+  $("near").addEventListener("blur", () => setTimeout(hideSugg, 180));
+  $("nearlist").addEventListener("mousedown", e => { const li = e.target.closest("li[data-i]"); if (li){ e.preventDefault(); setNear(PLACES[+li.dataset.i]); } });
+  $("nearx").addEventListener("click", () => setNear(null));
+  $("nearkm").addEventListener("input", e => { S.nearKm = +e.target.value; syncUI(); apply(); renderNear(false); });
+  document.querySelectorAll(".lt").forEach(b => b.addEventListener("click", () => { const on = b.getAttribute("aria-pressed") !== "true"; b.setAttribute("aria-pressed", on); on ? lmOff.delete(b.dataset.c) : lmOff.add(b.dataset.c); declutter(); }));
   $("more").addEventListener("click", () => { shown += 40; renderList(); });
   $("list").addEventListener("click", e => { const b = e.target.closest(".item"); if (b) openCard(+b.dataset.id, true); });
   $("b3d").addEventListener("click", () => { const on = $("b3d").getAttribute("aria-pressed") !== "true"; $("b3d").setAttribute("aria-pressed", on); map.easeTo({pitch: on ? 58 : 0, bearing: on ? -14 : 0, duration: 700}); });
@@ -372,13 +435,49 @@ function buildUI(){
   $("foot").innerHTML = `${P.length} projects in East Bangalore, ${P.filter(p => !p.sold).length} with homes still available. Prices are indicative as of ${esc(CONFIG.dataDate)} and change often, so confirm with ${esc(CONFIG.brand)} before you decide. Distances are straight-line. Nearby places from OpenStreetMap.`;
 }
 
+function hideSugg(){ $("nearlist").hidden = true; $("near").setAttribute("aria-expanded", "false"); }
+function setNear(pl){
+  S.near = pl ? {n:pl.n, lat:pl.lat, lng:pl.lng, t:pl.t} : null; picking = false; $("map").classList.remove("picking"); hideSugg(); $("near").blur();
+  if (S.near){ for (const p of P) p.d = Math.round(kmBetween(S.near.lat, S.near.lng, p.lat, p.lng)*10)/10; if (S.sort === "best" || S.sort === "metro") S.sort = "best"; }
+  syncUI(); apply(); renderNear(true);
+}
+function renderNear(fit){
+  if (!map || !map.getSource("near")) return;
+  if (originMarker){ originMarker.remove(); originMarker = null; }
+  if (!S.near){ map.getSource("near").setData(fc([])); return; }
+  const ring = [], cl = Math.cos(S.near.lat*Math.PI/180);
+  for (let i = 0; i <= 72; i++){ const a = i/72*2*Math.PI; ring.push([S.near.lng + S.nearKm/111.32/cl*Math.cos(a), S.near.lat + S.nearKm/111.32*Math.sin(a)]); }
+  map.getSource("near").setData(fc([{type:"Feature", geometry:{type:"Polygon", coordinates:[ring]}, properties:{}}]));
+  const el = document.createElement("div"); el.className = "origin"; el.innerHTML = `<b>${esc(S.near.n)}</b><i></i><u></u>`;
+  originMarker = new maplibregl.Marker({element:el, anchor:"bottom"}).setLngLat([S.near.lng, S.near.lat]).addTo(map);
+  if (fit){ const b = new maplibregl.LngLatBounds(); ring.forEach(c => b.extend(c)); map.fitBounds(b, {padding:{top:70,bottom:50,left:innerWidth > 860 ? 410 : 30,right:50}, maxZoom:14.5, duration:800, pitch:map.getPitch(), bearing:map.getBearing()}); }
+  declutter();
+}
+/* Landmark names never overlap: higher-priority names are placed first and anything that would collide is hidden until you zoom in. */
+function addLabel(text, lng, lat, cat, pri, minZ, place){
+  const el = document.createElement("div"); el.className = "lm lm-" + cat; el.textContent = text;
+  if (place) el.addEventListener("click", ev => { ev.stopPropagation(); setNear(place); });
+  const mk = new maplibregl.Marker({element:el, anchor: cat === "area" ? "center" : "left"}).setLngLat([lng,lat]).addTo(map);
+  LABELS.push({el, lng, lat, cat, pri, minZ, w: text.length*(cat === "area" ? 7.6 : 5.9) + 22, text});
+}
+function declutter(){
+  if (!map) return; const z = map.getZoom(), placed = [], W = map.getContainer().clientWidth, H = map.getContainer().clientHeight;
+  if (originMarker){ const o = map.project(originMarker.getLngLat()); placed.push([o.x-70, o.y-46, o.x+70, o.y+6]); }
+  for (const L of LABELS){
+    let show = z >= L.minZ && !lmOff.has(L.cat) && !(S.near && S.near.n === L.text);
+    if (show){ const p = map.project([L.lng, L.lat]), x0 = L.cat === "area" ? p.x - L.w/2 : p.x - 4, box = [x0, p.y - 9, x0 + L.w, p.y + 9];
+      show = p.x > -40 && p.x < W + 40 && p.y > -20 && p.y < H + 20 && !placed.some(b => box[0] < b[2] + 6 && box[2] > b[0] - 6 && box[1] < b[3] + 3 && box[3] > b[1] - 3);
+      if (show) placed.push(box); }
+    L.el.style.display = show ? "" : "none";
+  }
+}
 /* ---------- results ---------- */
 let RES = [];
 function apply(){
   RES = [];
   for (const p of P){ p.m = match(p); if (p.m) RES.push(p); }
   const by = {
-    best: (a,b) => (b.m - a.m) || ((BP[b.id]?1:0) - (BP[a.id]?1:0)) || ((a.sold?1:0) - (b.sold?1:0)) || (b.id - a.id),
+    best: (a,b) => (b.m - a.m) || (S.near ? a.d - b.d : 0) || ((BP[b.id]?1:0) - (BP[a.id]?1:0)) || ((a.sold?1:0) - (b.sold?1:0)) || (b.id - a.id),
     plow: (a,b) => fromPrice(a) - fromPrice(b),
     phigh: (a,b) => b.pmax - a.pmax,
     poss: (a,b) => (a.st === "ready" ? 0 : a.py || 9999) - (b.st === "ready" ? 0 : b.py || 9999),
@@ -393,7 +492,7 @@ function renderList(){
   $("list").innerHTML = RES.slice(0, shown).map(p => `
     <button type="button" class="item${p.id === openId ? " on" : ""}" data-id="${p.id}">
       <span class="n">${esc(p.name)}</span><span class="p">${money(fromPrice(p))}+</span>
-      <span class="s">${p.sold ? '<i class="pill sold">Sold out</i>' : p.m === 1 ? '<i class="pill likely">Likely</i>' : `<i class="pill ${p.st}">${STAGE[p.st]}</i>`}${esc(p.loc)} · ${p.bhk.length ? esc(p.bhk.join(", ")) + " BHK" : KIND[p.kind]}${p.metro[0] <= 2 ? " · metro " + p.metro[0] + " km" : ""}</span>
+      <span class="s">${p.sold ? '<i class="pill sold">Sold out</i>' : p.m === 1 ? '<i class="pill likely">Likely</i>' : `<i class="pill ${p.st}">${STAGE[p.st]}</i>`}${esc(p.loc)} · ${p.bhk.length ? esc(p.bhk.join(", ")) + " BHK" : KIND[p.kind]}${S.near ? " · " + p.d + " km from " + esc(S.near.n) : p.metro[0] <= 2 ? " · metro " + p.metro[0] + " km" : ""}</span>
     </button>`).join("") || `<p class="hint">Nothing fits these filters. Raise the budget, drop an amenity, or clear all filters.</p>`;
   $("more").hidden = RES.length <= shown;
   const ps = RES.filter(p => p.psf).map(p => p.psf);
@@ -407,6 +506,7 @@ function need(){
   if (S.bhk.size) b.push([...S.bhk].sort().map(x => x === 5 ? "5+" : x).join("/") + " BHK");
   if (S.pmax != null) b.push("budget up to " + money(S.pmax));
   if (S.sq) b.push("at least " + S.sq + " sq ft");
+  if (S.near) b.push("within " + S.nearKm + " km of " + S.near.n);
   return b.length ? " My requirement: " + b.join(", ") + "." : "";
 }
 
@@ -497,8 +597,12 @@ function priceLabels(){
   labelMarkers.forEach(m => m.remove()); labelMarkers = [];
   if (!map || map.getZoom() < 12.2) return;
   const b = map.getBounds(), vis = RES.filter(p => b.contains([p.lng,p.lat]));
-  if (vis.length > 45) return;
+  if (vis.length > 60) return;
+  const placed = [];
   for (const p of vis){
+    const q = map.project([p.lng,p.lat]), box = [q.x-36, q.y-40, q.x+36, q.y-14];
+    if (p.id !== openId && placed.some(b => box[0] < b[2] && box[2] > b[0] && box[1] < b[3] && box[3] > b[1])) continue;
+    placed.push(box);
     const el = document.createElement("div"); el.className = "price" + (p.m === 1 ? " likely" : ""); el.textContent = money(fromPrice(p)) + "+";
     el.addEventListener("click", ev => { ev.stopPropagation(); openCard(p.id, false); });
     labelMarkers.push(new maplibregl.Marker({element:el, anchor:"bottom"}).setLngLat([p.lng,p.lat]).addTo(map));
@@ -532,6 +636,9 @@ function addOverlays(){
   map.addLayer({id:"metro", type:"line", source:"metro", paint:{"line-color":"#ff5d8f","line-width":["interpolate",["linear"],["zoom"],10,1.2,14,3],"line-opacity":.85}});
   map.addSource("stn", {type:"geojson", data:fc(B.stations.map(s => ({type:"Feature", geometry:{type:"Point", coordinates:[s[0],s[1]]}, properties:{n:s[2]+" metro"}})))});
   map.addLayer({id:"stn", type:"circle", source:"stn", minzoom:11, paint:{"circle-radius":["interpolate",["linear"],["zoom"],11,2,15,5],"circle-color":"#0a0f1e","circle-stroke-color":"#ff5d8f","circle-stroke-width":1.5}});
+  map.addSource("near", {type:"geojson", data:fc([])});
+  map.addLayer({id:"near-f", type:"fill", source:"near", paint:{"fill-color":"#6fd3ff","fill-opacity":.07}});
+  map.addLayer({id:"near-l", type:"line", source:"near", paint:{"line-color":"#6fd3ff","line-width":1.5,"line-dasharray":[3,3],"line-opacity":.9}});
   map.addSource("sel", {type:"geojson", data:selFC()});
   map.addLayer({id:"sel", type:"circle", source:"sel", paint:{"circle-radius":["interpolate",["linear"],["zoom"],10,14,13,26,16,90],"circle-color":"#ffffff","circle-opacity":.1,"circle-stroke-color":"#ffffff","circle-stroke-width":1.5,"circle-pitch-alignment":"map"}});
   map.addSource("proj", {type:"geojson", data:projFC()});
@@ -539,23 +646,25 @@ function addOverlays(){
   map.addLayer({id:"pad", type:"fill", source:"pad", paint:{"fill-color":["case",[">",["get","m"],0],"#1f4a36","#182540"],"fill-opacity":.85,"fill-outline-color":["case",["==",["get","sel"],1],"#ffffff",[">",["get","m"],0],"#58d68d","#33406b"]}});
   map.addLayer({id:"p2", type:"fill-extrusion", source:"proj", paint:{"fill-extrusion-color":["get","c"],"fill-extrusion-base":["get","b"],"fill-extrusion-height":["get","h"],"fill-extrusion-opacity":.96,"fill-extrusion-vertical-gradient":true}});
   map.setLight({anchor:"viewport", color:"#ffffff", intensity:.42, position:[1.4,215,38]});
-  // area names from where the projects cluster
+  // names on the map, in priority order: areas, tech parks, stations, malls, metro stops
   const loc = {}; P.forEach(p => { (loc[p.loc] = loc[p.loc] || []).push(p); });
-  Object.entries(loc).filter(e => e[1].length >= 5).forEach(([n,a]) => {
-    const el = document.createElement("div"); el.className = "plabel"; el.textContent = n;
-    new maplibregl.Marker({element:el}).setLngLat([a.reduce((s,p) => s+p.lng,0)/a.length, a.reduce((s,p) => s+p.lat,0)/a.length + .006]).addTo(map);
-  });
-  B.hubs.filter(h => h[3] === "w").forEach(h => { const el = document.createElement("div"); el.className = "hlabel"; el.textContent = h[2]; new maplibregl.Marker({element:el, anchor:"left"}).setLngLat([h[0],h[1]]).addTo(map); });
+  Object.entries(loc).filter(e => e[1].length >= 5).sort((a,b) => b[1].length - a[1].length).forEach(([n,a]) => addLabel(n, a.reduce((s,p) => s+p.lng,0)/a.length, a.reduce((s,p) => s+p.lat,0)/a.length + .006, "area", 1, 0));
+  const lmPlace = l => PLACES.find(p => p.n === l[0]);
+  LM.filter(l => l[3] === "office").forEach(l => addLabel(l[0], l[2], l[1], "office", 2, 11.4, lmPlace(l)));
+  LM.filter(l => l[3] === "rail" && l[1] < 13.1).forEach(l => addLabel(l[0], l[2], l[1], "rail", 3, 12.2, lmPlace(l)));
+  LM.filter(l => l[3] === "mall").forEach(l => addLabel(l[0], l[2], l[1], "mall", 4, 12.2, lmPlace(l)));
+  B.stations.forEach(s => addLabel(s[2], s[0], s[1], "metro", 5, 13, PLACES.find(p => p.n === s[2] + " metro")));
+  map.on("click", e => { if (!picking) return; setNear({n:"Dropped pin", lat:Math.round(e.lngLat.lat*1e5)/1e5, lng:Math.round(e.lngLat.lng*1e5)/1e5, t:"pin"}); });
   const pop = new maplibregl.Popup({closeButton:false, closeOnClick:false, offset:12});
   for (const id of ["pad","p2"]){
     map.on("mousemove", id, e => { const p = P.find(x => x.id === e.features[0].properties.id); map.getCanvas().style.cursor = "pointer"; pop.setLngLat([p.lng,p.lat]).setHTML(`<b>${esc(p.name)}</b><br>${esc(p.loc)} · ${money(p.pmin)} onwards${p.sold ? " · sold out" : ""}`).addTo(map); });
     map.on("mouseleave", id, () => { map.getCanvas().style.cursor = ""; pop.remove(); });
-    map.on("click", id, e => openCard(e.features[0].properties.id, false));
+    map.on("click", id, e => { if (!picking) openCard(e.features[0].properties.id, false); });
   }
   map.on("mousemove", "stn", e => { pop.setLngLat(e.lngLat).setHTML(esc(e.features[0].properties.n)).addTo(map); });
   map.on("mouseleave", "stn", () => pop.remove());
   const z = () => $("map").classList.toggle("z-lo", map.getZoom() < 11.6);
-  map.on("zoom", () => { z(); if (Math.round(scaleK()*4)/4 !== lastK) paint(); }); z(); map.on("moveend", () => { if (scaleK() <= 1.6) paint(); else priceLabels(); });
+  map.on("zoom", () => { z(); if (Math.round(scaleK()*4)/4 !== lastK) paint(); }); z(); let raf = 0; map.on("move", () => { if (!raf) raf = requestAnimationFrame(() => { raf = 0; declutter(); }); }); declutter(); map.on("moveend", () => { if (scaleK() <= 1.6) paint(); else priceLabels(); });
 }
 async function initMap(){
   let style = {version:8, sources:{}, layers:[{id:"bg", type:"background", paint:{"background-color":"#0a0f1e"}}]};
@@ -567,7 +676,7 @@ async function initMap(){
   const [S_,W,N,E] = BASE.bbox;
   map = new maplibregl.Map({container:"map", style, center:[77.725,12.945], zoom:11.2, pitch:52, bearing:-14, minZoom:9.5, maxZoom:18, maxBounds:[[W-.25,S_-.2],[E+.25,N+.2]], attributionControl:false, maxPitch:70});
   map.addControl(new maplibregl.NavigationControl({visualizePitch:true}), "bottom-right");
-  map.on("load", () => { addOverlays(); paint(); fitResults(); if (location.hash.startsWith("#p-")) openCard(+location.hash.slice(3), true); });
+  map.on("load", () => { addOverlays(); paint(); fitResults(); renderNear(false); if (location.hash.startsWith("#p-")) openCard(+location.hash.slice(3), true); });
 }
 
 /* ---------- project card ---------- */
@@ -607,7 +716,7 @@ function openCard(id, fly){
     ["Homes", p.bhk.length ? p.bhk.join(", ") + " BHK" : KIND[p.kind]], ["RERA", p.rera ? p.rera : (p.rera_st === "ok" ? "Registered" : p.rera_st === "pending" ? "Awaited" : "–")]
   ];
   const tiles = [[p.acres ? p.acres + " ac" : "–", "Land"], [p.kind === "apt" ? (p.towers || "–") : KIND[p.kind].slice(0,-1), p.kind === "apt" ? "Towers" : "Type"], [p.floors ? "G+" + p.floors : "–", "Floors"], [p.units ? p.units.toLocaleString("en-IN") : "–", "Units"]];
-  const dist = [["Metro: " + esc(p.metro[1]), p.metro[0], 2], ...p.off.slice(0,3).map(o => [esc(o[1]), o[0], 5])];
+  const dist = [...(S.near ? [["From " + esc(S.near.n), p.d, 5]] : []), ["Metro: " + esc(p.metro[1]), p.metro[0], 2], ...p.off.slice(0,3).map(o => [esc(o[1]), o[0], 5])];
   const checks = ["pool","gym","clubhouse","kids","jogging","courts","indoor","spa","yoga","pet","cowork","theatre"];
   const pos = cp ? Math.min(Math.max((p.psf - cp.lo)/Math.max(cp.hi - cp.lo, 1), 0), 1)*100 : 0, mpos = cp ? Math.min(Math.max((cp.mid - cp.lo)/Math.max(cp.hi - cp.lo, 1), 0), 1)*100 : 0;
   $("card").innerHTML = `
