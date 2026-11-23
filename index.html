@@ -223,7 +223,11 @@ select{width:100%;padding:8px 10px;border-radius:10px;border:1px solid var(--lin
 .keyrow.ksub{color:var(--mute);font-size:11.5px}
 .keyrow.ksub i{width:10px;height:10px}
 .chip .tdot{display:inline-block;width:9px;height:9px;border-radius:2px;margin-right:6px;vertical-align:0}
-#bfit,#b3d{display:grid;place-items:center;font:700 11.5px var(--f-body);color:#333;cursor:pointer}
+#bfit,#b3d,#bsat{display:grid;place-items:center;font:700 11.5px var(--f-body);color:#333;cursor:pointer}
+#bsat[aria-pressed="true"]{background:#ffb72b;color:#0a0f1e}
+#compass{display:block;width:50px;height:50px;padding:0;border:0;background:none;border-radius:50%;cursor:pointer;box-shadow:0 4px 14px rgba(0,0,0,.4);backdrop-filter:blur(6px)}
+#compass svg{display:block}
+.satnote{position:absolute;z-index:6;top:268px;right:58px;max-width:210px;background:#fff;color:#0a0f1e;font:600 12.5px/1.35 var(--f-body);padding:9px 12px;border-radius:12px;box-shadow:0 8px 24px rgba(0,0,0,.4)}
 .attr{position:absolute;z-index:2;right:8px;bottom:6px;font-size:10.5px;color:var(--mute);background:rgba(10,15,30,.7);padding:2px 6px;border-radius:6px}
 .attr a{color:inherit}
 /* markers */
@@ -601,6 +605,44 @@ body.tips-k .khint,body.tips-f .fhint{opacity:1;visibility:visible}
 body.sheet-full .tip2,body.pindrag .tip2{opacity:0;visibility:hidden}
 .key{overflow:visible}
 @media (max-width:860px){.key>b{display:none!important}}
+
+/* desktop: the list owns the left panel; filters slide out beside it from two buttons next to the logo */
+@media (min-width:861px){
+  #app{position:relative}
+  .fwrap{display:flex;flex-direction:column;position:absolute;left:372px;top:0;bottom:0;width:388px;z-index:3;background:var(--panel);border-right:1px solid var(--line);box-shadow:18px 0 44px rgba(0,0,0,.5);transform:translateX(-100%);visibility:hidden;transition:transform .24s ease,visibility 0s .24s}
+  .fwrap.open{transform:none;visibility:visible;transition:transform .24s ease}
+  .fhead{display:flex;align-items:center;justify-content:space-between;padding:14px 18px;border-bottom:1px solid var(--line)}
+  .fhead b{font:700 19px var(--f-display)}
+  .fbody{display:flex;flex-direction:column;gap:14px;flex:1;overflow-y:auto;padding:16px 18px 24px}
+  .fbody>*{flex:none}
+  .ffoot{display:block;padding:12px 18px;border-top:1px solid var(--line)}
+  .ffoot .cta{width:100%}
+  .fwrap[data-mode="loc"] #sec-prop,.fwrap[data-mode="prop"] #sec-loc{display:none}
+  .fwrap .fh{display:none}
+  .fwrap .reset{position:absolute;top:19px;right:64px;margin:0;font-size:13px;z-index:2}
+  #filters #sub-start,#filters #sub-build{border-top:0;padding-top:2px}
+  .fpill{display:inline-flex;align-items:center;gap:7px;position:absolute;z-index:5;top:13px;height:34px;padding:0 12px;border-radius:999px;border:1px solid var(--line);background:var(--raise);color:var(--ink);font:600 13px var(--f-body);cursor:pointer;transition:border-color .15s,background .15s}
+  .fpill:hover{border-color:var(--sun)}
+  .fpill>svg{width:16px;height:16px;color:var(--sun);flex:none}
+  .fpill{padding:0 10px;gap:6px;font-size:12.5px}
+  #bloc{left:auto;right:calc(100% - 258px)}#bloc::after{content:"Location"}
+  #bfilters{left:auto;right:calc(100% - 360px);min-width:96px;justify-content:center}#bfilters::after{content:"Filters"}
+  .rail .logo span{font-size:16px}.rail .logo img{width:24px;height:24px}
+  .khint{display:none}
+  .fpill[aria-pressed="true"]{background:var(--sun);border-color:var(--sun);color:var(--sun-ink)}
+  .fpill[aria-pressed="true"]>svg{color:var(--sun-ink)}
+  .fpill span{position:absolute;top:-7px;right:-5px;min-width:18px;height:18px;padding:0 5px;border-radius:999px;background:var(--sun);color:#0a0f1e;border:2px solid var(--panel);box-sizing:content-box;font:700 11px/18px var(--f-body);text-align:center}
+  .fpill[aria-pressed="true"] span{background:#0a0f1e;color:var(--sun)}
+  .fpill span:empty{display:none}
+  .fpill .tip2{display:none}
+  .mapbar,.key{transition:left .24s ease}
+  body.fopen .mapbar,body.fopen .key{left:772px}
+  .lhead{top:0;padding-top:4px}
+  .scroll{padding-top:6px}
+}
+
+.nearwrap .sugg li>span:first-child{flex:1 1 auto;min-width:45%}
+.nearwrap .sugg li>span:last-child{flex:0 1 auto;min-width:0;overflow:hidden;text-overflow:ellipsis}
 </style>
 </head>
 <body>
@@ -618,10 +660,10 @@ body.sheet-full .tip2,body.pindrag .tip2{opacity:0;visibility:hidden}
       <h2 class="fh" id="fh-loc">Location filters</h2>
       <div class="sub" id="sub-start"><h3 class="subh"><i class="si"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21s-6.5-5.6-6.5-11a6.5 6.5 0 0 1 13 0c0 5.4-6.5 11-6.5 11z"/><circle cx="12" cy="10" r="2.3"/></svg></i>Start from a place</h3>
       <div class="grp nearbox">
-        <div data-i="case" class="lab"><label for="near">Your office, metro or mall</label></div>
+        <div data-i="case" class="lab"><label for="near">Your office, area, metro or mall</label></div>
         <div class="nearwrap">
           <svg class="sico" viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="6.5"/><path d="M16 16l4.5 4.5"/></svg>
-          <input id="near" class="search" type="text" placeholder="Type a metro, office or mall" autocomplete="off" role="combobox" aria-expanded="false" aria-controls="nearlist">
+          <input id="near" class="search" type="text" placeholder="Type any place in Bangalore" autocomplete="off" role="combobox" aria-expanded="false" aria-controls="nearlist">
           <button class="x2" id="nearx" type="button" aria-label="Clear starting place" hidden>×</button>
           <ul class="sugg" id="nearlist" hidden></ul>
         </div>
@@ -633,9 +675,6 @@ body.sheet-full .tip2,body.pindrag .tip2{opacity:0;visibility:hidden}
           <input id="nearkm" type="range" min="1" max="20" step="1" value="5">
         </div>
       </div>
-      </div>
-      <div class="sub" id="sub-cor"><h3 class="subh"><i class="si"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 20c0-6 3-7 7-8s7-2 7-8"/><circle cx="5" cy="20" r="1.6"/><circle cx="19" cy="4" r="1.6"/></svg></i>Corridor</h3>
-        <div class="chips" id="f-cor"></div>
       </div>
       <div class="sub" id="sub-metro"><h3 class="subh"><i class="si"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="6" y="3" width="12" height="14" rx="3"/><path d="M6 11h12M9 21l1.5-4M15 21l-1.5-4M9.5 14h.01M14.5 14h.01"/></svg></i>Near a metro</h3>
       <div class="grp">
@@ -717,11 +756,12 @@ body.sheet-full .tip2,body.pindrag .tip2{opacity:0;visibility:hidden}
   <div hidden id="ctlhold">
     <button id="bfit" type="button" title="Fit all results on the map" aria-label="Fit all results on the map"><svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="#333" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/><circle cx="12" cy="12" r="2.2" fill="#333" stroke="none"/></svg></button>
     <button id="b3d" type="button" aria-pressed="true" title="Switch between 3D and flat 2D view" aria-label="Switch between 3D and 2D view">2D</button>
+    <button id="bsat" type="button" aria-pressed="false" title="Satellite view" aria-label="Satellite view"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l9 5-9 5-9-5 9-5z"/><path d="M3 12.5l9 5 9-5"/><path d="M3 17l9 5 9-5"/></svg></button>
   </div>
   <div class="mapbar">
     <div class="gsearch nearwrap">
       <svg class="sico" viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="6.5"/><path d="M16 16l4.5 4.5"/></svg>
-      <input id="gq" class="search" type="text" placeholder="Search, or drag the pin →" autocomplete="off" role="combobox" aria-expanded="false" aria-controls="gbox" aria-label="Search project, area, tech park, metro or mall. Or drag the pin onto the map">
+      <input id="gq" class="search" type="text" placeholder="Search, or drag the pin →" autocomplete="off" role="combobox" aria-expanded="false" aria-controls="gbox" aria-label="Search a tech park, metro, mall, builder or any place. Or drag the pin onto the map">
       <button class="x2" id="gx" type="button" aria-label="Clear search" hidden>×</button>
       <button id="gpin" type="button" aria-label="Hold and drag onto the map to drop a pin" title="Hold and drag onto the map to drop a pin"><svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M12 22s-7-6-7-12a7 7 0 0 1 14 0c0 6-7 12-7 12z" fill="#0a0f1e"/><circle cx="12" cy="10" r="2.6" fill="#ffb72b"/></svg><i aria-hidden="true"><svg viewBox="0 0 24 24" width="10" height="10" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v18M3 12h18M12 3l-3 3M12 3l3 3M12 21l-3-3M12 21l3-3M3 12l3-3M3 12l3 3M21 12l-3-3M21 12l-3 3"/></svg></i></button>
       <em class="pinhint" aria-hidden="true">Hold this pin and drag it onto the map</em>
@@ -730,7 +770,6 @@ body.sheet-full .tip2,body.pindrag .tip2{opacity:0;visibility:hidden}
     <button class="mbtn lt" data-c="office" type="button" aria-pressed="false">Offices</button>
     <button class="mbtn lt" data-c="mall" type="button" aria-pressed="false">Malls</button>
     <button class="mbtn lt" data-c="metro" type="button" aria-pressed="true" aria-label="Metro stops"><span>Metro<span class="lg"> stops</span></span></button>
-    <button class="mbtn" id="bsat" type="button" aria-pressed="false" hidden>Satellite</button>
   </div>
   <div class="key" aria-label="What the colours mean">
     <b><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 11V5.5a1.5 1.5 0 0 1 3 0V11m0-1.5a1.5 1.5 0 0 1 3 0V12m0-1a1.5 1.5 0 0 1 3 0v4a6 6 0 0 1-6 6h-1a6 6 0 0 1-5-2.7L3.8 15a1.6 1.6 0 0 1 2.6-1.8L9 15.5"/></svg>Tap to filter the map</b>
@@ -864,7 +903,6 @@ function unitFit(u){
 function match(p){
   if (p.sold && !S.sold) return 0;
   if (S.kind.size && !p.kinds.some(k => S.kind.has(k))) return 0;
-  if (S.cor.size && !S.cor.has(p.cor)) return 0;
   if (S.st.size && !S.st.has(p.st)) return 0;
   for (const a of S.am) if (!p.am.includes(a)) return 0;
   if (S.metro && p.metro[0] > S.metro) return 0;
@@ -915,7 +953,7 @@ function syncUI(){
   if (document.activeElement !== $("dev-q") || S.dev) $("dev-q").value = S.dev; $("devx").hidden = !S.dev; $("dev-q").classList.toggle("set", !!S.dev);
   const am = [...S.am].map(a => AMEN[a]); $("am-btn").textContent = am.length ? am.slice(0,2).join(", ") + (am.length > 2 ? " +" + (am.length-2) : "") : "Any amenities"; $("am-btn").classList.toggle("set", am.length > 0);
   $("poss").value = S.poss; $("sort").value = S.sort; if (document.activeElement !== $("lq")) $("lq").value = S.q; $("lqx").hidden = !S.q;
-  const sets = {"f-kind":S.kind,"f-bhk":S.bhk,"f-cor":S.cor,"f-st":S.st,"f-am":S.am};
+  const sets = {"f-kind":S.kind,"f-bhk":S.bhk,"f-st":S.st,"f-am":S.am};
   rangeFill();
   for (const b of $("keykind").children) b.setAttribute("aria-pressed", S.kind.has(b.dataset.k)); $("keykind").classList.toggle("some", S.kind.size > 0); $("kmay").setAttribute("aria-pressed", !S.strict); $("kout").setAttribute("aria-pressed", !S.hideOut);
   for (const id in sets) for (const b of $(id).children){ let v = b.dataset.v; if (id === "f-bhk") v = +v; b.setAttribute("aria-pressed", sets[id].has(v)); }
@@ -925,10 +963,8 @@ function buildUI(){
   const TC = {apt:"#38bdf8", villa:"#2fd08a", plot:"#ff7a5c"}; for (const b of $("f-kind").children){ b.style.setProperty("--tc", TC[b.dataset.v]); b.insertAdjacentHTML("afterbegin", ic(b.dataset.v, 20)); }
   for (const el of document.querySelectorAll("#filters [data-i]")){ const t = el.firstElementChild && el.firstElementChild.tagName === "LABEL" ? el.firstElementChild : el; if (t === el && el.classList.contains("lab")) el.innerHTML = `<span>${el.innerHTML}</span>`; (t === el ? (el.firstElementChild || el) : t).insertAdjacentHTML("afterbegin", ic(el.dataset.i, 14)); }
   chipGroup($("f-bhk"), [1,2,3,4,5], () => S.bhk, v => v === 5 ? "5+" : v);
-  chipGroup($("f-cor"), [...new Set(P.map(p => p.cor))].sort(), () => S.cor, v => v);
   chipGroup($("f-st"), Object.keys(STAGE), () => S.st, v => STAGE[v]);
   for (const b of $("f-st").children) b.insertAdjacentHTML("afterbegin", ic(b.dataset.v, 16));
-  for (const b of $("f-cor").children) b.insertAdjacentHTML("afterbegin", ic("pin", 15));
   chipGroup($("f-am"), Object.keys(AMEN), () => S.am, v => AMEN[v]);
   for (const b of $("f-am").children) b.innerHTML = `<svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${AMEN_ICO[b.dataset.v] || ""}</svg><span>${esc(AMEN[b.dataset.v])}</span>`;
   const devs = {}; P.forEach(p => { if (!p.sold && p.brand) devs[p.brand] = (devs[p.brand]||0)+1; });
@@ -978,18 +1014,24 @@ function buildUI(){
       const m = PLACES.filter(p => ws.every(w => (p.n + " " + LM_TYPE[p.t] + (p.ln ? " " + p.ln + " line" : "")).toLowerCase().includes(w)));
       const order = {metro:0, office:1, mall:2, rail:3, area:4}, starts = p => p.n.toLowerCase().startsWith(q) ? 0 : 1;
       const hits = m.sort((x,y) => starts(x) - starts(y) || order[x.t] - order[y.t]).slice(0, 12);
-      html = hits.map((p,i) => row(p, !i)).join("") || `<li><span>No match. Drop a pin on the map instead.</span><span></span></li>`;
+      const osm = OSM.cache[q] || [], waiting = q.length >= 3 && !OSM.cache[q] && !!CONFIG.placeSearch; osmFind(q); $("nearlist")._osm = osm;
+      html = hits.map((p,i) => row(p, !i)).join("")
+        + (osm.length ? `<li class="sh">More places</li>` + osm.map((o,i) => `<li data-o="${i}"><span>${esc(o.n)}</span><span>${esc(o.m)}</span></li>`).join("") : "")
+        + (waiting ? `<li class="sh">Searching more places…</li>` : "")
+        || `<li><span>${OSM.fail ? "No match in our list. The wider place search runs on the live website." : "No match. Try another name, or drag the pin onto the map."}</span><span></span></li>`;
     }
     $("nearlist").innerHTML = html; $("nearlist").scrollTop = 0;
     $("nearlist").hidden = false; $("near").setAttribute("aria-expanded", "true"); };
   $("near").addEventListener("input", sugg); $("near").addEventListener("focus", sugg);
-  $("near").addEventListener("keydown", e => { if (e.key === "Enter"){ const li = $("nearlist").querySelector("li[data-i]"); if (li) setNear(PLACES[+li.dataset.i]); } if (e.key === "Escape") hideSugg(); });
+  const nearPick = li => { if (li.dataset.o != null){ const o = ($("nearlist")._osm || [])[+li.dataset.o]; if (o) setNear(o); } else setNear(PLACES[+li.dataset.i]); };
+  $("near").addEventListener("keydown", e => { if (e.key === "Enter"){ const li = $("nearlist").querySelector("li[data-i],li[data-o]"); if (li) nearPick(li); } if (e.key === "Escape") hideSugg(); });
   $("near").addEventListener("blur", () => setTimeout(hideSugg, 180));
-  $("nearlist").addEventListener("mousedown", e => { const li = e.target.closest("li[data-i]"); if (li){ e.preventDefault(); setNear(PLACES[+li.dataset.i]); } });
+  $("nearlist").addEventListener("mousedown", e => { const li = e.target.closest("li[data-i],li[data-o]"); if (li){ e.preventDefault(); nearPick(li); } });
   $("nearx").addEventListener("click", () => setNear(null));
   // one search for everything: projects, builders, areas, tech parks, metro and malls
   const GI = {office:"office", mall:"retail", metro:"train", rail:"train", area:"pin"};
-  let gTab = "all"; const gHide = () => { $("gbox").hidden = true; $("gq").setAttribute("aria-expanded", "false"); };
+  let gTab = "area", gManual = false; const OSM_FIT = {area:o => /^(place|boundary)$/.test(o.k) ? 1 : 0, office:o => o.k === "office" || /^(commercial|office|industrial)$/.test(o.v) ? 1 : 0, metro:o => /^(railway|public_transport)$/.test(o.k) || /station|stop/.test(o.v) ? 1 : 0, mall:o => o.k === "shop" || /mall|marketplace/.test(o.v) ? 1 : 0};
+  const gHide = () => { $("gbox").hidden = true; $("gq").setAttribute("aria-expanded", "false"); };
   const gRow = (k, v, icon, name, meta) => `<li data-k="${k}" data-v="${esc(v)}"><span>${icon}<span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(name)}</span></span><span>${esc(meta)}</span></li>`;
   // more places from OpenStreetMap (Photon search): any locality, road, landmark or building in and around Bangalore
   const OSM = {cache:{}, t:null, ctl:null, busy:""};
@@ -1000,33 +1042,37 @@ function buildUI(){
           for (const f of j.features || []){ const o = f.properties || {}, c = f.geometry && f.geometry.coordinates; if (!o.name || !c) continue; if (seen.has(o.name.toLowerCase())) continue;
             const where = [o.street, o.district || o.locality, o.city].filter((x, i, a) => x && x !== o.name && a.indexOf(x) === i).slice(0, 2).join(", ");
             const key = (o.name + "|" + where).toLowerCase(); if (seen.has(key)) continue; seen.add(key);
-            out.push({n:o.name, m:where || (o.osm_value || "Place").replace(/_/g, " "), lat:Math.round(c[1]*1e5)/1e5, lng:Math.round(c[0]*1e5)/1e5, t:"place"}); }
+            out.push({n:o.name, m:where || (o.osm_value || "Place").replace(/_/g, " "), lat:Math.round(c[1]*1e5)/1e5, lng:Math.round(c[0]*1e5)/1e5, t:"place", k:o.osm_key || "", v:o.osm_value || ""}); }
           OSM.cache[q] = out.slice(0, 8); OSM.fail = false; })
         .catch(e => { if (e && e.name === "AbortError") return; OSM.cache[q] = []; OSM.fail = true; })
-        .finally(() => { if (OSM.busy === q) OSM.busy = ""; if (!$("gbox").hidden && $("gq").value.trim().toLowerCase() === q){ const st = $("glist").scrollTop; gSugg(); $("glist").scrollTop = st; } }); }, 350); };
+        .finally(() => { if (OSM.busy === q) OSM.busy = ""; if (!$("gbox").hidden && $("gq").value.trim().toLowerCase() === q){ const st = $("glist").scrollTop; gSugg(); $("glist").scrollTop = st; }
+          if (!$("nearlist").hidden && $("near").value.trim().toLowerCase() === q){ const st = $("nearlist").scrollTop; sugg(); $("nearlist").scrollTop = st; } }); }, 350); };
   const gSugg = () => { const q = $("gq").value.trim().toLowerCase(), ws = q.split(/\s+/).filter(Boolean); $("gx").hidden = !q && !S.near && !S.dev;
-    const all = !q, one = gTab !== "all", has = t => ws.every(w => t.toLowerCase().includes(w)), st = n => n.toLowerCase().startsWith(q) ? 0 : 1;
+    const all = !q, has = t => ws.every(w => t.toLowerCase().includes(w)), st = n => n.toLowerCase().startsWith(q) ? 0 : 1;
     const pr = P.filter(p => all ? !p.sold : has(p.name + " " + (p.brand || ""))).sort((a,b) => all ? a.name.localeCompare(b.name) : st(a.name) - st(b.name) || a.sold - b.sold);
     const dv = DEVS.filter(e => has(e[0]));
     const pl = PLACES.filter(p => all ? !/opening later/.test(p.n) : has(p.n + " " + LM_TYPE[p.t] + (p.ln ? " " + p.ln + " line" : ""))).sort((a,b) => all ? (a.t === "metro" ? b.lng - a.lng : a.n.localeCompare(b.n)) : st(a.n) - st(b.n));
     const plRow = p => gRow("n", PLACES.indexOf(p), ic(GI[p.t] === "retail" ? "bag" : GI[p.t], 16), p.n, p.ln ? p.ln[0].toUpperCase() + p.ln.slice(1) + " Line" : p.t === "area" ? "Area" : LM_TYPE[p.t]);
-    const G = [["proj", "Projects", pr, p => gRow("p", p.id, ic(p.kind, 16), p.name, p.sold ? "Sold out" : money(fromPrice(p)) + "+"), 6, "apt"],
-      ["area", "Areas", pl.filter(p => p.t === "area"), plRow, 4, "pin"], ["office", "Tech parks", pl.filter(p => p.t === "office"), plRow, 4, "office"],
+    const G = [["area", "Areas", pl.filter(p => p.t === "area"), plRow, 4, "pin"], ["office", "Tech parks", pl.filter(p => p.t === "office"), plRow, 4, "office"],
       ["metro", "Metro", pl.filter(p => p.t === "metro" || p.t === "rail"), plRow, 4, "train"], ["mall", "Malls", pl.filter(p => p.t === "mall"), plRow, 3, "bag"],
       ["dev", "Builders", dv, e => gRow("d", e[0], ic("hat", 16), e[0], e[1] + " project" + (e[1] > 1 ? "s" : "")), 3, "hat"]];
-    const osm = OSM.cache[q] || [], waiting = !all && q.length >= 3 && !OSM.cache[q] && !!CONFIG.placeSearch; osmFind(q);
-    if (!all && CONFIG.placeSearch) G.push(["osm", "More places", osm, o => gRow("o", osm.indexOf(o), ic("pin", 16), o.n, o.m), 5, "pin"]);
-    if (one && !G.find(g => g[0] === gTab)[2].length) gTab = "all";
-    const total = G.reduce((n,g) => n + g[2].length, 0), sel = gTab !== "all";
-    $("gtabs").innerHTML = `<button type="button" class="gtab" role="tab" data-t="all" aria-selected="${!sel}">All <b>${total}</b></button>` + G.map(g => `<button type="button" class="gtab" role="tab" data-t="${g[0]}" aria-selected="${gTab === g[0]}"${g[2].length ? "" : " disabled"}>${ic(g[5], 14)}${g[1]} <b>${g[2].length}</b></button>`).join("");
-    const order = sel ? G.filter(g => g[0] === gTab) : G;
-    $("glist").innerHTML = order.map(g => g[2].length ? (sel ? "" : `<li class="sh">${g[1]}</li>`) + (sel || all ? g[2] : g[2].slice(0, g[4])).map(g[3]).join("") : "").join("") || `<li class="sh">${waiting ? "Searching more places…" : "Nothing by that name. Try an area or a builder."}</li>`;
-    if (waiting && total) $("glist").insertAdjacentHTML("beforeend", `<li class="sh">Searching more places…</li>`);
-    if (!all && !waiting && OSM.fail && q.length >= 3 && (gTab === "all" || gTab === "osm")) $("glist").insertAdjacentHTML("beforeend", `<li class="sh">More places</li><li class="gnote">The wider place search could not be reached from here. It runs on the live website, not inside this preview.</li>`);
+    const live = !all && q.length >= 3 && !!CONFIG.placeSearch, osm = live ? OSM.cache[q] || [] : [], waiting = live && !OSM.cache[q]; osmFind(q);
+    if (all && !gManual) gTab = "area";
+    else if (!gManual){ const cur = G.find(g => g[0] === gTab); if (!cur || !cur[2].length){ const f = G.find(g => g[2].length); gTab = f ? f[0] : gTab === "all" ? "area" : gTab; } }
+    const own = G.reduce((n,g) => n + g[2].length, 0), sel = gTab !== "all";
+    $("gtabs").innerHTML = G.map(g => `<button type="button" class="gtab" role="tab" data-t="${g[0]}" aria-selected="${gTab === g[0]}"${g[2].length || live ? "" : " disabled"}>${ic(g[5], 14)}${g[1]} <b>${g[2].length}</b></button>`).join("") + `<button type="button" class="gtab" role="tab" data-t="all" aria-selected="${!sel}">All <b>${own + osm.length}</b></button>`;
+    const order = sel ? G.filter(g => g[0] === gTab) : G, fit = OSM_FIT[gTab], osmS = fit ? osm.slice().sort((a,b) => fit(b) - fit(a)) : osm;
+    let h = order.map(g => g[2].length ? (sel ? "" : `<li class="sh">${g[1]}</li>`) + (sel || all ? g[2] : g[2].slice(0, g[4])).map(g[3]).join("") : "").join("");
+    if (osmS.length) h += `<li class="sh">More places · OpenStreetMap</li>` + osmS.map(o => gRow("o", osm.indexOf(o), ic("pin", 16), o.n, o.m)).join("");
+    else if (waiting) h += `<li class="sh">Searching more places…</li>`;
+    else if (live && OSM.fail) h += `<li class="sh">More places · OpenStreetMap</li><li class="gnote">The wider place search could not be reached from here. It runs on the live website, not inside this preview.</li>`;
+    else if (!h) h = `<li class="sh">Nothing by that name. Try an area, tech park, metro, mall, builder or any place.</li>`;
+    if (!live && !(q.length && h.includes("Nothing by"))) h += `<li class="gnote">Type 3 or more letters to search any place in Bangalore.</li>`;
+    $("glist").innerHTML = h;
     $("glist")._osm = osm;
     const on = $("gtabs").querySelector('[aria-selected="true"]'); if (on && on.scrollIntoView) $("gtabs").scrollLeft = Math.max(0, on.offsetLeft - 40);
     $("glist").scrollTop = 0; $("gbox").hidden = false; $("gq").setAttribute("aria-expanded", "true"); };
-  $("gtabs").addEventListener("mousedown", e => { e.preventDefault(); const b = e.target.closest(".gtab"); if (b && !b.disabled){ gTab = b.dataset.t; gSugg(); } });
+  $("gtabs").addEventListener("mousedown", e => { e.preventDefault(); const b = e.target.closest(".gtab"); if (b && !b.disabled){ gTab = b.dataset.t; gManual = true; gSugg(); } });
   const gPick = li => { const k = li.dataset.k, v = li.dataset.v; gHide(); $("gq").value = ""; $("gq").blur();
     if (k === "p"){ syncUI(); openCard(+v, true); }
     else if (k === "d"){ S.dev = v; syncUI(); apply(); fitResults(); }
@@ -1034,7 +1080,7 @@ function buildUI(){
     else setNear(PLACES[+v]); };
   $("gq").addEventListener("input", gSugg); $("gq").addEventListener("focus", gSugg);
   $("gq").addEventListener("keydown", e => { if (e.key === "Enter"){ const li = $("glist").querySelector("li[data-k]"); if (li) gPick(li); } if (e.key === "Escape"){ gHide(); $("gq").blur(); } });
-  $("gq").addEventListener("blur", () => setTimeout(() => { gHide(); syncUI(); }, 180));
+  $("gq").addEventListener("blur", () => setTimeout(() => { gHide(); gManual = false; syncUI(); }, 180));
   $("glist").addEventListener("mousedown", e => { const li = e.target.closest("li[data-k]"); if (li){ e.preventDefault(); gPick(li); } });
   $("gx").addEventListener("click", () => { $("gq").value = ""; if (S.dev){ S.dev = ""; apply(); } if (S.near) setNear(null); else syncUI(); });
   const setKm = (v, fit) => { S.nearKm = Math.min(20, Math.max(1, v)); syncUI(); apply(); renderNear(fit); };
@@ -1051,7 +1097,8 @@ function buildUI(){
   $("list").addEventListener("click", e => { const b = e.target.closest(".item"); if (b) openCard(+b.dataset.id, true); });
   $("b3d").addEventListener("click", () => { const on = $("b3d").getAttribute("aria-pressed") !== "true"; $("b3d").setAttribute("aria-pressed", on); $("b3d").textContent = on ? "2D" : "3D"; map.easeTo({pitch: on ? 58 : 0, bearing: on ? -14 : 0, duration: 700}); });
   $("bfit").addEventListener("click", fitResults);
-  $("bsat").addEventListener("click", () => { const on = $("bsat").getAttribute("aria-pressed") !== "true"; $("bsat").setAttribute("aria-pressed", on); if (map.getLayer("sat")) map.setLayoutProperty("sat", "visibility", on ? "visible" : "none"); });
+  $("bsat").addEventListener("click", () => { if (!map.getLayer("sat")){ let n = document.querySelector(".satnote"); if (!n){ n = document.createElement("div"); n.className = "satnote"; n.textContent = "Satellite view runs on the live website. This preview cannot load the satellite photos."; $("map").parentNode.appendChild(n); } n.hidden = false; n.style.top = ($("bsat").getBoundingClientRect().top - $("map").parentNode.getBoundingClientRect().top - 6) + "px"; clearTimeout(n._t); n._t = setTimeout(() => n.hidden = true, 4000); return; }
+    const on = $("bsat").getAttribute("aria-pressed") !== "true"; $("bsat").setAttribute("aria-pressed", on); map.setLayoutProperty("sat", "visibility", on ? "visible" : "none"); const at = document.querySelector(".attr"); if (at){ let e = at.querySelector(".esri"); if (!e){ e = document.createElement("span"); e.className = "esri"; e.textContent = " · Imagery © Esri"; at.appendChild(e); } e.hidden = !on; } });
   $("foot").innerHTML = `${P.length} projects in East Bangalore, ${P.filter(p => !p.sold).length} with homes still available. Prices are indicative as of ${esc(CONFIG.dataDate)} and change often, so confirm with ${esc(CONFIG.brand)} before you decide. Distances are straight-line. Nearby places from OpenStreetMap.`;
 }
 
@@ -1141,7 +1188,7 @@ function renderList(){
       <span class="itf">${mix && p.py ? `<span class="poss">Possession ${p.py}</span>` : ""}${p.sold ? '<i class="pill sold">Sold out</i>' : p.m === 1 ? '<i class="pill likely">May fit</i>' : `<i class="pill ${p.st}">${STAGE[p.st]}</i>`}${dist ? `<span class="dist">${ic(S.near ? "pin" : "train", 13)}${dist}</span>` : ""}<span class="go">View ›</span></span>
     </button>`; }).join("") || `<p class="hint">${S.q ? "Nothing in this list matches “" + esc(S.q) + "”. Clear the list search or loosen the filters." : "Nothing fits these filters. Raise the budget, drop an amenity, or clear all filters."}</p>`;
   $("more").hidden = RES.length <= shown;
-  const nl = (S.near ? 1 : 0) + S.cor.size + (S.metro ? 1 : 0), nf = S.kind.size + S.bhk.size + (S.pmax != null ? 1 : 0) + (S.sq ? 1 : 0) + S.st.size + (S.sold ? 1 : 0) + S.am.size + (S.dev ? 1 : 0) + (S.poss ? 1 : 0);
+  const nl = (S.near ? 1 : 0) + (S.metro ? 1 : 0), nf = S.kind.size + S.bhk.size + (S.pmax != null ? 1 : 0) + (S.sq ? 1 : 0) + S.st.size + (S.sold ? 1 : 0) + S.am.size + (S.dev ? 1 : 0) + (S.poss ? 1 : 0);
   $("fbadge").textContent = nf || ""; $("bfilters").setAttribute("aria-label", "Property filters" + (nf ? ", " + nf + " on" : ""));
   $("lbadge").textContent = nl || ""; $("bloc").setAttribute("aria-label", "Location filters" + (nl ? ", " + nl + " on" : "")); $("fshow").textContent = "Show " + RES.length + (RES.length === 1 ? " project" : " projects");
   $("peekcount").textContent = RES.length + (RES.length === 1 ? " project found" : " projects found"); peekHint();
@@ -1314,7 +1361,6 @@ function addOverlays(){
     map.addLayer({id:"sat", type:"raster", source:"sat", layout:{visibility:"none"}}, first && first.id);
     const src = Object.keys(map.getStyle().sources).find(s => map.getStyle().sources[s].type === "vector");
     if (src && !map.getLayer("b3d")) map.addLayer({id:"b3d", type:"fill-extrusion", source:src, "source-layer":"building", minzoom:13.5, paint:{"fill-extrusion-color":"#1a2240","fill-extrusion-height":["coalesce",["get","render_height"],8],"fill-extrusion-base":["coalesce",["get","render_min_height"],0],"fill-extrusion-opacity":.7}});
-    $("bsat").hidden = false;
   }
   // metro lines in their own colours; dashed = not open yet
   const LN = B.lines || [{k:"metro", n:"Metro", c:"#ff5d8f", open:1, g:B.metro}];
@@ -1386,8 +1432,12 @@ async function initMap(){
   } catch(e) {}
   const [S_,W,N,E] = BASE.bbox;
   map = new maplibregl.Map({container:"map", style, center:[77.725,12.945], zoom:11.2, pitch:52, bearing:-14, minZoom:9.5, maxZoom:18, maxBounds:[[W-.25,S_-.2],[E+.25,N+.2]], attributionControl:false, maxPitch:70});
-  map.addControl(new maplibregl.NavigationControl({visualizePitch:true}), "top-right");
-  map.addControl({onAdd(){ const d = document.createElement("div"); d.className = "maplibregl-ctrl maplibregl-ctrl-group"; d.append($("bfit"), $("b3d")); return d; }, onRemove(){}}, "top-right");
+  map.addControl(new maplibregl.NavigationControl({showCompass:false}), "top-right");
+  map.addControl({onAdd(){ const d = document.createElement("div"); d.className = "maplibregl-ctrl maplibregl-ctrl-group"; d.append($("bfit"), $("b3d"), $("bsat")); return d; }, onRemove(){}}, "top-right");
+  map.addControl({onAdd(){ const d = document.createElement("div"); d.className = "maplibregl-ctrl"; d.innerHTML = `<button id="compass" type="button" title="Compass. Tap to face north" aria-label="Compass. Tap to turn the map to face north"><svg viewBox="0 0 64 64" width="50" height="50" aria-hidden="true"><circle cx="32" cy="32" r="31" fill="rgba(17,24,48,.94)" stroke="rgba(255,255,255,.14)"/><g class="rose"><g stroke="rgba(255,255,255,.28)" stroke-width="1.4" stroke-linecap="round"><path d="M32 6v3" transform="rotate(30 32 32)"/><path d="M32 6v3" transform="rotate(60 32 32)"/><path d="M32 6v3" transform="rotate(120 32 32)"/><path d="M32 6v3" transform="rotate(150 32 32)"/><path d="M32 6v3" transform="rotate(210 32 32)"/><path d="M32 6v3" transform="rotate(240 32 32)"/><path d="M32 6v3" transform="rotate(300 32 32)"/><path d="M32 6v3" transform="rotate(330 32 32)"/></g><path d="M32 17l4.2 15h-8.4z" fill="#ffb72b"/><path d="M32 47l4.2-15h-8.4z" fill="rgba(255,255,255,.3)"/><circle cx="32" cy="32" r="1.8" fill="#111830"/></g><g class="pts" font-family="inherit" font-weight="700" text-anchor="middle" dominant-baseline="central"><text font-size="10.5" fill="#ffb72b">N</text><text font-size="8" fill="#9aa4c4">E</text><text font-size="8" fill="#9aa4c4">S</text><text font-size="8" fill="#9aa4c4">W</text></g></svg></button>`;
+    const rose = d.querySelector(".rose"), pts = [...d.querySelectorAll(".pts text")], turn = () => { const br = -map.getBearing(); rose.setAttribute("transform", `rotate(${br} 32 32)`);
+      pts.forEach((t, i) => { const a = (br + i*90) * Math.PI/180, r = i ? 24 : 23.5; t.setAttribute("x", (32 + r*Math.sin(a)).toFixed(1)); t.setAttribute("y", (32 - r*Math.cos(a)).toFixed(1)); }); }; map.on("rotate", turn); turn();
+    d.firstChild.addEventListener("click", () => map.easeTo({bearing:0, duration:600})); return d; }, onRemove(){}}, "top-right");
   map.on("load", () => { addOverlays(); paint(); fitResults(1); renderNear(false); if (location.hash.startsWith("#p-")) openCard(+location.hash.slice(3), true); });
 }
 
@@ -1421,6 +1471,7 @@ function heroSVG(p){
 }
 function openCard(id, fly){
   const p = P.find(x => x.id === id); if (!p) return;
+  if (!phone() && $("filters").classList.contains("open")) openFilters(false);
   openId = id; try { history.replaceState(null, "", "#p-" + id); } catch(e) { location.hash = "p-" + id; }
   const g = `${p.lat},${p.lng}`, q = encodeURIComponent(p.name + " " + p.loc + " Bangalore");
   const earth = `https://earth.google.com/web/@${p.lat},${p.lng},880a,650d,35y,20h,62t,0r`;
@@ -1490,10 +1541,11 @@ document.addEventListener("keydown", e => { if (e.key === "Escape" && openId) cl
 const phone = () => matchMedia("(max-width:860px)").matches;
 function placeFilters(){ // on a phone the filters are their own screen, opened from the Filters pill; on desktop they sit in the side panel
   const f = $("filters"), sc = document.querySelector(".scroll");
-  if (phone()){ if (f.parentNode !== $("app")) $("app").appendChild(f); }
-  else { if (f.parentNode !== sc) sc.insertBefore(f, sc.firstChild); f.classList.remove("open"); }
+  if (f.parentNode !== $("app")) $("app").appendChild(f);   // filters are their own panel on every screen size: a full screen on phones, a slide-out beside the list on desktop
 }
-function openFilters(open, mode){ const f = $("filters"); if (open){ f.dataset.mode = mode; $("ftitle").textContent = mode === "loc" ? "Location filters" : "Property filters"; document.querySelector(".fbody").scrollTop = 0; } f.classList.toggle("open", open); }   // the list stays as it was, so closing filters returns you to it
+function openFilters(open, mode){ const f = $("filters"); if (open && f.classList.contains("open") && f.dataset.mode === mode) open = false;
+  if (open){ f.dataset.mode = mode; $("ftitle").textContent = mode === "loc" ? "Location filters" : "Property filters"; document.querySelector(".fbody").scrollTop = 0; }
+  f.classList.toggle("open", open); document.body.classList.toggle("fopen", open); $("bloc").setAttribute("aria-pressed", open && mode === "loc"); $("bfilters").setAttribute("aria-pressed", open && mode === "prop"); }
 function peekHint(){ const open = $("sheet").classList.contains("full"); $("peekhint").textContent = open ? "Swipe down to see the map" : (S.near ? "Near " + S.near.n + " · swipe up" : "Swipe up for the full list"); }
 function setSheet(open){
   const sh = $("sheet"); sh.style.transition = ""; sh.style.transform = ""; sh.classList.toggle("full", open); document.body.classList.toggle("sheet-full", open);
@@ -1516,6 +1568,7 @@ function setSheet(open){
   sc.addEventListener("touchstart", e => { sy = e.touches[0].clientY; top0 = sc.scrollTop <= 0; }, {passive:true});
   sc.addEventListener("touchend", e => { if (phone() && top0 && sy != null && e.changedTouches[0].clientY - sy > 90 && sc.scrollTop <= 0) setSheet(false); sy = null; });
   addEventListener("resize", () => { placeFilters(); if (!phone()) setSheet(false); });
+  document.addEventListener("keydown", e => { if (e.key === "Escape" && $("filters").classList.contains("open") && !e.target.closest(".dd,.nearwrap")) openFilters(false); });
   $("bfilters").addEventListener("click", () => openFilters(true, "prop")); $("bloc").addEventListener("click", () => openFilters(true, "loc"));
   $("fclose").addEventListener("click", () => openFilters(false)); $("fshow").addEventListener("click", () => openFilters(false));
   document.addEventListener("keydown", e => { if (e.key === "Escape") openFilters(false); });

@@ -1,6 +1,6 @@
 # Bangalore Flat Finder by BharatProps
 
-East Bangalore projects on one 3D map: filter by home type, BHK, budget, size, stage, amenities, corridor, and distance from a metro, tech park, mall or any dropped pin.
+East Bangalore projects on one 3D map: filter by home type, BHK, budget, size, stage, amenities, and distance from a metro, tech park, mall or any dropped pin.
 
 Live site: https://vikram-art.github.io/bangalore-flat-finder-bharatprops/
 
