@@ -1248,7 +1248,7 @@ function scaleK(){ const mpp = 78271.5 * Math.cos(12.95*Math.PI/180) / Math.pow(
 let lastK = 0, PADS = fc([]);
 function projFC(){
   const k = scaleK(); lastK = Math.round(k*4)/4;
-  const feats = [], pads = [], detail = k <= 1.6;
+  const feats = [], pads = [], detail = k <= 1.6, spot = S.kind.size > 0 || !!S.near;
   const view = map && detail ? map.getBounds() : null;
   const inView = p => !view || (p.lng > view.getWest()-.02 && p.lng < view.getEast()+.02 && p.lat > view.getSouth()-.02 && p.lat < view.getNorth()+.02);
   for (const p of P){
@@ -1257,7 +1257,7 @@ function projFC(){
     const sh = shape(p), m = p.m||0, kk = m ? k : Math.max(1, k*.6), sel = p.id === openId ? 1 : 0;
     let skin = !m ? SKIN.none : p.sold ? SKIN.sold : SKIN[p.kind][m]; const a = (p.id % 50 - 25) * Math.PI/180, ca = Math.cos(a), sa = Math.sin(a), cl = Math.cos(p.lat*Math.PI/180);
     const ll = (x,y) => [p.lng + (x*ca - y*sa)/(111320*cl), p.lat + (x*sa + y*ca)/111320];
-    const poly = (pts, base, top, c) => { const r = pts.map(q => ll(q[0],q[1])); r.push(r[0]); feats.push({type:"Feature", geometry:{type:"Polygon", coordinates:[r]}, properties:{id:p.id, b:base, h:top, c}}); };
+    const poly = (pts, base, top, c) => { const r = pts.map(q => ll(q[0],q[1])); r.push(r[0]); feats.push({type:"Feature", geometry:{type:"Polygon", coordinates:[r]}, properties:{id:p.id, b:base, h:top, c, m:m ? 1 : 0}}); };
     const foot = (f, cx, cy, hw, hd) => f.map(q => [cx + q[0]*hw, cy + q[1]*hd]);
     const tower = (cx, cy, w, fl, f, bands) => {
       const fh = 3.1*kk, total = fl*fh, hw = w/2;
@@ -1270,6 +1270,12 @@ function projFC(){
       }
       poly(foot(FOOT[0], cx, cy, hw*.5, hw*.34), total, total + 2.2*fh, sel ? "#ffffff" : skin[3]);          // crown
     };
+    // spotlight: when a home type or a place is picked, low homes (villas, plots) get a floating marker so they stand tall like the towers
+    const beacon = (cx, cy, from, z) => { if (!spot || !m || p.sold) return; const sk = SKIN[z][m], u = detail ? 3.2 : kk, H = from + (z === "plot" ? 30 : 14)*u, r = (detail ? 3.4 : 8)*u, pw = (detail ? .55 : 1.1)*u;
+      poly(foot(FOOT[0], cx, cy, pw, pw), from, H, "#e8ecf8");
+      poly(foot(FOOT[1], cx, cy, r*.5, r*.5), H, H + 1.6*u, sk[3]); poly(foot(FOOT[1], cx, cy, r, r), H + 1.6*u, H + 4.6*u, sel ? "#ffffff" : sk[0]);
+      poly(foot(FOOT[1], cx, cy, r*.6, r*.6), H + 4.6*u, H + 5.8*u, "#ffffff"); };
+    const lift = spot && m ? 1 : 0;
     const house = (cx, cy, w, sc) => {   // a villa: light walls, a stepped green gable roof, a porch
       const hw = w/2, hd = w*.4, h1 = 6.4*sc;
       poly(foot(FOOT[0], cx, cy, hw, hd), 0, h1, sel ? "#ffffff" : skin[1]);
@@ -1288,9 +1294,10 @@ function projFC(){
       let y0 = -totalD/2;
       for (const z of zones){ const cy0 = y0 + dD[z]/2; y0 += dD[z] + gapZ; skin = !m ? SKIN.none : p.sold ? SKIN.sold : SKIN[z][m];
         if (z === "apt"){ for (let i = 0; i < nT; i++) tower(((i % tc) - (tc-1)/2)*tg, cy0 + (Math.floor(i/tc) - (tr-1)/2)*tg, tw, Math.max(fl + (detail ? ((i*7 + p.id) % 3) - 1 : 0), 3), FOOT[p.id % 4], detail ? Math.max(3, Math.ceil(fl/2)) : 3); }
-        else if (z === "villa"){ if (detail) for (let i = 0; i < 4; i++) house(((i % 2) - .5)*68, cy0 + (Math.floor(i/2) - .5)*62, 44, 3); else house(0, cy0, dW.villa*.88, kk*3.4); }
-        else if (detail){ for (let i = 0; i < 8; i++) poly(foot(FOOT[0], ((i % 4) - 1.5)*30, cy0 + (Math.floor(i/4) - .5)*27, 8, 5.8), 0, .7, skin[0]); }
-        else poly(foot(FOOT[0], 0, cy0, dW.plot/2, dD.plot/2), 0, 1.2*kk, skin[0]); }
+        else if (z === "villa"){ if (detail) for (let i = 0; i < 4; i++) house(((i % 2) - .5)*68, cy0 + (Math.floor(i/2) - .5)*62, 44, 3); else house(0, cy0, dW.villa*.88, kk*3.4); if (!S.kind.size || S.kind.has("villa")) beacon(0, cy0, detail ? 0 : 11.8*kk*3.4, "villa"); }
+        else { if (detail){ for (let i = 0; i < 8; i++) poly(foot(FOOT[0], ((i % 4) - 1.5)*30, cy0 + (Math.floor(i/4) - .5)*27, 8, 5.8), 0, lift ? 2.4 : .7, skin[0]); }
+          else { poly(foot(FOOT[0], 0, cy0, dW.plot/2, dD.plot/2), 0, (lift ? 3 : 1.2)*kk, skin[0]); if (lift) poly(foot(FOOT[0], 0, cy0, dW.plot/2*.78, dD.plot/2*.7), 3*kk, 3.5*kk, skin[1]); }
+          if (!S.kind.size || S.kind.has("plot")) beacon(0, cy0, detail ? 0 : 3*kk, "plot"); } }
     } else if (p.kind === "apt"){
       const n = kk > 3 ? 1 : kk > 1.6 ? Math.min(sh.n,4) : Math.min(sh.n,18);
       const w = sh.w*kk, cols = Math.ceil(Math.sqrt(n)), rows = Math.ceil(n/cols);
@@ -1311,8 +1318,10 @@ function projFC(){
       if (detail){ const hs = cols*gx/2 + 10, hd = rows*gy/2 + 10, r = [[-hs,-hd],[hs,-hd],[hs,hd],[-hs,hd]].map(q => ll(q[0],q[1])); r.push(r[0]);
         pads.push({type:"Feature", geometry:{type:"Polygon", coordinates:[r]}, properties:{id:p.id, m, sel}}); }
       for (let i = 0; i < n; i++) house(((i % cols) - (cols-1)/2)*gx, (Math.floor(i/cols) - (rows-1)/2)*gy, w, kk*big);
+      beacon(0, 0, cols % 2 && rows % 2 ? 11.8*kk*big : 0, "villa");
     } else if (!detail){
-      const w = 30*kk; poly(foot(FOOT[0], 0, 0, w/2, w/2*.62), 0, (p.kind === "plot" ? 1.2 : 5)*kk, skin[0]);
+      const w = (p.kind === "plot" && lift ? 46 : 30)*kk, ph = p.kind === "plot" ? (lift ? 3.4 : 1.2) : 5; poly(foot(FOOT[0], 0, 0, w/2, w/2*.62), 0, ph*kk, skin[0]);
+      if (p.kind === "plot" && lift){ poly(foot(FOOT[0], 0, 0, w/2*.8, w/2*.62*.76), ph*kk, (ph + 1)*kk, skin[1]); poly(foot(FOOT[0], 0, 0, w/2*.62, w/2*.62*.56), (ph + 1)*kk, (ph + 2.6)*kk, skin[0]); beacon(0, 0, (ph + 2.6)*kk, "plot"); }
       if (p.kind === "villa") poly(foot(FOOT[0], 0, 0, w/2*.7, w/2*.4), 5*kk, 7.5*kk, skin[3]);
     } else {
       const n = sh.n, cols = Math.ceil(Math.sqrt(n*1.4)), rows = Math.ceil(n/cols), gx = sh.w*1.9, gy = sh.w*1.7;
@@ -1320,18 +1329,28 @@ function projFC(){
       pads.push({type:"Feature", geometry:{type:"Polygon", coordinates:[r]}, properties:{id:p.id, m, sel}});
       for (let i = 0; i < n; i++){
         const cx = ((i % cols) - (cols-1)/2) * gx, cy = (Math.floor(i/cols) - (rows-1)/2) * gy;
-        if (p.kind === "plot") poly(foot(FOOT[0], cx, cy, sh.w/2, sh.w/2*.72), 0, .7, skin[0]);
+        if (p.kind === "plot") poly(foot(FOOT[0], cx, cy, sh.w/2, sh.w/2*.72), 0, lift ? 2.4 : .7, skin[0]);
         else { poly(foot(FOOT[0], cx, cy, sh.w/2, sh.w/2*.8), 0, sh.fl*3.1, skin[0]); poly(foot(FOOT[0], cx, cy, sh.w/2*1.08, sh.w/2*.5), sh.fl*3.1, sh.fl*3.1 + 2.2, sel ? "#ffffff" : skin[1]); }
       }
+      if (p.kind === "plot") beacon(0, 0, 0, "plot");
     }
   }
   PADS = fc(pads);
   return fc(feats);
 }
 function selFC(){ const p = P.find(x => x.id === openId); return fc(p ? [{type:"Feature", geometry:{type:"Point", coordinates:[p.lng,p.lat]}, properties:{}}] : []); }
+// matching homes rise out of the ground when a home type or a place is picked
+let popRaf = 0, popSig = "";
+const popExp = (prop, g) => ["*", ["get", prop], ["case", ["==", ["get", "m"], 1], g, 1]];
+function popUp(){ if (!map || !map.getLayer("p2")) return; cancelAnimationFrame(popRaf); const t0 = performance.now(), D = 850; let last = 0;
+  const step = now => { const t = Math.min(1, (now - t0)/D), c1 = 1.9, g = t >= 1 ? 1 : Math.max(.02, 1 + (c1 + 1)*Math.pow(t - 1, 3) + c1*Math.pow(t - 1, 2));
+    if (t >= 1 || now - last > 30){ last = now; map.setPaintProperty("p2", "fill-extrusion-height", t >= 1 ? ["get","h"] : popExp("h", g)); map.setPaintProperty("p2", "fill-extrusion-base", t >= 1 ? ["get","b"] : popExp("b", g)); }
+    if (t < 1) popRaf = requestAnimationFrame(step); };
+  popRaf = requestAnimationFrame(step); }
+function popCheck(){ const sig = [...S.kind].sort().join() + "|" + (S.near ? S.near.n + S.near.lat : ""); if (sig !== popSig){ const go = sig !== "|" && !(window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches); popSig = sig; if (go) popUp(); } }
 function paint(){
   if (!map || !map.getSource("proj")) return;
-  map.getSource("proj").setData(projFC()); map.getSource("pad").setData(PADS); map.getSource("sel").setData(selFC()); priceLabels();
+  map.getSource("proj").setData(projFC()); map.getSource("pad").setData(PADS); map.getSource("sel").setData(selFC()); priceLabels(); popCheck();
 }
 function priceLabels(){
   labelMarkers.forEach(m => m.remove()); labelMarkers = [];
