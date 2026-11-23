@@ -592,6 +592,9 @@ body.pindrag .pinhint{opacity:0;visibility:hidden}
 
 .gsearch .sugg li.gnote{display:block;cursor:default;color:var(--mute);font-size:12.5px;line-height:1.4;padding:6px 10px 10px}
 .gsearch .sugg li.gnote:hover{background:none}
+.gsearch .sugg li.gloc{color:var(--sun);font-weight:600;border-bottom:1px solid var(--line)}
+.gsearch .sugg li.gloc>span:last-child{color:var(--sun);opacity:.8}
+.saynote{position:fixed;z-index:60;top:74px;left:50%;transform:translateX(-50%);width:max-content;max-width:min(330px,calc(100vw - 32px));background:#fff;color:#0a0f1e;font:600 13px/1.4 var(--f-body);padding:10px 14px;border-radius:12px;box-shadow:0 8px 24px rgba(0,0,0,.45)}
 
 
 /* one-time hint bubbles for the legend and the filter buttons (same look as the pin hint) */
@@ -1068,18 +1071,26 @@ function buildUI(){
     else if (live && OSM.fail) h += `<li class="sh">More places · OpenStreetMap</li><li class="gnote">The wider place search could not be reached from here. It runs on the live website, not inside this preview.</li>`;
     else if (!h) h = `<li class="sh">Nothing by that name. Try an area, tech park, metro, mall, builder or any place.</li>`;
     if (!live && !(q.length && h.includes("Nothing by"))) h += `<li class="gnote">Type 3 or more letters to search any place in Bangalore.</li>`;
-    $("glist").innerHTML = h;
+    $("glist").innerHTML = `<li data-k="g" data-v="" class="gloc"><span><svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="6.5"/><circle cx="12" cy="12" r="2" fill="currentColor" stroke="none"/><path d="M12 2.5v3M12 18.5v3M2.5 12h3M18.5 12h3"/></svg><span>Use my current location</span></span><span>Locate me</span></li>` + h;
     $("glist")._osm = osm;
     const on = $("gtabs").querySelector('[aria-selected="true"]'); if (on && on.scrollIntoView) $("gtabs").scrollLeft = Math.max(0, on.offsetLeft - 40);
     $("glist").scrollTop = 0; $("gbox").hidden = false; $("gq").setAttribute("aria-expanded", "true"); };
   $("gtabs").addEventListener("mousedown", e => { e.preventDefault(); const b = e.target.closest(".gtab"); if (b && !b.disabled){ gTab = b.dataset.t; gManual = true; gSugg(); } });
-  const gPick = li => { const k = li.dataset.k, v = li.dataset.v; gHide(); $("gq").value = ""; $("gq").blur();
+  const say = (msg, ms) => { let n = document.querySelector(".saynote"); if (!n){ n = document.createElement("div"); n.className = "saynote"; n.setAttribute("role", "status"); document.body.appendChild(n); } n.textContent = msg; n.hidden = false; clearTimeout(n._t); n._t = setTimeout(() => n.hidden = true, ms || 4500); };
+  const locateMe = () => { if (!navigator.geolocation) return say("This browser cannot share your location. Search a place or drag the pin instead.");
+    say("Finding your location…", 15000);
+    navigator.geolocation.getCurrentPosition(g => { const lat = g.coords.latitude, lng = g.coords.longitude, [s_, w, n, e] = BASE.bbox;
+        if (lat < s_ - .25 || lat > n + .25 || lng < w - .3 || lng > e + .3) return say("You seem to be outside Bangalore, so we can't search around you. Search a place or drag the pin instead.", 6000);
+        document.querySelector(".saynote").hidden = true; setNear({n:"My location", lat:Math.round(lat*1e5)/1e5, lng:Math.round(lng*1e5)/1e5, t:"pin"}); },
+      er => say(er && er.code === 1 ? "Location is blocked. Allow location for this site in your browser, or search a place instead." : "Could not get your location. Try again, or search a place instead.", 6000),
+      {enableHighAccuracy:true, timeout:12000, maximumAge:60000}); };
+  const gPick = li => { const k = li.dataset.k, v = li.dataset.v; gHide(); $("gq").value = ""; $("gq").blur(); if (k === "g") return locateMe();
     if (k === "p"){ syncUI(); openCard(+v, true); }
     else if (k === "d"){ S.dev = v; syncUI(); apply(); fitResults(); }
     else if (k === "o"){ const o = ($("glist")._osm || [])[+v]; if (o) setNear(o); }
     else setNear(PLACES[+v]); };
   $("gq").addEventListener("input", gSugg); $("gq").addEventListener("focus", gSugg);
-  $("gq").addEventListener("keydown", e => { if (e.key === "Enter"){ const li = $("glist").querySelector("li[data-k]"); if (li) gPick(li); } if (e.key === "Escape"){ gHide(); $("gq").blur(); } });
+  $("gq").addEventListener("keydown", e => { if (e.key === "Enter"){ const li = $("glist").querySelector('li[data-k]:not([data-k="g"])'); if (li) gPick(li); } if (e.key === "Escape"){ gHide(); $("gq").blur(); } });
   $("gq").addEventListener("blur", () => setTimeout(() => { gHide(); gManual = false; syncUI(); }, 180));
   $("glist").addEventListener("mousedown", e => { const li = e.target.closest("li[data-k]"); if (li){ e.preventDefault(); gPick(li); } });
   $("gx").addEventListener("click", () => { $("gq").value = ""; if (S.dev){ S.dev = ""; apply(); } if (S.near) setNear(null); else syncUI(); });
