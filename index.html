@@ -27,12 +27,12 @@
   --f-body:"IBM Plex Sans","Segoe UI",system-ui,sans-serif;
 }
 *{box-sizing:border-box}
+[hidden]{display:none!important}
 html,body{height:100%;margin:0}
 body{background:var(--night);color:var(--ink);font:14px/1.45 var(--f-body);overflow:hidden}
 button,input,select{font:inherit;color:inherit}
 button{cursor:pointer}
 :focus-visible{outline:2px solid var(--sun);outline-offset:2px}
-.top{position:fixed;z-index:6;top:0;left:0;right:0;height:var(--top);display:flex;align-items:center;justify-content:space-between;gap:12px;padding:0 18px;background:var(--panel);border-bottom:1px solid var(--line)}
 .logo{display:flex;align-items:center;gap:8px;text-decoration:none;color:var(--ink);min-width:0;padding:4px 14px 4px 5px;border-radius:999px;border:0;background:rgba(17,24,48,.92)}
 .logo img{width:26px;height:26px;border-radius:50%;object-fit:contain;flex:none}
 .logo span{font:700 16px/1 var(--f-display);white-space:nowrap}
@@ -77,18 +77,98 @@ select{width:100%;padding:8px 10px;border-radius:10px;border:1px solid var(--lin
 .ddlist .chip:hover{background:var(--raise)}
 .ddlist small{color:var(--mute);font-weight:400}
 #dev-list .chip::before{border-radius:50%}
-.reset{align-self:flex-start;background:none;border:0;color:var(--likely);padding:0;text-decoration:underline;font-size:13px}
+#f-am{display:grid;grid-template-columns:1fr 1fr;gap:2px 6px;max-height:216px}
+#f-am .chip{flex-direction:row;align-items:center;justify-content:flex-start;gap:8px;padding:7px 22px 7px 8px;font-size:12.5px;line-height:1.2;color:var(--ink)}
+#f-am .chip::before{display:none}
+#f-am .chip svg{flex:none;width:19px;height:19px;color:var(--mute)}
+#f-am .chip[aria-pressed="true"]{background:rgba(255,183,43,.14);color:var(--sun);font-weight:500}
+#f-am .chip[aria-pressed="true"] svg{color:var(--sun)}
+#f-am .chip[aria-pressed="true"]::after{content:"";position:absolute;right:9px;top:50%;width:5px;height:9px;margin-top:-7px;border-right:2px solid var(--sun);border-bottom:2px solid var(--sun);transform:rotate(45deg)}
+#f-am .chip[hidden]{display:none}
+.sub{display:flex;flex-direction:column;gap:14px;padding-top:14px;border-top:1px solid var(--line)}
+.sub>*{flex:none}
+.subh{margin:0;font:700 14px/1 var(--f-display);color:var(--ink);display:flex;align-items:center;gap:9px}
+.si{display:grid;place-items:center;width:28px;height:28px;border-radius:9px;background:rgba(255,183,43,.14);color:var(--sun);flex:none}
+.ordiv{display:flex;align-items:center;gap:10px;color:var(--mute);font-size:11px;letter-spacing:.14em;text-transform:uppercase;margin:-2px 0}
+.ordiv::before,.ordiv::after{content:"";flex:1;height:1px;background:var(--line)}
+.ordiv+.sub,#sub-start{border-top:0;padding-top:0}
+.fh+.sub{padding-top:14px}
+#filters .lab b{background:rgba(255,183,43,.14);color:var(--sun);padding:2px 9px;border-radius:999px;font-size:12px}
+#filters .qlab{margin-top:3px;font-size:10px}
+.ic{flex:none}
+#filters .lab label,#filters .lab>span,.lab2{display:inline-flex;align-items:center;gap:6px}
+#filters .lab .ic{opacity:.9}
+.lab2 .ic{color:var(--mute)}
+#filters .chip .ic{vertical-align:-3px;margin-right:6px;opacity:.75}
+#filters .chip[aria-pressed="true"] .ic{opacity:1}
+#f-kind .chip .ic{color:var(--tc);opacity:1;vertical-align:-5px}
+#f-kind .chip[aria-pressed="true"] .ic{color:inherit}
+#f-st .chip .ic,#f-cor .chip .ic{margin-right:7px}
+.tip{margin:0;font-size:12px;color:var(--mute);line-height:1.35}
+.tip .t-touch{display:none}
+@media (hover:none){.tip .t-touch{display:inline}.tip .t-mouse{display:none}}
+.nearwrap .sico{position:absolute;left:12px;top:50%;margin-top:-8.5px;color:var(--mute);pointer-events:none}
+.nearwrap .search{padding-left:38px}
+.nearwrap .search:focus{border-color:var(--sun);outline:0;box-shadow:0 0 0 3px rgba(255,183,43,.18)}
+#f-bhk{display:grid;grid-template-columns:repeat(5,1fr)}
+#f-cor{display:grid;grid-template-columns:1fr 1fr}
+#f-bhk .chip,#f-cor .chip,#f-st .chip{display:flex;align-items:center;justify-content:center;text-align:center}
+#f-cor .chip{white-space:normal;border-radius:12px;padding:9px 8px;line-height:1.25;min-height:44px}
+#f-bhk .chip{border-radius:10px;padding:8px 0}
+#nearquick .chip[data-pick]{flex-basis:100%;display:flex;align-items:center;justify-content:center;gap:7px;border-style:dashed;border-color:var(--mute);border-radius:10px;padding:9px 10px}
+#filters input[type=range]{-webkit-appearance:none;appearance:none;height:24px;background:none;cursor:pointer}
+#filters input[type=range]::-webkit-slider-runnable-track{height:6px;border-radius:3px;background:linear-gradient(to right,var(--sun) var(--p,0%),var(--line) var(--p,0%))}
+#filters input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:22px;height:22px;border-radius:50%;background:var(--sun);border:4px solid var(--panel);box-shadow:0 0 0 1.5px var(--sun);margin-top:-8px}
+#filters input[type=range]::-moz-range-track{height:6px;border-radius:3px;background:linear-gradient(to right,var(--sun) var(--p,0%),var(--line) var(--p,0%))}
+#filters input[type=range]::-moz-range-thumb{width:16px;height:16px;border-radius:50%;background:var(--sun);border:4px solid var(--panel);box-shadow:0 0 0 1.5px var(--sun)}
+.ticks{display:flex;justify-content:space-between;font-size:10.5px;color:var(--mute);margin-top:-4px;padding:0 6px 0 2px}
+#filters .tog{justify-content:space-between;gap:12px;padding:9px 12px;border:1px solid var(--line);border-radius:10px;background:var(--panel);cursor:pointer}
+#filters .tog input{-webkit-appearance:none;appearance:none;flex:none;width:38px;height:22px;border-radius:999px;background:var(--line);position:relative;transition:background .15s;cursor:pointer;margin:0}
+#filters .tog input::after{content:"";position:absolute;left:3px;top:3px;width:16px;height:16px;border-radius:50%;background:#fff;transition:transform .15s}
+#filters .tog input:checked{background:var(--sun)}
+#filters .tog input:checked::after{transform:translateX(16px)}
+#filters select{-webkit-appearance:none;appearance:none;padding:9px 34px 9px 12px;background-image:linear-gradient(45deg,transparent 50%,var(--mute) 50%),linear-gradient(135deg,var(--mute) 50%,transparent 50%);background-position:calc(100% - 19px) 55%,calc(100% - 13.5px) 55%;background-size:5.5px 5.5px;background-repeat:no-repeat}
+
+.reset{align-self:flex-end;margin-bottom:-4px;background:none;border:0;color:var(--likely);padding:0;text-decoration:underline;font-size:13px}
 .resbar{display:flex;align-items:center;justify-content:space-between;gap:12px;padding-top:12px;border-top:1px solid var(--line)}
 .resleft{display:flex;flex-direction:column;gap:5px;min-width:0}
 .count{font:700 26px/1 var(--f-display);font-variant-numeric:tabular-nums}
 .count span{font:400 12.5px var(--f-body);color:var(--mute);margin-left:6px}
 .resbar select{width:auto;flex:none;font-size:12.5px;padding:6px 8px}
-.list{display:flex;flex-direction:column;gap:6px}
-.item{display:grid;grid-template-columns:1fr auto;gap:2px 10px;text-align:left;padding:10px 12px;border-radius:12px;border:1px solid var(--line);background:var(--raise);width:100%}
+.list{display:flex;flex-direction:column;gap:10px}
+.resbar{display:none!important}
+.rstats{display:grid;grid-template-columns:.8fr 1.4fr 1fr;gap:8px;padding-top:14px;border-top:1px solid var(--line)}
+.rstats div{display:flex;flex-direction:column;gap:4px;padding:10px 10px 9px;border-radius:12px;background:var(--raise);border:1px solid var(--line);min-width:0}
+.rstats div:first-child{background:rgba(255,183,43,.12);border-color:rgba(255,183,43,.35)}
+.rstats b{font:700 13.5px/1.15 var(--f-display);font-variant-numeric:tabular-nums;white-space:nowrap}
+.rstats div:first-child b{font-size:22px;color:var(--sun)}
+.rstats span{font-size:10.5px;color:var(--mute);line-height:1.25}
+.sortrow,.rstats{flex:none}
+.sortrow{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;margin:0 -18px;padding:0 18px}
+.sortrow::-webkit-scrollbar{display:none}
+.sortrow .chip{flex:none;font-size:12.5px}
+.item{display:grid;grid-template-columns:46px 1fr auto;gap:10px 12px;align-items:center;text-align:left;padding:13px 13px 11px;border-radius:16px;border:1px solid var(--line);background:var(--raise);width:100%}
 .item:hover,.item.on{border-color:var(--sun)}
-.item .n{font-weight:600;overflow-wrap:anywhere}
-.item .p{font-weight:600;font-variant-numeric:tabular-nums;white-space:nowrap}
-.item .s{grid-column:1/-1;font-size:12.5px;color:var(--mute)}
+.item .ith{display:grid;place-items:center;width:46px;height:46px;border-radius:13px;color:var(--tc);background:color-mix(in srgb,var(--tc) 16%,transparent)}
+.item .ith.two{grid-template-columns:1fr 1fr;gap:0;background:linear-gradient(135deg,rgba(56,189,248,.18) 50%,rgba(47,208,138,.18) 50%)}
+.item .ith.two .ic:first-child{color:#38bdf8;align-self:start;margin-top:6px}
+.item .ith.two .ic:last-child{color:#2fd08a;align-self:end;margin-bottom:6px}
+.item .both{display:flex;align-items:center;gap:6px;margin-top:3px;flex-wrap:wrap}
+.item .both i{font-style:normal;display:inline-flex;align-items:center;gap:4px;padding:2px 8px;border-radius:999px;font-size:11px;font-weight:600;color:var(--kc);background:color-mix(in srgb,var(--kc) 15%,transparent)}
+.item .both b{color:var(--mute);font-weight:400;font-size:12px}
+.item .itm{display:flex;flex-direction:column;gap:3px;min-width:0}
+.item .n{font:700 15.5px/1.2 var(--f-display);overflow-wrap:anywhere}
+.item .by{font-size:12px;color:var(--mute);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.item .p{font:700 16px/1.1 var(--f-display);font-variant-numeric:tabular-nums;white-space:nowrap;text-align:right;align-self:start;padding-top:3px}
+.item .p small{display:block;font:400 10.5px var(--f-body);color:var(--mute);margin-top:3px}
+.item .specs{grid-column:1/-1;display:grid;grid-template-columns:1.15fr 1.25fr .9fr;border-radius:11px;background:var(--panel);border:1px solid var(--line)}
+.item .specs>span{display:flex;flex-direction:column;gap:3px;padding:8px 10px;font-size:12.5px;font-weight:600;min-width:0;border-left:1px solid var(--line)}
+.item .specs>span:first-child{border-left:0}
+.item .specs small{font-size:9.5px;font-weight:400;letter-spacing:.1em;text-transform:uppercase;color:var(--mute)}
+.item .itf{grid-column:1/-1;display:flex;align-items:center;gap:8px;font-size:12px;color:var(--mute);min-width:0}
+.item .itf .pill{margin:0;flex:none;padding:3px 9px}
+.item .dist{display:inline-flex;align-items:center;gap:4px;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.item .go{margin-left:auto;flex:none;color:var(--sun);font-weight:600;font-size:12.5px}
 .pill{font-style:normal;display:inline-block;padding:1px 8px;border-radius:999px;font-size:11px;font-weight:600;vertical-align:1px;margin-right:6px}
 .pill.fit{background:var(--sun);color:var(--sun-ink)}
 .pill.likely{background:transparent;color:var(--likely);border:1px solid var(--likely)}
@@ -105,6 +185,22 @@ select{width:100%;padding:8px 10px;border-radius:10px;border:1px solid var(--lin
 .mbtn{padding:8px 13px;border-radius:999px;border:1px solid var(--line);background:rgba(17,24,48,.92);font-size:13px}
 .mbtn[aria-pressed="true"]{border-color:var(--sun);color:var(--sun)}
 .lt{display:inline-flex;align-items:center;gap:7px}
+.gsearch{flex:0 0 100%;max-width:400px}
+.gsearch .search{background:rgba(17,24,48,.97);border-radius:999px;padding:11px 42px 11px 40px;font-size:14px;box-shadow:0 4px 16px rgba(0,0,0,.45);text-overflow:ellipsis}
+.gsearch .search.set{border-color:var(--sun)}
+.gsearch .x2{top:7px;right:8px}
+.gbox{position:absolute;z-index:6;left:0;right:0;top:calc(100% + 4px);height:min(380px,52vh);display:flex;flex-direction:column;background:var(--panel);border:1px solid var(--line);border-radius:14px;box-shadow:0 12px 30px rgba(0,0,0,.5);overflow:hidden;pointer-events:auto}
+.gbox[hidden]{display:none}
+.gtabs{flex:none;display:flex;gap:6px;overflow-x:auto;padding:8px;border-bottom:1px solid var(--line);scrollbar-width:none}
+.gtabs::-webkit-scrollbar{display:none}
+.gtab{flex:none;display:inline-flex;align-items:center;gap:6px;padding:6px 10px;border-radius:999px;border:1px solid var(--line);background:var(--raise);font-size:12.5px;white-space:nowrap}
+.gtab b{font-weight:600;font-size:11px;color:var(--mute);font-variant-numeric:tabular-nums}
+.gtab[aria-selected="true"]{background:var(--sun);border-color:var(--sun);color:var(--sun-ink);font-weight:600}
+.gtab[aria-selected="true"] b{color:inherit}
+.gtab:disabled{opacity:.4}
+.gbox .sugg{position:static;flex:1;min-height:0;height:auto;max-height:none;border:0;border-radius:0;box-shadow:none;background:none;overflow-y:auto;overscroll-behavior:contain}
+.gsearch .sugg li span:first-child{display:flex;align-items:center;gap:8px;min-width:0}
+.gsearch .sugg li .ic{color:var(--mute)}
 .ltstack{display:flex;flex-direction:row;align-items:center;justify-content:flex-end;gap:6px}
 .ltstack .mbtn{padding:6px 11px;font-size:12.5px}
 .lt::before{content:"";flex:none;width:8px;height:8px}
@@ -124,8 +220,8 @@ select{width:100%;padding:8px 10px;border-radius:10px;border:1px solid var(--lin
 .keyrow span{display:flex;align-items:center;white-space:nowrap}
 .keyrow i{width:13px;height:13px;border-radius:3px;margin-right:6px;flex:none}
 .keyrow i.ln{width:12px;height:4px;border-radius:2px;margin-right:3px}
-.keyrow.sub{color:var(--mute);font-size:11.5px}
-.keyrow.sub i{width:10px;height:10px}
+.keyrow.ksub{color:var(--mute);font-size:11.5px}
+.keyrow.ksub i{width:10px;height:10px}
 .chip .tdot{display:inline-block;width:9px;height:9px;border-radius:2px;margin-right:6px;vertical-align:0}
 #bfit,#b3d{display:grid;place-items:center;font:700 11.5px var(--f-body);color:#333;cursor:pointer}
 .attr{position:absolute;z-index:2;right:8px;bottom:6px;font-size:10.5px;color:var(--mute);background:rgba(10,15,30,.7);padding:2px 6px;border-radius:6px}
@@ -152,14 +248,25 @@ select{width:100%;padding:8px 10px;border-radius:10px;border:1px solid var(--lin
 .origin b{font:600 11.5px var(--f-body);background:#fff;color:#0a0f1e;padding:3px 9px;border-radius:999px;white-space:nowrap;box-shadow:0 2px 10px rgba(0,0,0,.6)}
 .origin i{width:2px;height:16px;background:#fff}
 .origin u{width:10px;height:10px;border-radius:50%;background:#fff;border:3px solid var(--likely);text-decoration:none}
-.nearbox{background:var(--raise);border:1px solid var(--line);border-radius:14px;padding:12px}
+.fsec{display:flex;flex-direction:column;gap:14px;background:var(--raise);border:1px solid var(--line);border-radius:14px;padding:13px 12px 14px}
+.fsec>*{flex:none}
+.fh{margin:0;font:700 15px/1.1 var(--f-display);color:var(--ink)}
+.fsec .chip,.fsec .ddbtn,.fsec select{background:var(--panel)}
+.fsec .chip[aria-pressed="true"]{background:var(--sun)}
+.fsec .ddlist .chip{background:none}
+.fsec .ddlist .chip[aria-pressed="true"]{background:var(--raise)}
+.nearbox{padding:0}
 .nearbox .search{background:var(--panel)}
 .nearwrap{position:relative}
+#dev-q{padding-right:40px}
+#dev-q.set{border-color:var(--sun);font-weight:500}
 .nearwrap .x2{position:absolute;right:6px;top:6px;width:28px;height:28px;border-radius:50%;border:0;background:var(--line);font-size:15px;line-height:1}
 .sugg{position:absolute;z-index:6;left:0;right:0;top:calc(100% + 4px);margin:0;padding:4px;list-style:none;background:var(--panel);border:1px solid var(--line);border-radius:12px;box-shadow:0 12px 30px rgba(0,0,0,.5);max-height:290px;overflow-y:auto}
 .sugg li{display:flex;justify-content:space-between;gap:10px;padding:8px 10px;border-radius:8px;cursor:pointer;font-size:13.5px}
 .sugg li:hover,.sugg li.on{background:var(--raise)}
 .sugg li span:last-child{color:var(--mute);font-size:11.5px;white-space:nowrap}
+.sugg li.sh{position:sticky;top:-4px;background:var(--panel);cursor:default;padding:8px 10px 4px;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--mute);border-radius:0}
+.sugg li.sh:hover{background:var(--panel)}
 .nearbox .chip{background:var(--panel);font-size:12.5px;padding:5px 10px}
 .nearbox .chip[aria-pressed="true"]{background:var(--sun)}
 .picking .maplibregl-canvas{cursor:crosshair!important}
@@ -170,7 +277,7 @@ select{width:100%;padding:8px 10px;border-radius:10px;border:1px solid var(--lin
 .card.open{display:flex}
 .chead{padding:16px 18px 12px;border-bottom:1px solid var(--line);display:grid;grid-template-columns:1fr auto;gap:6px 10px}
 .chead h2{font:700 22px/1.15 var(--f-display);margin:0;text-wrap:balance;overflow-wrap:anywhere}
-.chead .sub{grid-column:1/-1;color:var(--mute);font-size:13px}
+.chead .csub{grid-column:1/-1;color:var(--mute);font-size:13px}
 .x{border:1px solid var(--line);background:var(--raise);border-radius:999px;width:34px;height:34px;font-size:18px;line-height:1}
 .cbody{flex:1;overflow-y:auto;padding:14px 18px 18px;display:flex;flex-direction:column;gap:16px}
 .cbody>*{flex:none}
@@ -261,18 +368,57 @@ details summary{cursor:pointer;color:var(--mute);font-size:12.5px;margin-top:8px
   .card{position:fixed;width:100%;z-index:7}
   .attr{bottom:calc(var(--peek) + 4px);right:6px}
   .key{left:8px;bottom:calc(var(--peek) + 26px);max-width:calc(100% - 64px);padding:7px 10px;gap:3px}
-  .key b,.key .keyrow.sub:last-child{display:none}
-  .resbar{border-top:0;padding-top:0}.resbar .count{display:none}
-  .fpill{display:grid;place-items:center;position:absolute;z-index:3;right:10px;bottom:calc(var(--peek) + 26px);width:54px;height:54px;border-radius:50%;border:0;background:var(--sun);color:var(--sun-ink);box-shadow:0 6px 18px rgba(0,0,0,.55)}
+  .key b,.key .keyrow.ksub:last-child{display:none}
+  .rstats{border-top:0;padding-top:2px;gap:9px}
+  .rstats div{padding:12px 12px 11px;border-radius:14px}
+  .rstats b{font-size:14.5px}.rstats div:first-child b{font-size:26px}
+  .rstats span{font-size:11.5px}
+  .sortrow .chip{font-size:13.5px;padding:8px 13px}
+  .item{grid-template-columns:52px 1fr auto;padding:15px 14px 13px;gap:12px 13px;border-radius:18px}
+  .item .ith{width:52px;height:52px;border-radius:15px}
+  .item .n{font-size:17px}.item .by{font-size:13px}
+  .item .p{font-size:17.5px}.item .p small{font-size:11.5px}
+  .item .specs>span{padding:10px 12px;font-size:13.5px}
+  .item .specs small{font-size:10px}
+  .item .itf{font-size:13px}.item .itf .pill{font-size:12px;padding:4px 10px}
+  .item .go{font-size:13.5px}
+  .fpill{display:grid;place-items:center;position:fixed;z-index:6;right:10px;bottom:calc(var(--peek) + 26px);transition:bottom .28s ease;width:54px;height:54px;border-radius:50%;border:0;background:var(--sun);color:var(--sun-ink);box-shadow:0 6px 18px rgba(0,0,0,.55)}
+  .fpill.floc{bottom:calc(var(--peek) + 26px + 54px + 10px)}
+  body.sheet-full .fpill{bottom:calc(18px + env(safe-area-inset-bottom,0px))}
+  body.sheet-full .fpill.floc{bottom:calc(18px + 54px + 10px + env(safe-area-inset-bottom,0px))}
+  .fwrap[data-mode="loc"] #sec-prop,.fwrap[data-mode="prop"] #sec-loc{display:none}
+  .fwrap .fh{display:none}
+  .fwrap .fsec{background:none;border:0;padding:0}
+  .fwrap .sub,.fwrap #sub-start,.fwrap .ordiv+.sub{background:var(--raise);border:1px solid var(--line);border-radius:16px;padding:15px 14px 16px;gap:15px}
+  .fwrap .subh{font-size:16.5px}
+  .fwrap .si{width:32px;height:32px;border-radius:10px}
+  .fwrap .fsec{gap:12px}
+  .fwrap .ordiv{margin:-3px 4px}
+  .fwrap .chip{font-size:14.5px;padding:9px 14px}
+  .fwrap #f-bhk .chip{padding:11px 0}
+  .fwrap #f-cor .chip{font-size:14px;min-height:52px}
+  .fwrap #f-kind{display:grid;grid-template-columns:repeat(3,1fr)}
+  .fwrap #f-kind .chip{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;padding:12px 2px 10px;border-radius:12px;font-size:13.5px}
+  .fwrap #f-kind .chip .ic{margin:0;width:24px;height:24px}
+  .fwrap #f-st .chip{flex:1 1 auto;padding:10px 12px}
+  .fwrap .nearbox .chip{font-size:13.5px;padding:7px 12px}
+  .fwrap .search,.fwrap .ddbtn,.fwrap select{padding-top:12px;padding-bottom:12px;border-radius:12px;font-size:15px}
+  .fwrap .nearwrap .x2{top:9px}
+  .fwrap .lab{font-size:11.5px}
+  .fwrap #filters .lab b,.fwrap .lab b{font-size:13px}
+  .fwrap .tog{font-size:14.5px}
   .fpill span{position:absolute;top:-4px;right:-4px;min-width:20px;height:20px;padding:0 5px;border-radius:999px;background:#fff;color:#0a0f1e;font:700 12px/20px var(--f-body);text-align:center}
   .fpill span:empty{display:none}
   .mapbar{right:58px;top:10px;row-gap:8px}
+  .gsearch{max-width:none}
+  .gsearch .search{font-size:16px;padding-top:10px;padding-bottom:10px}
   .ltstack{gap:5px}.ltstack .mbtn{padding:5px 9px;font-size:11.5px;gap:5px}
   .key{max-width:calc(100% - 82px)}
   .fwrap{display:flex;flex-direction:column;position:fixed;inset:0;z-index:8;background:var(--panel);transform:translateY(100%);visibility:hidden;transition:transform .26s ease,visibility 0s .26s}
   .fwrap.open{transform:none;visibility:visible;transition:transform .26s ease}
   .fhead{display:flex;align-items:center;justify-content:space-between;padding:12px 16px;border-bottom:1px solid var(--line)}
   .fhead b{font:700 20px var(--f-display)}
+  .fwrap .reset{position:absolute;top:16px;right:66px;margin:0;font-size:14px;padding:6px 4px;z-index:2}
   .fbody{display:flex;flex-direction:column;gap:14px;flex:1;overflow-y:auto;padding:14px 16px 24px;overscroll-behavior:contain}
   .fbody>*{flex:none}
   .ffoot{display:flex;padding:10px 16px calc(10px + env(safe-area-inset-bottom,0px));border-top:1px solid var(--line)}
@@ -282,6 +428,179 @@ details summary{cursor:pointer;color:var(--mute);font-size:12.5px;margin-top:8px
   .mapbar .mbtn{padding:6px 8px;font-size:11.5px}
 }
 @media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+
+/* list panel: flat, divided by lines */
+.lsearch{flex:none;display:flex;align-items:center;gap:10px;padding:14px 2px 10px;border-top:1px solid var(--line);border-bottom:1px solid var(--line);color:var(--mute)}
+.lsearch input{flex:1;min-width:0;border:0;background:none;outline:0;padding:2px 0;font-size:14px;color:var(--ink)}
+.lsearch input::placeholder{color:var(--mute)}
+.lsearch:focus-within{border-bottom-color:var(--sun)}
+.lsearch button{flex:none;border:0;background:none;color:var(--mute);font-size:20px;line-height:1;padding:0 4px}
+#rstats{gap:0;padding:0;border-top:0;border-bottom:1px solid var(--line);margin-top:-14px}
+#rstats div{background:none;border:0;border-left:1px solid var(--line);border-radius:0;padding:12px 12px}
+#rstats div:first-child{border-left:0;padding-left:2px}
+#sortrow{gap:18px;margin-top:-6px;border-bottom:1px solid var(--line)}
+#sortrow .chip{background:none;border:0;border-bottom:2px solid transparent;border-radius:0;padding:6px 0 10px;color:var(--mute);font-weight:500}
+#sortrow .chip[aria-pressed="true"]{color:var(--sun);border-bottom-color:var(--sun);font-weight:600;background:none}
+#list{gap:0;margin-top:-14px}
+#list .item{background:none;border:0;border-bottom:1px solid var(--line);border-radius:0;padding:16px 2px 14px;grid-template-columns:30px 1fr auto;gap:11px 12px}
+#list .item:hover{background:rgba(255,255,255,.025)}
+#list .item.on{box-shadow:inset 3px 0 0 var(--sun);padding-left:12px;background:rgba(255,183,43,.05)}
+#list .item .ith,#list .item .ith.two{width:30px;height:auto;background:none;border-radius:0;align-self:start;padding-top:1px;display:flex;flex-direction:column;gap:5px;align-items:center}
+#list .item .ith.two .ic{margin:0;align-self:center}
+#list .item .both i{background:none;padding:0}
+#list .item .specs{border:0;background:none;border-radius:0}
+#list .item .specs>span{padding:1px 12px}
+#list .item .specs>span:first-child{padding-left:0}
+
+/* filter panels: flat, divided by lines */
+#filters .fsec{background:none;border:0;border-radius:0;padding:0;gap:16px}
+#filters .fh{padding-top:14px;border-top:1px solid var(--line)}
+#filters .sub,#filters #sub-start,#filters .ordiv+.sub{background:none;border:0;border-top:1px solid var(--line);border-radius:0;padding:16px 0 2px}
+#filters .ordiv+.sub{border-top:0;padding-top:0}
+#filters .si{width:auto;height:auto;background:none;border-radius:0}
+#filters .si svg{width:19px;height:19px}
+#filters .lab b{background:none;padding:0;font-size:13px}
+#filters .nearwrap .search{background:none;border:0;border-bottom:1px solid var(--line);border-radius:0;padding-left:28px;box-shadow:none}
+#filters .nearwrap .search:focus{border-bottom-color:var(--sun);box-shadow:none}
+#filters .nearwrap .sico{left:2px}
+#filters #dev-q.set{border-bottom-color:var(--sun)}
+#filters .chips .chip{background:none;border-radius:8px}
+#filters .chips .chip[aria-pressed="true"]{background:var(--sun)}
+#filters #nearquick .chip{border:0;padding-left:0;padding-right:10px;color:var(--ink)}
+#filters #nearquick .chip[aria-pressed="true"]{background:none;color:var(--sun);font-weight:600}
+#filters #nearquick .chip[aria-pressed="true"] .ic{color:var(--sun)}
+#filters .ddbtn,#filters select{background-color:transparent;border:0;border-bottom:1px solid var(--line);border-radius:0;padding-left:2px}
+#filters .ddbtn.set{border-bottom-color:var(--sun)}
+#filters .tog{border:0;background:none;border-radius:0;padding:4px 0}
+@media (min-width:861px){#filters #sub-start,#filters .fh+.sub{border-top:0;padding-top:0}}
+@media (max-width:860px){#filters #sub-start,#filters #sub-build{border-top:0;padding-top:2px}}
+
+/* prominent search fields */
+.lsearch{margin-top:2px;padding:0 14px;height:50px;border:1.5px solid rgba(255,183,43,.55);border-radius:14px;background:#1d2747;color:var(--sun);box-shadow:0 4px 14px rgba(0,0,0,.28)}
+.lsearch svg{width:20px;height:20px;stroke-width:2.4}
+.lsearch input{font-size:15.5px;font-weight:500}
+.lsearch input::placeholder{color:#aab4d6;font-weight:400}
+.lsearch:focus-within{border-color:var(--sun);box-shadow:0 0 0 3px rgba(255,183,43,.22)}
+#rstats{margin-top:-6px;border-top:0}
+#filters .nearwrap .search{height:50px;padding:0 44px 0 44px;border:1.5px solid rgba(255,183,43,.55);border-radius:14px;background:#1d2747;font-size:15.5px;font-weight:500;box-shadow:0 4px 14px rgba(0,0,0,.28)}
+#filters .nearwrap .search::placeholder{color:#aab4d6;font-weight:400}
+#filters .nearwrap .search:focus{border-color:var(--sun);box-shadow:0 0 0 3px rgba(255,183,43,.22)}
+#filters .nearwrap .sico{left:14px;width:20px;height:20px;margin-top:-10px;color:var(--sun);stroke-width:2.4}
+#filters .nearwrap .x2{top:11px;right:10px}
+#filters #dev-q.set,#filters #near.set{border-color:var(--sun)}
+
+/* drag a pin onto the map */
+.pinghost{position:fixed;z-index:20;left:0;top:0;width:0;height:0;pointer-events:none;display:none}
+body.pindrag .pinghost{display:block}
+.pinghost svg{position:absolute;left:-23px;top:-44px;filter:drop-shadow(0 6px 8px rgba(0,0,0,.6))}
+.pinghost i{position:absolute;left:-7px;top:-3px;width:14px;height:6px;border-radius:50%;background:rgba(0,0,0,.45)}
+.pinghost.no svg{opacity:.4}
+body.pindrag{cursor:grabbing;user-select:none;-webkit-user-select:none}
+#gpin{touch-action:none;-webkit-touch-callout:none;user-select:none;-webkit-user-select:none}
+body.pindrag #gpin{opacity:.35}
+.origin.drag{cursor:grab;pointer-events:auto}
+.origin.drag b::after{content:" · drag to move";font-weight:400;color:#5a6384}
+.gsearch .search{padding-right:54px}
+.gsearch .x2{right:50px}
+.gsearch:has(#gx:not([hidden])) .search{padding-right:88px}
+#gpin{position:absolute;right:6px;top:50%;margin-top:-18px;width:36px;height:36px;border-radius:50%;border:0;background:var(--sun);display:grid;place-items:center;cursor:grab;pointer-events:auto;outline:1.5px dashed rgba(255,183,43,.85);outline-offset:2px;box-shadow:0 2px 8px rgba(0,0,0,.4)}
+#gpin:active{cursor:grabbing}
+#gpin>svg{animation:pinlift 3.2s ease-in-out infinite}
+#gpin i{position:absolute;right:-4px;bottom:-4px;width:17px;height:17px;border-radius:50%;display:grid;place-items:center;background:#0a0f1e;color:var(--sun);border:1.5px solid var(--sun)}
+@keyframes pinlift{0%,62%,100%{transform:none}72%{transform:translateY(-5px)}82%{transform:none}90%{transform:translateY(-2px)}}
+@media (prefers-reduced-motion:reduce){#gpin>svg{animation:none}}
+.pinhint{position:absolute;z-index:5;right:0;top:calc(100% + 10px);width:max-content;max-width:230px;padding:8px 11px;border-radius:10px;background:#fff;color:#0a0f1e;font:600 12.5px/1.3 var(--f-body);font-style:normal;box-shadow:0 6px 18px rgba(0,0,0,.5);opacity:0;visibility:hidden;transition:opacity .25s;pointer-events:none}
+.pinhint::after{content:"";position:absolute;right:18px;top:-5px;width:10px;height:10px;background:#fff;transform:rotate(45deg)}
+body.pinhint-on .pinhint{opacity:1;visibility:visible}
+body.pindrag .pinhint{opacity:0;visibility:hidden}
+
+/* radius handle on the circle */
+.radh{display:flex;align-items:center;gap:6px;cursor:ew-resize;touch-action:none;user-select:none;-webkit-user-select:none;padding:8px 6px 8px 0}
+.radh i{flex:none;width:34px;height:34px;border-radius:50%;display:grid;place-items:center;background:var(--sun);color:#0a0f1e;border:3px solid #0a0f1e;box-shadow:0 0 0 2px var(--sun),0 4px 12px rgba(0,0,0,.6);margin-left:-17px}
+.radh b{font:700 12.5px var(--f-body);background:#0a0f1e;color:var(--sun);border:1.5px solid var(--sun);padding:3px 9px;border-radius:999px;white-space:nowrap;font-variant-numeric:tabular-nums}
+.radh.on i{transform:scale(1.15)}
+.radh.on b{background:var(--sun);color:#0a0f1e}
+.radh:focus-visible i{box-shadow:0 0 0 4px #fff}
+
+/* project page: grouped sections */
+.chead{grid-template-columns:1fr auto auto;align-items:start}
+.mapgo{display:grid;place-items:center;background:#fff;border-color:#fff;text-decoration:none}
+.mapgo:hover{box-shadow:0 0 0 3px rgba(255,255,255,.25)}
+.mapgo .mapfb{font:700 9.5px var(--f-body);color:#0a0f1e;letter-spacing:.02em}
+.mapgo:hover{background:rgba(255,183,43,.12)}
+.cbody{gap:0}
+.csec{display:flex;flex-direction:column;gap:13px;padding:18px 0;border-top:1px solid var(--line)}
+.csec.first{border-top:0;padding-top:14px}
+.csec>*{flex:none}
+.ch{display:flex;align-items:center;gap:9px;margin:0;font:700 15px/1.1 var(--f-display);color:var(--ink);letter-spacing:0;text-transform:none}
+.ch .ic{color:var(--sun)}
+.csec h4{margin:0 0 2px;font:600 11px var(--f-body);letter-spacing:.1em;text-transform:uppercase;color:var(--mute)}
+.csec .pvs{padding-top:4px}
+.facts.one{grid-template-columns:1fr}
+.csec .tile{background:none;border:0;border-left:1px solid var(--line);border-radius:0;padding:2px 6px}
+.csec .tile:first-child{border-left:0}
+
+/* list rows for projects with several home types */
+#list .item .ith.two i{display:grid;font-style:normal}
+#list .item .ith.two i .ic{color:inherit;margin:0}
+#list .item .types{grid-column:1/-1;display:flex;flex-direction:column}
+#list .item .trow{display:grid;grid-template-columns:1.15fr .9fr 1.45fr auto;gap:8px;align-items:center;padding:7px 0;border-top:1px solid var(--line);font-size:12.5px}
+#list .item .trow:last-child{border-bottom:1px solid var(--line)}
+#list .item .trow b{display:inline-flex;align-items:center;gap:6px;color:var(--kc);font-weight:600;min-width:0}
+#list .item .trow span{color:var(--ink);min-width:0}
+#list .item .trow .tp{font-weight:700;font-variant-numeric:tabular-nums;text-align:right;white-space:nowrap}
+#list .item .trow.off span{color:var(--mute)}
+#list .item .poss{order:2;white-space:nowrap}
+#list .item .itf .pill{order:1}
+#list .item .itf .dist{order:3}
+#list .item .itf .go{order:4}
+@media (max-width:860px){#list .item .trow{font-size:13.5px;padding:9px 0}}
+
+/* list header (search, numbers, sort tabs) stays put while the projects scroll */
+.lhead{flex:none;position:sticky;top:-12px;z-index:3;display:flex;flex-direction:column;gap:14px;margin:0 -18px;padding:12px 18px 0;background:var(--panel);box-shadow:0 10px 14px -12px rgba(0,0,0,.7)}
+.lhead>*{flex:none}
+.lhead #sortrow{margin-left:-18px;margin-right:-18px}
+@media (max-width:860px){.lhead{top:-13px;padding-top:12px;margin:0 -16px;padding-left:16px;padding-right:16px}.lhead #sortrow{margin-left:-16px;margin-right:-16px}}
+
+/* legend doubles as filters */
+.key{pointer-events:auto}
+.key>b{display:flex!important;align-items:center;gap:6px;color:var(--sun)}
+.key .kbtns{gap:6px}
+.kb{display:inline-flex;align-items:center;gap:0;padding:5px 9px;border-radius:999px;border:1px solid #47548a;background:rgba(255,255,255,.06);color:var(--ink);font-size:12.5px;white-space:nowrap;cursor:pointer;transition:background .15s,border-color .15s}
+.kb:hover{border-color:var(--sun)}
+.kb:active{transform:scale(.96)}
+.kb i{width:12px;height:12px;border-radius:3px;margin-right:6px;flex:none}
+.kb em{font-style:normal;font-size:11px;color:var(--mute);margin-left:6px;font-variant-numeric:tabular-nums}
+#keykind .kb[aria-pressed="true"]{border-color:var(--sun);background:rgba(255,183,43,.18);font-weight:600;box-shadow:0 0 0 1px var(--sun)}
+#keykind .kb[aria-pressed="true"] em{color:var(--sun)}
+#keykind.some .kb[aria-pressed="false"]{opacity:.55}
+.key .kb span{display:inline;white-space:nowrap}
+.kb.kv{font-size:11.5px;padding:4px 8px;color:var(--mute)}
+.kb.kv i{width:10px;height:10px}
+.kb.kv .eye{margin-left:7px;color:var(--ink)}
+.kb.kv .slash{display:none}
+.kb.kv[aria-pressed="false"]{text-decoration:line-through;opacity:.6}
+.kb.kv[aria-pressed="false"] .slash{display:inline}
+@media (max-width:860px){.key{padding:8px 9px;gap:6px}.key>b{font-size:10px}.kb{font-size:11.5px;padding:6px 7px}.kb i{margin-right:4px}.kb em{margin-left:4px;font-size:10.5px}.kb.kv{font-size:11px;padding:5px 7px}.kb.kv .eye{margin-left:5px}.key .kbtns{gap:4px;flex-wrap:nowrap}.key .kb .kl{display:none}}
+
+.gsearch .sugg li>span:first-child{flex:1 1 auto;min-width:45%}
+.gsearch .sugg li>span:last-child{flex:0 1 auto;min-width:0;overflow:hidden;text-overflow:ellipsis}
+
+.gsearch .sugg li.gnote{display:block;cursor:default;color:var(--mute);font-size:12.5px;line-height:1.4;padding:6px 10px 10px}
+.gsearch .sugg li.gnote:hover{background:none}
+
+
+/* one-time hint bubbles for the legend and the filter buttons (same look as the pin hint) */
+.tip2{position:absolute;z-index:5;width:max-content;max-width:220px;padding:8px 11px;border-radius:10px;background:#fff;color:#0a0f1e;font:600 12.5px/1.3 var(--f-body);font-style:normal;letter-spacing:0;text-transform:none;box-shadow:0 6px 18px rgba(0,0,0,.5);opacity:0;visibility:hidden;transition:opacity .25s;pointer-events:none}
+.tip2::after{content:"";position:absolute;width:10px;height:10px;background:#fff;transform:rotate(45deg)}
+.khint{left:10px;bottom:calc(100% + 10px)}
+.khint::after{left:22px;bottom:-5px}
+.fhint{right:calc(100% + 12px);top:calc(100% + 5px);transform:translateY(-50%)}
+.fhint::after{right:-5px;top:50%;margin-top:-5px}
+body.tips-k .khint,body.tips-f .fhint{opacity:1;visibility:visible}
+body.sheet-full .tip2,body.pindrag .tip2{opacity:0;visibility:hidden}
+.key{overflow:visible}
+@media (max-width:860px){.key>b{display:none!important}}
 </style>
 </head>
 <body>
@@ -292,57 +611,78 @@ details summary{cursor:pointer;color:var(--mute);font-size:12.5px;margin-top:8px
     <div class="grab" id="grab" role="button" tabindex="0" aria-expanded="false" aria-controls="sheet"><i></i><div class="grabrow"><a class="logo" id="logo" href="https://www.bharatprops.com" target="_blank" rel="noopener" aria-label="BharatProps home"><img src="https://www.bharatprops.com/brand/mark.webp" alt="" width="26" height="26" referrerpolicy="no-referrer" onerror="this.remove()"><span>BharatProps</span></a><div class="grabtxt"><span id="peekcount">Projects</span><em id="peekhint">Swipe up for the full list</em></div></div></div>
     <div class="scroll">
       <div class="fwrap" id="filters" aria-label="Filters">
-      <div class="fhead"><b>Filters</b><button class="x" id="fclose" type="button" aria-label="Close filters">×</button></div>
+      <div class="fhead"><b id="ftitle">Filters</b><button class="x" id="fclose" type="button" aria-label="Close filters">×</button></div>
       <div class="fbody">
+      <button class="reset" id="reset" type="button">Clear all filters</button>
+      <section class="fsec" id="sec-loc" aria-labelledby="fh-loc">
+      <h2 class="fh" id="fh-loc">Location filters</h2>
+      <div class="sub" id="sub-start"><h3 class="subh"><i class="si"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21s-6.5-5.6-6.5-11a6.5 6.5 0 0 1 13 0c0 5.4-6.5 11-6.5 11z"/><circle cx="12" cy="10" r="2.3"/></svg></i>Start from a place</h3>
       <div class="grp nearbox">
-        <div class="lab"><label for="near">Start from your office, metro or mall</label></div>
+        <div data-i="case" class="lab"><label for="near">Your office, metro or mall</label></div>
         <div class="nearwrap">
-          <input id="near" class="search" type="text" placeholder="Try ITPL, Ecoworld, Hoodi metro, Phoenix" autocomplete="off" role="combobox" aria-expanded="false" aria-controls="nearlist">
+          <svg class="sico" viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="6.5"/><path d="M16 16l4.5 4.5"/></svg>
+          <input id="near" class="search" type="text" placeholder="Type a metro, office or mall" autocomplete="off" role="combobox" aria-expanded="false" aria-controls="nearlist">
           <button class="x2" id="nearx" type="button" aria-label="Clear starting place" hidden>×</button>
           <ul class="sugg" id="nearlist" hidden></ul>
         </div>
+        <div data-i="office" class="lab qlab">Popular tech parks</div>
         <div class="chips" id="nearquick"></div>
+        <p class="tip">Tip: hold the yellow pin in the map search bar and drag it onto any spot.</p>
         <div class="grp" id="nearkmrow" hidden>
-          <div class="lab"><label for="nearkm">Show homes within</label><b id="nearkm-v">5 km</b></div>
+          <div data-i="radius" class="lab"><label for="nearkm">Show homes within</label><b id="nearkm-v">5 km</b></div>
           <input id="nearkm" type="range" min="1" max="20" step="1" value="5">
         </div>
       </div>
-
-      <div class="grp"><div class="lab">Type</div><div class="chips" id="f-kind"></div></div>
-      <div class="grp"><div class="lab">BHK</div><div class="chips" id="f-bhk"></div></div>
-
-      <div class="grp">
-        <div class="lab"><label for="pmax">Budget up to</label><b id="pmax-v">Any</b></div>
-        <input id="pmax" type="range" min="0" max="20" step="1" value="20">
       </div>
+      <div class="sub" id="sub-cor"><h3 class="subh"><i class="si"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 20c0-6 3-7 7-8s7-2 7-8"/><circle cx="5" cy="20" r="1.6"/><circle cx="19" cy="4" r="1.6"/></svg></i>Corridor</h3>
+        <div class="chips" id="f-cor"></div>
+      </div>
+      <div class="sub" id="sub-metro"><h3 class="subh"><i class="si"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="6" y="3" width="12" height="14" rx="3"/><path d="M6 11h12M9 21l1.5-4M15 21l-1.5-4M9.5 14h.01M14.5 14h.01"/></svg></i>Near a metro</h3>
       <div class="grp">
-        <div class="lab"><label for="sq">Home size at least</label><b id="sq-v">Any</b></div>
+        <div data-i="train" class="lab"><label for="metro">Any metro station within</label><b id="metro-v">Any</b></div>
+        <input id="metro" type="range" min="0" max="5" step="1" value="0">
+        <div class="ticks"><span>Any</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5 km</span></div>
+      </div>
+      </div>
+      </section>
+      <section class="fsec" id="sec-prop" aria-labelledby="fh-prop">
+      <h2 class="fh" id="fh-prop">Property filters</h2>
+      <div class="sub" id="sub-build"><h3 class="subh"><i class="si"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 21V6l8-3v18M12 9l8 2v10M3 21h18M7.5 9h1M7.5 13h1M7.5 17h1M15.5 14h1M15.5 17.5h1"/></svg></i>Build</h3>
+      <div class="grp">
+        <div data-i="hat" class="lab"><label for="dev-q">Search by builder</label></div>
+        <div class="nearwrap">
+          <svg class="sico" viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="6.5"/><path d="M16 16l4.5 4.5"/></svg>
+          <input id="dev-q" class="search" type="text" placeholder="Type a builder name" autocomplete="off" role="combobox" aria-expanded="false" aria-controls="dev-list">
+          <button class="x2" id="devx" type="button" aria-label="Clear builder" hidden>×</button>
+          <ul class="sugg" id="dev-list" hidden></ul>
+        </div>
+      </div>
+      <div class="grp"><div data-i="shapes" class="lab">Type</div><div class="chips" id="f-kind"></div></div>
+      <div class="grp"><div data-i="bed" class="lab">BHK</div><div class="chips" id="f-bhk"></div></div>
+      <div class="grp">
+        <div data-i="expand" class="lab"><label for="sq">Home size at least</label><b id="sq-v">Any</b></div>
         <input id="sq" type="range" min="0" max="4000" step="100" value="0">
       </div>
-
-      <div class="grp"><div class="lab">Corridor</div><div class="chips" id="f-cor"></div></div>
-      <div class="grp"><div class="lab">Stage</div><div class="chips" id="f-st"></div>
-        <label class="tog"><input id="sold" type="checkbox"> Also show sold-out projects</label>
-      </div>
-
-      <div class="grp"><div class="lab">Amenities</div>
+      <div class="grp"><div data-i="spark" class="lab">Amenities</div>
         <div class="dd" id="dd-am"><button type="button" class="ddbtn" id="am-btn" aria-expanded="false" aria-haspopup="true">Any amenities</button>
-          <div class="ddpanel" hidden><div class="ddlist" id="f-am"></div></div></div></div>
-
+          <div class="ddpanel" hidden><input id="am-q" class="search" type="text" placeholder="Search amenities" autocomplete="off" aria-label="Search amenities"><div class="ddlist" id="f-am"></div><p class="hint" id="am-none" hidden style="margin:6px 8px">No amenity by that name.</p></div></div></div>
+      </div>
+      <div class="sub" id="sub-budget"><h3 class="subh"><i class="si"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 4h10M7 8h10M7 4c6 0 6 8 0 8l7 8"/></svg></i>Budget</h3>
       <div class="grp">
-        <div class="lab"><label for="metro">Any metro station within</label><b id="metro-v">Any</b></div>
-        <input id="metro" type="range" min="0" max="5" step="1" value="0">
+        <div data-i="wallet" class="lab"><label for="pmax">Budget up to</label><b id="pmax-v">Any</b></div>
+        <input id="pmax" type="range" min="0" max="20" step="1" value="20">
+      </div>
+      </div>
+      <div class="sub" id="sub-stage"><h3 class="subh"><i class="si"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="5" width="16" height="16" rx="2.5"/><path d="M4 10h16M8.5 3v4M15.5 3v4"/></svg></i>Stage</h3>
+      <div class="grp"><div data-i="flag" class="lab">Status</div><div class="chips" id="f-st"></div>
+        <label class="tog"><span data-i="eye" class="lab2">Also show sold-out projects</span><input id="sold" type="checkbox"></label>
       </div>
       <div class="grp">
-        <div class="lab">Builder</div>
-        <div class="dd" id="dd-dev"><button type="button" class="ddbtn" id="dev-btn" aria-expanded="false" aria-haspopup="true">Any builder</button>
-          <div class="ddpanel" hidden><input id="dev-q" class="search" type="text" placeholder="Type a builder name" autocomplete="off" aria-label="Search builders"><div class="ddlist" id="dev-list"></div></div></div>
-      </div>
-      <div class="grp">
-        <div class="lab"><label for="poss">Possession</label></div>
+        <div data-i="key" class="lab"><label for="poss">Possession</label></div>
         <select id="poss"><option value="">Any possession</option><option value="2026">By 2026</option><option value="2027">By 2027</option><option value="2028">By 2028</option><option value="2029">By 2029</option><option value="2030">By 2030</option></select>
       </div>
-      <button class="reset" id="reset" type="button">Clear all filters</button>
+      </div>
+      </section>
       </div>
       <div class="ffoot"><button class="cta" id="fshow" type="button">Show projects</button></div>
       </div>
@@ -358,6 +698,15 @@ details summary{cursor:pointer;color:var(--mute);font-size:12.5px;margin-top:8px
           <option value="land">Largest land parcel</option>
         </select>
       </div>
+      <div class="lhead">
+      <div class="lsearch">
+        <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="6.5"/><path d="M16 16l4.5 4.5"/></svg>
+        <input id="lq" type="text" placeholder="Search this list by project, builder or area" autocomplete="off" aria-label="Search this list by project, builder or area">
+        <button id="lqx" type="button" aria-label="Clear list search" hidden>×</button>
+      </div>
+      <div class="rstats" id="rstats"></div>
+      <div class="sortrow" id="sortrow" role="group" aria-label="Sort results"></div>
+      </div>
       <div class="listbar" id="listbar"></div>
       <div class="list" id="list"></div>
       <button class="more" id="more" type="button" hidden>Show more</button>
@@ -370,19 +719,40 @@ details summary{cursor:pointer;color:var(--mute);font-size:12.5px;margin-top:8px
     <button id="b3d" type="button" aria-pressed="true" title="Switch between 3D and flat 2D view" aria-label="Switch between 3D and 2D view">2D</button>
   </div>
   <div class="mapbar">
+    <div class="gsearch nearwrap">
+      <svg class="sico" viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="6.5"/><path d="M16 16l4.5 4.5"/></svg>
+      <input id="gq" class="search" type="text" placeholder="Search, or drag the pin →" autocomplete="off" role="combobox" aria-expanded="false" aria-controls="gbox" aria-label="Search project, area, tech park, metro or mall. Or drag the pin onto the map">
+      <button class="x2" id="gx" type="button" aria-label="Clear search" hidden>×</button>
+      <button id="gpin" type="button" aria-label="Hold and drag onto the map to drop a pin" title="Hold and drag onto the map to drop a pin"><svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M12 22s-7-6-7-12a7 7 0 0 1 14 0c0 6-7 12-7 12z" fill="#0a0f1e"/><circle cx="12" cy="10" r="2.6" fill="#ffb72b"/></svg><i aria-hidden="true"><svg viewBox="0 0 24 24" width="10" height="10" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v18M3 12h18M12 3l-3 3M12 3l3 3M12 21l-3-3M12 21l3-3M3 12l3-3M3 12l3 3M21 12l-3-3M21 12l-3 3"/></svg></i></button>
+      <em class="pinhint" aria-hidden="true">Hold this pin and drag it onto the map</em>
+      <div class="gbox" id="gbox" hidden><div class="gtabs" id="gtabs" role="tablist" aria-label="Kind of result"></div><ul class="sugg" id="glist"></ul></div>
+    </div>
     <button class="mbtn lt" data-c="office" type="button" aria-pressed="false">Offices</button>
     <button class="mbtn lt" data-c="mall" type="button" aria-pressed="false">Malls</button>
     <button class="mbtn lt" data-c="metro" type="button" aria-pressed="true" aria-label="Metro stops"><span>Metro<span class="lg"> stops</span></span></button>
     <button class="mbtn" id="bsat" type="button" aria-pressed="false" hidden>Satellite</button>
   </div>
   <div class="key" aria-label="What the colours mean">
-    <b>Colour shows the home type</b>
-    <div class="keyrow"><span><i style="background:#38bdf8"></i>Apartments</span><span><i style="background:#2fd08a"></i>Villas</span><span><i style="background:#ff7a5c"></i>Plots</span></div>
-    <div class="keyrow sub"><span><i style="background:#3f7f99"></i>Paler = likely match</span><span><i style="background:#343a4c"></i>Grey = not a match</span></div>
-    <div class="keyrow sub"><span>Metro<i class="ln" style="background:#b565f5;margin-left:6px"></i><i class="ln" style="background:#2fbf71"></i><i class="ln" style="background:#ffe14a"></i><i class="ln" style="background:#ff5fa8"></i><i class="ln" style="background:#4a90ff"></i></span><span>Dashed = opening later</span></div>
+    <b><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 11V5.5a1.5 1.5 0 0 1 3 0V11m0-1.5a1.5 1.5 0 0 1 3 0V12m0-1a1.5 1.5 0 0 1 3 0v4a6 6 0 0 1-6 6h-1a6 6 0 0 1-5-2.7L3.8 15a1.6 1.6 0 0 1 2.6-1.8L9 15.5"/></svg>Tap to filter the map</b>
+    <em class="tip2 khint" aria-hidden="true">Tap a type to filter the map</em>
+    <div class="keyrow kbtns" id="keykind" role="group" aria-label="Filter by home type">
+      <button type="button" class="kb" data-k="apt" aria-pressed="false"><i style="background:#38bdf8"></i>Apartments<em></em></button>
+      <button type="button" class="kb" data-k="villa" aria-pressed="false"><i style="background:#2fd08a"></i>Villas<em></em></button>
+      <button type="button" class="kb" data-k="plot" aria-pressed="false"><i style="background:#ff7a5c"></i>Plots<em></em></button>
+    </div>
+    <div class="keyrow ksub kbtns" role="group" aria-label="Show or hide on the map">
+      <button type="button" class="kb kv" id="kmay" aria-pressed="true" title="Show or hide projects that may fit"><i style="background:#3f7f99"></i><span class="lbl"><span class="kl">Faded: </span>May fit<span class="kl">, ask us</span></span><svg class="eye" viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12s3.6-6.5 10-6.5S22 12 22 12s-3.6 6.5-10 6.5S2 12 2 12z"/><circle cx="12" cy="12" r="2.8"/><path class="slash" d="M4 4l16 16"/></svg></button>
+      <button type="button" class="kb kv" id="kout" aria-pressed="true" title="Show or hide projects outside your filters"><i style="background:#343a4c"></i><span class="lbl"><span class="kl">Dark: </span>Outside <span class="kl">your </span>filters</span><svg class="eye" viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12s3.6-6.5 10-6.5S22 12 22 12s-3.6 6.5-10 6.5S2 12 2 12z"/><circle cx="12" cy="12" r="2.8"/><path class="slash" d="M4 4l16 16"/></svg></button>
+    </div>
+    <div class="keyrow ksub"><span>Metro<i class="ln" style="background:#b565f5;margin-left:6px"></i><i class="ln" style="background:#2fbf71"></i><i class="ln" style="background:#ffe14a"></i><i class="ln" style="background:#ff5fa8"></i><i class="ln" style="background:#4a90ff"></i></span><span>Dashed = opening later</span></div>
   </div>
-  <button class="fpill" id="bfilters" type="button" aria-label="Filters">
-    <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M4 7h10M18 7h2M4 12h3M11 12h9M4 17h12M20 17h0"/><circle cx="16" cy="7" r="2"/><circle cx="9" cy="12" r="2"/><circle cx="18" cy="17" r="2"/></svg>
+  <button class="fpill floc" id="bloc" type="button" aria-label="Location filters" title="Location filters">
+    <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21s7-6.2 7-11.5A7 7 0 0 0 5 9.5C5 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/></svg>
+    <b class="tip2 fhint" aria-hidden="true">Tap for filters</b>
+    <span id="lbadge"></span>
+  </button>
+  <button class="fpill" id="bfilters" type="button" aria-label="Property filters" title="Property filters">
+    <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 21V6l8-3v18M12 9l8 2.5V21M2.5 21h19M7.500 8.500v0M7.500 12.5v0M7.500 16.500v0M16 14v0M16 17.500v0"/></svg>
     <span id="fbadge"></span>
   </button>
   <div class="attr">Map data © <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a> contributors</div>
@@ -394,16 +764,16 @@ details summary{cursor:pointer;color:var(--mute);font-size:12.5px;margin-top:8px
 <script>
 "use strict";
 /* ---------- settings you can change ---------- */
-const CONFIG = {
+const CONFIG = {placeSearch:"https://photon.komoot.io/api/", mapsIcon:"gmaps.png", 
   whatsapp: "917760942976",            // BharatProps WhatsApp number with country code, digits only, e.g. "9198XXXXXXXX"
   brand: "BharatProps",
   dataDate: "Nov 2026"
 };
 
 /* ---------- helpers ---------- */
-const BP = {"111222":"cloud-forest-alembic-city","107165":"evergreen-at-prestige-raintree-park","104237":"adarsh-euphoria","104964":"assetz-66-shibui","105430":"sobha-crystal-meadows","105703":"vaswani-starlight","105651":"jrc-palladio","105464":"mana-the-right-life","106236":"godrej-woodscapes","101641":"rohan-ekanta","106184":"sbr-minara","105505":"provident-botanico","106482":"sowparnika-euphoria","103901":"adarsh-welkin-park-villas-sarjapur-road-bangalore","104018":"sobha-neopolis","103996":"spectra-parijatha","103928":"arvind-forest-trails-sarjapur-bangalore-villas","103597":"orchid-platinum","103258":"sumadhura-sarang","105542":"assetz-melodies-of-life","104116":"mana-dale","104757":"prestige-somerville","103317":"prestige-serenity-shores","103953":"prestige-glenbrook","104214":"abhee-celestial-city","103149":"prestige-park-grove","84402":"adarsh-park-heights-phase-2","103542":"orchid-bloomsberry","103841":"abhee-silicon-shine-phase-2","104337":"adarsh-parkland","104582":"orchid-life","104060":"brigade-sanctuary","115803":"brigade-granada","900001":"the-berries-for-birds","900003":"sumadhura-folium-phase-3","112455":"tru-lake-sky","105619":"purva-plots-in-sarjapur"}; // project id -> page on bharatprops.com
+const BP = {};   // project id -> BharatProps page, from the bharatprops_slug column of projects.csv // project id -> page on bharatprops.com
 const BP_SITE = "https://www.bharatprops.com";
-const BP_IMG = {"cloud-forest-alembic-city":"https://www.bharatprops.com/cms-api/media/file/hero-wide-1602.webp","evergreen-at-prestige-raintree-park":"https://www.bharatprops.com/cms-api/media/file/hero-wide-1600.webp","adarsh-euphoria":"https://www.bharatprops.com/cms-api/media/file/adarsh-euphoria-hero.webp","assetz-66-shibui":"https://www.bharatprops.com/cms-api/media/file/assetz-66-shibui-hero.webp","sobha-crystal-meadows":"https://www.bharatprops.com/cms-api/media/file/sobha-crystal-meadows-hero-hd.webp","vaswani-starlight":"https://www.bharatprops.com/cms-api/media/file/vaswani-starlight-hero.webp","jrc-palladio":"https://www.bharatprops.com/cms-api/media/file/jrc-palladio-hero.webp","mana-the-right-life":"https://www.bharatprops.com/cms-api/media/file/mana-the-right-life-hero.webp","godrej-woodscapes":"https://www.bharatprops.com/cms-api/media/file/godrej-woodscapes-hero.webp","rohan-ekanta":"https://www.bharatprops.com/cms-api/media/file/rohan-ekanta-hero.webp","sbr-minara":"https://www.bharatprops.com/cms-api/media/file/sbr-minara-hero-hd.webp","provident-botanico":"https://www.bharatprops.com/cms-api/media/file/provident-botanico-hero-hd.webp","sowparnika-euphoria":"https://www.bharatprops.com/cms-api/media/file/sowparnika-euphoria-hero-hd.webp","adarsh-welkin-park-villas-sarjapur-road-bangalore":"https://www.bharatprops.com/cms-api/media/file/adarsh-welkin-park-villas-sarjapur-road-bangalore-hero.webp","sobha-neopolis":"https://www.bharatprops.com/cms-api/media/file/sobha-neopolis-hero.webp","spectra-parijatha":"https://www.bharatprops.com/wp-content/uploads/2024/01/g3.webp","arvind-forest-trails-sarjapur-bangalore-villas":"https://www.bharatprops.com/cms-api/media/file/arvind-forest-trails-sarjapur-bangalore-villas-hero.webp","orchid-platinum":"https://www.bharatprops.com/cms-api/media/file/orchid-platinum-hero-hd.webp","sumadhura-sarang":"https://www.bharatprops.com/cms-api/media/file/sumadhura-sarang-hero.webp","assetz-melodies-of-life":"https://www.bharatprops.com/cms-api/media/file/assetz-melodies-of-life-hero.webp","mana-dale":"https://www.bharatprops.com/cms-api/media/file/mana-dale-hero.webp","prestige-somerville":"https://www.bharatprops.com/cms-api/media/file/prestige-somerville-hero.webp","prestige-serenity-shores":"https://www.bharatprops.com/cms-api/media/file/prestige-serenity-shores-hero.webp","prestige-glenbrook":"https://www.bharatprops.com/cms-api/media/file/prestige-glenbrook-hero.webp","abhee-celestial-city":"https://www.bharatprops.com/cms-api/media/file/abhee-celestial-city-hero.webp","prestige-park-grove":"https://www.bharatprops.com/cms-api/media/file/prestige-park-grove-hero-hz.webp","adarsh-park-heights-phase-2":"https://www.bharatprops.com/cms-api/media/file/adarsh-park-heights-phase-2-hero.webp","orchid-bloomsberry":"https://www.bharatprops.com/cms-api/media/file/orchid-bloomsberry-hero-hd.webp","abhee-silicon-shine-phase-2":"https://www.bharatprops.com/cms-api/media/file/abhee-silicon-shine-phase-2-hero.webp","adarsh-parkland":"https://www.bharatprops.com/cms-api/media/file/adarsh-parkland-hero.webp","orchid-life":"https://www.bharatprops.com/cms-api/media/file/orchid-life-hero-hz.webp","brigade-sanctuary":"https://www.bharatprops.com/cms-api/media/file/brigade-sanctuary-hero-hd.webp","brigade-granada":"https://www.bharatprops.com/cms-api/media/file/brigade-granada-hero-hd.webp","the-berries-for-birds":"https://www.bharatprops.com/cms-api/media/file/hero-wide-1601.webp","sumadhura-folium-phase-3":"https://www.bharatprops.com/cms-api/media/file/sumadhura-folium-phase-3-hero.webp","tru-lake-sky":"https://www.bharatprops.com/cms-api/media/file/tru-lake-sky-hero.webp","purva-plots-in-sarjapur":"https://www.bharatprops.com/cms-api/media/file/purva-plots-sarjapur-banner.jpg"}; // page slug -> BharatProps hero image
+const BP_IMG = {}; // page slug -> BharatProps hero image
 const $ = id => document.getElementById(id);
 const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 const money = l => l == null ? "" : (l >= 100 ? "₹" + (l/100).toFixed(l % 100 === 0 ? 0 : 2).replace(/0$/,"").replace(/\.$/,"") + " Cr" : "₹" + Math.round(l) + " L");
@@ -411,30 +781,77 @@ const BUDGET = [40,50,60,75,90,100,125,150,175,200,250,300,350,400,500,600,750,1
 const KIND = {apt:"Apartments", villa:"Villas", plot:"Plots"};
 const STAGE = {new:"New launch", uc:"Under construction", ready:"Ready to move"};
 const AMEN = {pool:"Pool",gym:"Gym",clubhouse:"Clubhouse",kids:"Kids play",jogging:"Jogging track",courts:"Sports courts",tennis:"Tennis",basketball:"Basketball",badminton:"Badminton",squash:"Squash",cricket:"Cricket",indoor:"Indoor games",spa:"Spa or sauna",yoga:"Yoga",amphi:"Amphitheatre",theatre:"Mini theatre",pet:"Pet park",cowork:"Co-working",party:"Party hall",retail:"Shops inside",cycling:"Cycling track",library:"Library"};
+const ICO = {
+case:'<rect x="3" y="7" width="18" height="13" rx="2"/><path d="M9 7V5a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v2M3 13h18"/>',
+radius:'<circle cx="12" cy="12" r="8.5"/><circle cx="12" cy="12" r="2.2"/><path d="M13.6 10.4L18 6"/>',
+train:'<rect x="6" y="3" width="12" height="14" rx="3"/><path d="M6 11h12M9 21l1.5-4M15 21l-1.5-4M9.5 14h.01M14.5 14h.01"/>',
+hat:'<path d="M3 17h18v2H3zM5 17v-2a7 7 0 0 1 14 0v2M10 8.3V5h4v3.3"/>',
+shapes:'<rect x="4" y="4" width="7" height="7" rx="1.5"/><rect x="13" y="4" width="7" height="7" rx="1.5"/><rect x="4" y="13" width="7" height="7" rx="1.5"/><circle cx="16.5" cy="16.5" r="3.5"/>',
+bed:'<path d="M3 19V6M3 15h18v4M21 15v-2a3 3 0 0 0-3-3h-7v5"/><circle cx="7" cy="11.5" r="1.6"/>',
+expand:'<path d="M4 9V4h5M20 15v5h-5M4 4l6 6M20 20l-6-6"/>',
+spark:'<path d="M12 3l2 6 6 2-6 2-2 6-2-6-6-2 6-2z"/>',
+wallet:'<path d="M16 7V4H6a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2H4.500M16 13.500h.01"/>',
+flag:'<path d="M5 21V4h11l-2 4 2 4H5"/>',
+key:'<circle cx="8" cy="15" r="4"/><path d="M11 12l8-8M16 7l3 3M13.5 9.500l2 2"/>',
+office:'<path d="M5 21V5a2 2 0 0 1 2-2h7a2 2 0 0 1 2 2v16M16 10h3v11M3 21h18M9 7h3M9 11h3M9 15h3"/>',
+bag:'<path d="M5 8h14l-1 12H6z"/><path d="M9 8V6a3 3 0 0 1 6 0v2"/>',
+eye:'<path d="M2 12s3.6-6.5 10-6.500S22 12 22 12s-3.6 6.5-10 6.500S2 12 2 12z"/><circle cx="12" cy="12" r="2.8"/>',
+pin:'<path d="M12 21s-6.5-5.6-6.5-11a6.5 6.5 0 0 1 13 0c0 5.4-6.5 11-6.5 11z"/><circle cx="12" cy="10" r="2.3"/>',
+apt:'<path d="M6 21V4h9v17M15 9h4v12M3 21h18M9 8h3M9 12h3M9 16h3"/>',
+villa:'<path d="M3 11l9-7 9 7M5 10v10h14V10M10 20v-6h4v6"/>',
+plot:'<rect x="3" y="5" width="18" height="14" rx="1.5" stroke-dasharray="3 2.5"/><path d="M12 5v14M3 12h18"/>',
+new:'<path d="M12 3l2.6 5.6 6 .7-4.5 4.1 1.3 6-5.4-3.1-5.4 3.1 1.3-6L3.4 9.300l6-.7z"/>',
+uc:'<path d="M6 21V3l13 4H6M17 6.500V11M15 11h4v3h-4zM3 21h7"/>',
+ready:'<circle cx="8" cy="15" r="4"/><path d="M11 12l8-8M16 7l3 3M13.5 9.500l2 2"/>'};
+const ic = (n, z) => `<svg class="ic" viewBox="0 0 24 24" width="${z||15}" height="${z||15}" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${ICO[n]}</svg>`;
+const AMEN_ICO = {
+pool:'<path d="M2 19c2 0 2-1.5 4-1.5S8 19 10 19s2-1.5 4-1.5 2 1.5 4 1.5 2-1.5 4-1.5"/><path d="M8 14V6a2 2 0 0 1 4 0M14 14V6a2 2 0 0 1 4 0M8 10h6"/>',
+gym:'<path d="M6 7v10M3 9.5v5M18 7v10M21 9.5v5M6 12h12"/>',
+clubhouse:'<path d="M3 11l9-7 9 7M5 10v10h14V10M10 20v-6h4v6"/>',
+kids:'<path d="M4 20L8 4h8l4 16M10 4v9M14 4v9M9 13h6"/>',
+jogging:'<path d="M3 17v-6l4 1 3-4 3 5 6 2a2 2 0 0 1 2 2H3z"/><path d="M3 20h18"/>',
+courts:'<rect x="3" y="5" width="18" height="14" rx="1.5"/><path d="M12 5v14"/><circle cx="12" cy="12" r="2.5"/>',
+tennis:'<circle cx="12" cy="12" r="9"/><path d="M5.5 5.8c3 2.8 3 9.6 0 12.4M18.5 5.8c-3 2.8-3 9.6 0 12.4"/>',
+basketball:'<circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3v18M5.6 5.6c3.4 3.2 3.4 9.6 0 12.8M18.4 5.6c-3.4 3.2-3.4 9.6 0 12.8"/>',
+badminton:'<circle cx="12" cy="18.5" r="2.5"/><path d="M9.8 17L6 5l4 2 2-4 2 4 4-2-3.8 12"/>',
+squash:'<ellipse cx="14.5" cy="8.5" rx="5" ry="6" transform="rotate(35 14.5 8.5)"/><path d="M10.8 13.6L4 21"/>',
+cricket:'<path d="M14 3l4 4-9 9-4-4z"/><path d="M7 14l-4 4"/><circle cx="18.5" cy="17.5" r="2.2"/>',
+indoor:'<rect x="4" y="4" width="16" height="16" rx="3"/><path d="M8.5 8.5h.01M15.5 8.5h.01M12 12h.01M8.5 15.5h.01M15.5 15.5h.01" stroke-width="2.6"/>',
+spa:'<path d="M12 4c3 3 3 8 0 12-3-4-3-9 0-12z"/><path d="M4 10c4 0 7 2 8 6-4 1-7-1-8-6zM20 10c-4 0-7 2-8 6 4 1 7-1 8-6z"/><path d="M6 20h12"/>',
+yoga:'<circle cx="12" cy="5" r="2"/><path d="M12 8v6M5 11l7 1 7-1M6 20l6-6 6 6"/>',
+amphi:'<path d="M3 8a9 9 0 0 0 18 0M6.5 8a5.5 5.5 0 0 0 11 0M10 8a2 2 0 0 0 4 0"/><path d="M3 20h18"/>',
+theatre:'<rect x="3" y="6" width="18" height="12" rx="2"/><path d="M10 9.5v5l4.5-2.5z"/>',
+pet:'<circle cx="6.5" cy="10.5" r="1.6"/><circle cx="10" cy="6.5" r="1.6"/><circle cx="14" cy="6.5" r="1.6"/><circle cx="17.5" cy="10.5" r="1.6"/><path d="M8 17.5c0-3 2-5 4-5s4 2 4 5c0 1.4-1.2 2-2.100 2s-1.300-.5-1.9-.5-1 .5-1.9.5S8 18.9 8 17.5z"/>',
+cowork:'<rect x="5" y="5" width="14" height="10" rx="1.5"/><path d="M2.5 19h19"/>',
+party:'<path d="M4 20l3.5-11 7.5 7.5z"/><path d="M14 3.5v2M19.5 4.5L18 6M20.5 10h-2M12 9c1-1 1-2.5 0-3.5"/>',
+retail:'<path d="M5 8h14l-1 12H6z"/><path d="M9 8V6a3 3 0 0 1 6 0v2"/>',
+cycling:'<circle cx="6" cy="16" r="3.5"/><circle cx="18" cy="16" r="3.5"/><path d="M6 16l4-8h5l3 8M10 8l4 8M9 5.5h3"/>',
+library:'<path d="M12 6c-2-1.5-5-1.5-8-1v13c3-.5 6-.5 8 1 2-1.5 5-1.5 8-1V5c-3-.5-6-.5-8 1zM12 6v13"/>'};
 const AMEN_TOP = ["pool","gym","clubhouse","kids","jogging","courts","tennis","basketball","indoor","spa","yoga","pet","cowork","theatre"];
-const LM = [ // curated landmarks: [name, lat, lng, type]
-  ["ITPL",12.9877,77.7369,"office"],["EPIP Zone, Whitefield",12.9782,77.7247,"office"],["GR Tech Park",12.9865,77.7448,"office"],["Kalyani Platina Tech Park",12.9714,77.7175,"office"],
-  ["Brigade Tech Gardens",12.9638,77.7201,"office"],["RMZ NXT",12.9783,77.7119,"office"],["Prestige Shantiniketan",12.9893,77.7267,"office"],["Bagmane WTC, Mahadevapura",12.9842,77.6942,"office"],
-  ["Bagmane Tech Park",12.9788,77.6589,"office"],["Embassy Golf Links",12.9534,77.6442,"office"],["RMZ Ecoworld",12.9298,77.6846,"office"],["RMZ Ecospace",12.9283,77.6812,"office"],
-  ["Embassy TechVillage",12.9307,77.6914,"office"],["Embassy Tech Square",12.9351,77.6935,"office"],["Cessna Business Park",12.9369,77.6951,"office"],["Prestige Tech Park",12.9423,77.6936,"office"],
-  ["RGA Tech Park, Sarjapur Road",12.9023,77.7059,"office"],["Electronic City",12.85,77.67,"office"],["Manyata Tech Park",13.0502,77.6234,"office"],
-  ["Phoenix Marketcity",12.9970,77.6967,"mall"],["VR Bengaluru",12.9963,77.6955,"mall"],["Nexus Shantiniketan",12.9897,77.7281,"mall"],["Nexus Whitefield",12.9597,77.7480,"mall"],
-  ["Park Square Mall, ITPL",12.9870,77.7364,"mall"],["Brookefield Mall",12.9661,77.7179,"mall"],["Orion Uptown Mall",13.0554,77.7637,"mall"],["Gopalan Grand Mall",12.9934,77.6641,"mall"],
-  ["Nexus Koramangala",12.9348,77.6113,"mall"],["Market Square Mall",12.9219,77.6204,"mall"],["M5 ECity Mall",12.8419,77.6770,"mall"],
-  ["KR Puram Railway Station",13.00065,77.67533,"rail"],["Whitefield Railway Station",12.9957,77.7579,"rail"],["SMVT Railway Terminal",12.9997,77.6412,"rail"],["Bengaluru Airport",13.19889,77.70556,"rail"]
-];
+let LM = [];   // landmarks [name, lat, lng, type], loaded from places.csv
 const LM_TYPE = {office:"Tech park", mall:"Mall", metro:"Metro", rail:"Station", area:"Area", pin:"Pin"};
-const QUICK = ["ITPL","RMZ Ecoworld","Embassy TechVillage","Bagmane Tech Park","Prestige Tech Park"];
+let QUICK = [];   // popular tech parks, from the "popular" column of places.csv
 const kmBetween = (a,b,c,d) => { const R = 6371, p = Math.PI/180, x = Math.sin((c-a)*p/2)**2 + Math.cos(a*p)*Math.cos(c*p)*Math.sin((d-b)*p/2)**2; return 2*R*Math.asin(Math.sqrt(x)); };
-let PLACES = [], picking = false, originMarker = null, LABELS = [], lmOff = new Set(["office","mall"]);
+let radMarker = null, pinDragAt = 0, DEVS = [], PLACES = [], picking = false, originMarker = null, LABELS = [], lmOff = new Set(["office","mall"]);
 const bucket = b => b >= 5 ? 5 : Math.floor(b);
 
-const S0 = () => ({q:"", kind:new Set(), bhk:new Set(), pmax:null, sq:0, cor:new Set(), st:new Set(), sold:false, am:new Set(), metro:0, near:null, nearKm:5, dev:"", poss:"", sort:"best"});
+const S0 = () => ({q:"", kind:new Set(), bhk:new Set(), pmax:null, sq:0, cor:new Set(), st:new Set(), sold:false, am:new Set(), metro:0, near:null, nearKm:5, dev:"", poss:"", sort:"best", strict:false, hideOut:false});
 let S = S0(), P = [], BASE = null, map = null, online = false, shown = 40, openId = null, labelMarkers = [];
 let saved = new Set();
 try { saved = new Set(JSON.parse(localStorage.getItem("bp-list") || "[]")); } catch(e) {}
 const persist = () => { try { localStorage.setItem("bp-list", JSON.stringify([...saved])); } catch(e) {} };
 
+/* ---------- home types inside one project: some sell apartments and villas together ---------- */
+function unitKind(n){ n = n.toLowerCase(); return /plot/.test(n) ? "plot" : /villament|sky bungalow/.test(n) ? "apt" : /villa|row ?house|townhouse|bungalow/.test(n) ? "villa" : "other"; }
+function typeKinds(p){
+  const k = p.u.map(u => unitKind(u[0])), v = k.includes("villa"), o = k.includes("other") || k.includes("apt"), pl = k.includes("plot");
+  if (p.kind === "apt" && v && !o && !pl) p.kind = "villa";     // listed as apartments at source, but every home is a villa
+  // which type each unit row belongs to: unnamed rows ("3 BHK") follow the project, unless the project also lists villas by name
+  const uk = k.map(x => p.kind === "plot" ? (x === "villa" && pl ? "villa" : "plot") : x === "other" ? (v && o ? "apt" : p.kind) : x);
+  const ks = ["apt","villa","plot"].filter(z => uk.includes(z));
+  p.kinds = ks.length > 1 ? ks : [p.kind];
+  p.uk = ks.length > 1 ? uk : null;
+}
 /* ---------- matching: 2 = fits, 1 = likely, 0 = no ---------- */
 function unitFit(u){
   // u = [name, beds, sqft, priceLakh]; returns 2 fits, 1 unknown, 0 fails
@@ -446,7 +863,7 @@ function unitFit(u){
 }
 function match(p){
   if (p.sold && !S.sold) return 0;
-  if (S.kind.size && !S.kind.has(p.kind)) return 0;
+  if (S.kind.size && !p.kinds.some(k => S.kind.has(k))) return 0;
   if (S.cor.size && !S.cor.has(p.cor)) return 0;
   if (S.st.size && !S.st.has(p.st)) return 0;
   for (const a of S.am) if (!p.am.includes(a)) return 0;
@@ -454,10 +871,10 @@ function match(p){
   if (S.near && p.d > S.nearKm) return 0;
   if (S.dev && p.brand !== S.dev) return 0;
   if (S.poss){ if (p.st !== "ready" && (!p.py || p.py > +S.poss)) return 0; }
-  if (S.q){ const h = (p.name + " " + p.dev + " " + p.loc + " " + p.cor).toLowerCase(); for (const w of S.q.toLowerCase().split(/\s+/)) if (w && !h.includes(w)) return 0; }
+  if (S.q){ const h = (p.name + " " + p.dev + " " + (p.brand || "") + " " + p.loc + " " + p.cor).toLowerCase(); for (const w of S.q.toLowerCase().split(/\s+/)) if (w && !h.includes(w)) return 0; }
   if (!S.bhk.size && S.pmax == null && !S.sq) return 2;
   let best = 0;
-  for (const u of p.u){ const f = unitFit(u); if (f > best) best = f; if (best === 2) break; }
+  for (let i = 0; i < p.u.length; i++){ if (p.uk && S.kind.size && !S.kind.has(p.uk[i])) continue; const f = unitFit(p.u[i]); if (f > best) best = f; if (best === 2) break; }
   if (best === 1 && S.pmax != null && p.pmin > S.pmax) best = 0; // unit price not listed and even the cheapest home is over budget
   if (best) return best;
   // fall back to the project's stated range when unit rows are missing
@@ -469,9 +886,9 @@ function match(p){
   return 0;
 }
 function fromPrice(p){
-  // lowest price among units that satisfy BHK and size, else project minimum
-  let m = null;
-  if (S.bhk.size || S.sq) for (const u of p.u){ if (u[3] != null && unitFit(u)) m = m == null ? u[3] : Math.min(m, u[3]); }
+  // lowest price among units that satisfy BHK, size and (for a mixed project) the chosen home type, else project minimum
+  let m = null; const kf = p.uk && S.kind.size, uf = S.bhk.size || S.sq;
+  if (uf || kf) p.u.forEach((u, i) => { if (kf && !S.kind.has(p.uk[i])) return; if (u[3] != null && (!uf || unitFit(u))) m = m == null ? u[3] : Math.min(m, u[3]); });
   return m ?? p.pmin;
 }
 
@@ -482,9 +899,11 @@ function chipGroup(el, items, set, labelOf){
     const b = e.target.closest(".chip"); if (!b) return;
     let v = b.dataset.v; if (el.id === "f-bhk") v = +v;
     set().has(v) ? set().delete(v) : set().add(v);
-    b.setAttribute("aria-pressed", set().has(v)); apply();
+    b.setAttribute("aria-pressed", set().has(v));
+    apply();
   });
 }
+function rangeFill(){ for (const r of document.querySelectorAll("#filters input[type=range]")) r.style.setProperty("--p", ((r.value - r.min) / (r.max - r.min) * 100) + "%"); }
 function syncUI(){
   $("sold").checked = S.sold;
   $("pmax").value = S.pmax == null ? 20 : BUDGET.indexOf(S.pmax); $("pmax-v").textContent = S.pmax == null ? "Any" : money(S.pmax);
@@ -492,31 +911,48 @@ function syncUI(){
   $("metro").value = S.metro; $("metro-v").textContent = S.metro ? S.metro + " km" : "Any";
   $("near").value = S.near ? S.near.n : ""; $("nearx").hidden = !S.near; $("nearkmrow").hidden = !S.near; $("nearkm").value = S.nearKm; $("nearkm-v").textContent = S.nearKm + " km";
   for (const b of $("nearquick").children) b.setAttribute("aria-pressed", b.dataset.pick ? picking : !!(S.near && S.near.n === b.dataset.n));
-  $("dev-btn").textContent = S.dev || "Any builder"; $("dev-btn").classList.toggle("set", !!S.dev);
+  if (document.activeElement !== $("gq")){ const g = S.near ? S.near.n : S.dev; $("gq").value = g || ""; $("gx").hidden = !g; $("gq").classList.toggle("set", !!g); }
+  if (document.activeElement !== $("dev-q") || S.dev) $("dev-q").value = S.dev; $("devx").hidden = !S.dev; $("dev-q").classList.toggle("set", !!S.dev);
   const am = [...S.am].map(a => AMEN[a]); $("am-btn").textContent = am.length ? am.slice(0,2).join(", ") + (am.length > 2 ? " +" + (am.length-2) : "") : "Any amenities"; $("am-btn").classList.toggle("set", am.length > 0);
-  $("poss").value = S.poss; $("sort").value = S.sort;
+  $("poss").value = S.poss; $("sort").value = S.sort; if (document.activeElement !== $("lq")) $("lq").value = S.q; $("lqx").hidden = !S.q;
   const sets = {"f-kind":S.kind,"f-bhk":S.bhk,"f-cor":S.cor,"f-st":S.st,"f-am":S.am};
+  rangeFill();
+  for (const b of $("keykind").children) b.setAttribute("aria-pressed", S.kind.has(b.dataset.k)); $("keykind").classList.toggle("some", S.kind.size > 0); $("kmay").setAttribute("aria-pressed", !S.strict); $("kout").setAttribute("aria-pressed", !S.hideOut);
   for (const id in sets) for (const b of $(id).children){ let v = b.dataset.v; if (id === "f-bhk") v = +v; b.setAttribute("aria-pressed", sets[id].has(v)); }
 }
 function buildUI(){
   chipGroup($("f-kind"), Object.keys(KIND), () => S.kind, v => KIND[v]);
-  const TC = {apt:"#38bdf8", villa:"#2fd08a", plot:"#ff7a5c"}; for (const b of $("f-kind").children) b.insertAdjacentHTML("afterbegin", `<i class="tdot" style="background:${TC[b.dataset.v]};box-shadow:0 0 0 1.5px var(--night)"></i>`);
+  const TC = {apt:"#38bdf8", villa:"#2fd08a", plot:"#ff7a5c"}; for (const b of $("f-kind").children){ b.style.setProperty("--tc", TC[b.dataset.v]); b.insertAdjacentHTML("afterbegin", ic(b.dataset.v, 20)); }
+  for (const el of document.querySelectorAll("#filters [data-i]")){ const t = el.firstElementChild && el.firstElementChild.tagName === "LABEL" ? el.firstElementChild : el; if (t === el && el.classList.contains("lab")) el.innerHTML = `<span>${el.innerHTML}</span>`; (t === el ? (el.firstElementChild || el) : t).insertAdjacentHTML("afterbegin", ic(el.dataset.i, 14)); }
   chipGroup($("f-bhk"), [1,2,3,4,5], () => S.bhk, v => v === 5 ? "5+" : v);
   chipGroup($("f-cor"), [...new Set(P.map(p => p.cor))].sort(), () => S.cor, v => v);
   chipGroup($("f-st"), Object.keys(STAGE), () => S.st, v => STAGE[v]);
+  for (const b of $("f-st").children) b.insertAdjacentHTML("afterbegin", ic(b.dataset.v, 16));
+  for (const b of $("f-cor").children) b.insertAdjacentHTML("afterbegin", ic("pin", 15));
   chipGroup($("f-am"), Object.keys(AMEN), () => S.am, v => AMEN[v]);
+  for (const b of $("f-am").children) b.innerHTML = `<svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${AMEN_ICO[b.dataset.v] || ""}</svg><span>${esc(AMEN[b.dataset.v])}</span>`;
   const devs = {}; P.forEach(p => { if (!p.sold && p.brand) devs[p.brand] = (devs[p.brand]||0)+1; });
-  const DEVS = Object.entries(devs).sort((a,b) => a[0].localeCompare(b[0]));
-  const devList = () => { const q = $("dev-q").value.trim().toLowerCase(), hits = DEVS.filter(e => e[0].toLowerCase().includes(q));
-    $("dev-list").innerHTML = `<button type="button" class="chip" data-v="" aria-pressed="${!S.dev}">Any builder</button>` + (hits.map(e => `<button type="button" class="chip" data-v="${esc(e[0])}" aria-pressed="${S.dev === e[0]}">${esc(e[0])} <small>${e[1]}</small></button>`).join("") || `<p class="hint" style="margin:8px 10px">No builder by that name.</p>`); };
+  DEVS = Object.entries(devs).sort((a,b) => a[0].localeCompare(b[0]));
+  const devHide = () => { $("dev-list").hidden = true; $("dev-q").setAttribute("aria-expanded", "false"); };
+  const devPick = v => { S.dev = v; devHide(); $("dev-q").blur(); syncUI(); apply(); };
+  const devList = () => { const q = $("dev-q").value.trim().toLowerCase(); if (S.dev && q !== S.dev.toLowerCase()){ S.dev = ""; $("devx").hidden = true; $("dev-q").classList.remove("set"); apply(); }
+    if (!q || S.dev){ devHide(); return; }
+    const hits = DEVS.filter(e => e[0].toLowerCase().includes(q)).sort((a,b) => (a[0].toLowerCase().startsWith(q) ? 0 : 1) - (b[0].toLowerCase().startsWith(q) ? 0 : 1));
+    $("dev-list").innerHTML = hits.map(e => `<li data-v="${esc(e[0])}"><span>${esc(e[0])}</span><span>${e[1]} project${e[1] > 1 ? "s" : ""}</span></li>`).join("") || `<li class="sh">No builder by that name</li>`;
+    $("dev-list").scrollTop = 0; $("dev-list").hidden = false; $("dev-q").setAttribute("aria-expanded", "true"); };
   $("dev-q").addEventListener("input", devList);
-  $("dev-list").addEventListener("click", e => { const b = e.target.closest(".chip"); if (!b) return; S.dev = b.dataset.v; closeDD(); syncUI(); apply(); });
+  $("dev-q").addEventListener("keydown", e => { if (e.key === "Enter"){ const li = $("dev-list").querySelector("li[data-v]"); if (li && !$("dev-list").hidden) devPick(li.dataset.v); } if (e.key === "Escape") devHide(); });
+  $("dev-q").addEventListener("blur", () => setTimeout(() => { devHide(); if (!S.dev) $("dev-q").value = ""; }, 180));
+  $("dev-list").addEventListener("mousedown", e => { const li = e.target.closest("li[data-v]"); if (li){ e.preventDefault(); devPick(li.dataset.v); } });
+  $("devx").addEventListener("click", () => { $("dev-q").value = ""; devPick(""); });
   const closeDD = () => document.querySelectorAll(".dd").forEach(d => { d.querySelector(".ddpanel").hidden = true; d.querySelector(".ddbtn").setAttribute("aria-expanded", "false"); });
-  document.querySelectorAll(".dd .ddbtn").forEach(b => b.addEventListener("click", () => { const p = b.parentNode.querySelector(".ddpanel"), open = p.hidden; closeDD(); p.hidden = !open; b.setAttribute("aria-expanded", open);
-    if (open && b.id === "dev-btn"){ $("dev-q").value = ""; devList(); $("dev-q").focus(); } }));
+  document.querySelectorAll(".dd .ddbtn").forEach(b => b.addEventListener("click", () => { const p = b.parentNode.querySelector(".ddpanel"), open = p.hidden; closeDD(); p.hidden = !open; b.setAttribute("aria-expanded", open); }));
   document.addEventListener("click", e => { if (!e.target.closest(".dd")) closeDD(); });
   document.addEventListener("keydown", e => { if (e.key === "Escape") closeDD(); });
   $("f-am").addEventListener("click", () => syncUI());
+  const amFilter = () => { const q = $("am-q").value.trim().toLowerCase(); let n = 0; for (const b of $("f-am").children){ const hit = AMEN[b.dataset.v].toLowerCase().includes(q); b.hidden = !hit; if (hit) n++; } $("am-none").hidden = n > 0; };
+  $("am-q").addEventListener("input", amFilter);
+  $("am-btn").addEventListener("click", () => { $("am-q").value = ""; amFilter(); $("f-am").scrollTop = 0; });
   $("pmax").addEventListener("input", e => { S.pmax = BUDGET[+e.target.value]; syncUI(); apply(); });
   $("sq").addEventListener("input", e => { S.sq = +e.target.value; syncUI(); apply(); });
   $("metro").addEventListener("input", e => { S.metro = +e.target.value; syncUI(); apply(); });
@@ -528,22 +964,90 @@ function buildUI(){
   PLACES = [...LM.map(l => ({n:l[0], lat:l[1], lng:l[2], t:l[3]})),
     ...BASE.stations.map(s => ({n:s[2] + " metro" + (s[4] === 0 ? " (opening later)" : ""), lat:s[1], lng:s[0], t:"metro", ln:s[3]})),
     ...Object.entries(areas).filter(e => e[1].length >= 3).map(([n,a]) => ({n, lat:a.reduce((x,p) => x+p.lat,0)/a.length, lng:a.reduce((x,p) => x+p.lng,0)/a.length, t:"area"}))];
-  $("nearquick").innerHTML = QUICK.map(n => `<button type="button" class="chip" data-n="${esc(n)}" aria-pressed="false">${esc(n)}</button>`).join("") + `<button type="button" class="chip" data-pick="1" aria-pressed="false">Drop a pin on the map</button>`;
+  $("nearquick").innerHTML = QUICK.map(n => `<button type="button" class="chip" data-n="${esc(n)}" aria-pressed="false">${ic("office", 14)}${esc(n)}</button>`).join("");
   $("nearquick").addEventListener("click", e => { const b = e.target.closest(".chip"); if (!b) return;
     if (b.dataset.pick){ picking = !picking; $("map").classList.toggle("picking", picking); syncUI(); return; }
     S.near && S.near.n === b.dataset.n ? setNear(null) : setNear(PLACES.find(p => p.n === b.dataset.n)); });
-  const sugg = () => { const q = $("near").value.trim().toLowerCase(), ws = q.split(/\s+/).filter(Boolean);
-    const hits = (q ? PLACES.filter(p => ws.every(w => (p.n + " " + LM_TYPE[p.t]).toLowerCase().includes(w))) : PLACES.filter(p => p.t === "office")).slice(0, 9);
-    $("nearlist").innerHTML = hits.map((p,i) => `<li data-i="${PLACES.indexOf(p)}" class="${i ? "" : "on"}"><span>${esc(p.n)}</span><span>${p.ln ? p.ln[0].toUpperCase() + p.ln.slice(1) + " Line" : LM_TYPE[p.t]}</span></li>`).join("") || `<li><span>No match. Drop a pin on the map instead.</span><span></span></li>`;
+  const row = (p, on) => `<li data-i="${PLACES.indexOf(p)}" class="${on ? "on" : ""}"><span>${esc(p.n)}</span><span>${p.ln ? p.ln[0].toUpperCase() + p.ln.slice(1) + " Line" : LM_TYPE[p.t]}</span></li>`;
+  const sugg = () => { const q = $("near").value.trim().toLowerCase(), ws = q.split(/\s+/).filter(Boolean); let html;
+    if (!q){ // nothing typed yet: show all three kinds, grouped
+      const east = PLACES.filter(p => p.t === "metro" && p.lng > 77.65 && !/opening later/.test(p.n)).sort((x,y) => y.lng - x.lng);
+      const groups = [["Metro stations", east], ["Offices and tech parks", PLACES.filter(p => p.t === "office")], ["Malls", PLACES.filter(p => p.t === "mall")]];
+      html = groups.map(g => `<li class="sh">${g[0]}</li>` + g[1].map(p => row(p, false)).join("")).join("");
+    } else {
+      const m = PLACES.filter(p => ws.every(w => (p.n + " " + LM_TYPE[p.t] + (p.ln ? " " + p.ln + " line" : "")).toLowerCase().includes(w)));
+      const order = {metro:0, office:1, mall:2, rail:3, area:4}, starts = p => p.n.toLowerCase().startsWith(q) ? 0 : 1;
+      const hits = m.sort((x,y) => starts(x) - starts(y) || order[x.t] - order[y.t]).slice(0, 12);
+      html = hits.map((p,i) => row(p, !i)).join("") || `<li><span>No match. Drop a pin on the map instead.</span><span></span></li>`;
+    }
+    $("nearlist").innerHTML = html; $("nearlist").scrollTop = 0;
     $("nearlist").hidden = false; $("near").setAttribute("aria-expanded", "true"); };
   $("near").addEventListener("input", sugg); $("near").addEventListener("focus", sugg);
   $("near").addEventListener("keydown", e => { if (e.key === "Enter"){ const li = $("nearlist").querySelector("li[data-i]"); if (li) setNear(PLACES[+li.dataset.i]); } if (e.key === "Escape") hideSugg(); });
   $("near").addEventListener("blur", () => setTimeout(hideSugg, 180));
   $("nearlist").addEventListener("mousedown", e => { const li = e.target.closest("li[data-i]"); if (li){ e.preventDefault(); setNear(PLACES[+li.dataset.i]); } });
   $("nearx").addEventListener("click", () => setNear(null));
-  $("nearkm").addEventListener("input", e => { S.nearKm = +e.target.value; syncUI(); apply(); renderNear(false); });
+  // one search for everything: projects, builders, areas, tech parks, metro and malls
+  const GI = {office:"office", mall:"retail", metro:"train", rail:"train", area:"pin"};
+  let gTab = "all"; const gHide = () => { $("gbox").hidden = true; $("gq").setAttribute("aria-expanded", "false"); };
+  const gRow = (k, v, icon, name, meta) => `<li data-k="${k}" data-v="${esc(v)}"><span>${icon}<span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(name)}</span></span><span>${esc(meta)}</span></li>`;
+  // more places from OpenStreetMap (Photon search): any locality, road, landmark or building in and around Bangalore
+  const OSM = {cache:{}, t:null, ctl:null, busy:""};
+  const osmFind = q => { clearTimeout(OSM.t); if (q.length < 3 || OSM.cache[q] || !CONFIG.placeSearch) return;
+    OSM.busy = q; OSM.t = setTimeout(() => { if (OSM.ctl) OSM.ctl.abort(); OSM.ctl = new AbortController();
+      fetch(CONFIG.placeSearch + "?limit=12&lang=en&lat=12.95&lon=77.72&bbox=77.30,12.65,78.00,13.30&q=" + encodeURIComponent(q), {signal:OSM.ctl.signal}).then(r => r.ok ? r.json() : Promise.reject(r.status))
+        .then(j => { const seen = new Set(PLACES.map(p => p.n.toLowerCase())), out = [];
+          for (const f of j.features || []){ const o = f.properties || {}, c = f.geometry && f.geometry.coordinates; if (!o.name || !c) continue; if (seen.has(o.name.toLowerCase())) continue;
+            const where = [o.street, o.district || o.locality, o.city].filter((x, i, a) => x && x !== o.name && a.indexOf(x) === i).slice(0, 2).join(", ");
+            const key = (o.name + "|" + where).toLowerCase(); if (seen.has(key)) continue; seen.add(key);
+            out.push({n:o.name, m:where || (o.osm_value || "Place").replace(/_/g, " "), lat:Math.round(c[1]*1e5)/1e5, lng:Math.round(c[0]*1e5)/1e5, t:"place"}); }
+          OSM.cache[q] = out.slice(0, 8); OSM.fail = false; })
+        .catch(e => { if (e && e.name === "AbortError") return; OSM.cache[q] = []; OSM.fail = true; })
+        .finally(() => { if (OSM.busy === q) OSM.busy = ""; if (!$("gbox").hidden && $("gq").value.trim().toLowerCase() === q){ const st = $("glist").scrollTop; gSugg(); $("glist").scrollTop = st; } }); }, 350); };
+  const gSugg = () => { const q = $("gq").value.trim().toLowerCase(), ws = q.split(/\s+/).filter(Boolean); $("gx").hidden = !q && !S.near && !S.dev;
+    const all = !q, one = gTab !== "all", has = t => ws.every(w => t.toLowerCase().includes(w)), st = n => n.toLowerCase().startsWith(q) ? 0 : 1;
+    const pr = P.filter(p => all ? !p.sold : has(p.name + " " + (p.brand || ""))).sort((a,b) => all ? a.name.localeCompare(b.name) : st(a.name) - st(b.name) || a.sold - b.sold);
+    const dv = DEVS.filter(e => has(e[0]));
+    const pl = PLACES.filter(p => all ? !/opening later/.test(p.n) : has(p.n + " " + LM_TYPE[p.t] + (p.ln ? " " + p.ln + " line" : ""))).sort((a,b) => all ? (a.t === "metro" ? b.lng - a.lng : a.n.localeCompare(b.n)) : st(a.n) - st(b.n));
+    const plRow = p => gRow("n", PLACES.indexOf(p), ic(GI[p.t] === "retail" ? "bag" : GI[p.t], 16), p.n, p.ln ? p.ln[0].toUpperCase() + p.ln.slice(1) + " Line" : p.t === "area" ? "Area" : LM_TYPE[p.t]);
+    const G = [["proj", "Projects", pr, p => gRow("p", p.id, ic(p.kind, 16), p.name, p.sold ? "Sold out" : money(fromPrice(p)) + "+"), 6, "apt"],
+      ["area", "Areas", pl.filter(p => p.t === "area"), plRow, 4, "pin"], ["office", "Tech parks", pl.filter(p => p.t === "office"), plRow, 4, "office"],
+      ["metro", "Metro", pl.filter(p => p.t === "metro" || p.t === "rail"), plRow, 4, "train"], ["mall", "Malls", pl.filter(p => p.t === "mall"), plRow, 3, "bag"],
+      ["dev", "Builders", dv, e => gRow("d", e[0], ic("hat", 16), e[0], e[1] + " project" + (e[1] > 1 ? "s" : "")), 3, "hat"]];
+    const osm = OSM.cache[q] || [], waiting = !all && q.length >= 3 && !OSM.cache[q] && !!CONFIG.placeSearch; osmFind(q);
+    if (!all && CONFIG.placeSearch) G.push(["osm", "More places", osm, o => gRow("o", osm.indexOf(o), ic("pin", 16), o.n, o.m), 5, "pin"]);
+    if (one && !G.find(g => g[0] === gTab)[2].length) gTab = "all";
+    const total = G.reduce((n,g) => n + g[2].length, 0), sel = gTab !== "all";
+    $("gtabs").innerHTML = `<button type="button" class="gtab" role="tab" data-t="all" aria-selected="${!sel}">All <b>${total}</b></button>` + G.map(g => `<button type="button" class="gtab" role="tab" data-t="${g[0]}" aria-selected="${gTab === g[0]}"${g[2].length ? "" : " disabled"}>${ic(g[5], 14)}${g[1]} <b>${g[2].length}</b></button>`).join("");
+    const order = sel ? G.filter(g => g[0] === gTab) : G;
+    $("glist").innerHTML = order.map(g => g[2].length ? (sel ? "" : `<li class="sh">${g[1]}</li>`) + (sel || all ? g[2] : g[2].slice(0, g[4])).map(g[3]).join("") : "").join("") || `<li class="sh">${waiting ? "Searching more places…" : "Nothing by that name. Try an area or a builder."}</li>`;
+    if (waiting && total) $("glist").insertAdjacentHTML("beforeend", `<li class="sh">Searching more places…</li>`);
+    if (!all && !waiting && OSM.fail && q.length >= 3 && (gTab === "all" || gTab === "osm")) $("glist").insertAdjacentHTML("beforeend", `<li class="sh">More places</li><li class="gnote">The wider place search could not be reached from here. It runs on the live website, not inside this preview.</li>`);
+    $("glist")._osm = osm;
+    const on = $("gtabs").querySelector('[aria-selected="true"]'); if (on && on.scrollIntoView) $("gtabs").scrollLeft = Math.max(0, on.offsetLeft - 40);
+    $("glist").scrollTop = 0; $("gbox").hidden = false; $("gq").setAttribute("aria-expanded", "true"); };
+  $("gtabs").addEventListener("mousedown", e => { e.preventDefault(); const b = e.target.closest(".gtab"); if (b && !b.disabled){ gTab = b.dataset.t; gSugg(); } });
+  const gPick = li => { const k = li.dataset.k, v = li.dataset.v; gHide(); $("gq").value = ""; $("gq").blur();
+    if (k === "p"){ syncUI(); openCard(+v, true); }
+    else if (k === "d"){ S.dev = v; syncUI(); apply(); fitResults(); }
+    else if (k === "o"){ const o = ($("glist")._osm || [])[+v]; if (o) setNear(o); }
+    else setNear(PLACES[+v]); };
+  $("gq").addEventListener("input", gSugg); $("gq").addEventListener("focus", gSugg);
+  $("gq").addEventListener("keydown", e => { if (e.key === "Enter"){ const li = $("glist").querySelector("li[data-k]"); if (li) gPick(li); } if (e.key === "Escape"){ gHide(); $("gq").blur(); } });
+  $("gq").addEventListener("blur", () => setTimeout(() => { gHide(); syncUI(); }, 180));
+  $("glist").addEventListener("mousedown", e => { const li = e.target.closest("li[data-k]"); if (li){ e.preventDefault(); gPick(li); } });
+  $("gx").addEventListener("click", () => { $("gq").value = ""; if (S.dev){ S.dev = ""; apply(); } if (S.near) setNear(null); else syncUI(); });
+  const setKm = (v, fit) => { S.nearKm = Math.min(20, Math.max(1, v)); syncUI(); apply(); renderNear(fit); };
+  $("nearkm").addEventListener("input", e => setKm(+e.target.value, false));
   document.querySelectorAll(".lt").forEach(b => b.addEventListener("click", () => { const on = b.getAttribute("aria-pressed") !== "true"; b.setAttribute("aria-pressed", on); on ? lmOff.delete(b.dataset.c) : lmOff.add(b.dataset.c); if (b.dataset.c === "metro" && map.getLayer("stn")) map.setLayoutProperty("stn", "visibility", on ? "visible" : "none"); declutter(); }));
   $("more").addEventListener("click", () => { shown += 40; renderList(); });
+  for (const b of $("keykind").children) b.lastElementChild.textContent = P.filter(p => !p.sold && p.kinds.includes(b.dataset.k)).length;
+  $("keykind").addEventListener("click", e => { const b = e.target.closest(".kb"); if (!b) return; S.kind.has(b.dataset.k) ? S.kind.delete(b.dataset.k) : S.kind.add(b.dataset.k); syncUI(); apply(); });
+  $("kmay").addEventListener("click", () => { S.strict = !S.strict; syncUI(); apply(); });
+  $("kout").addEventListener("click", () => { S.hideOut = !S.hideOut; syncUI(); apply(); });
+  $("lq").addEventListener("input", e => { S.q = e.target.value.trim(); $("lqx").hidden = !S.q; shown = 40; apply(); });
+  $("lqx").addEventListener("click", () => { S.q = ""; $("lq").value = ""; $("lqx").hidden = true; apply(); });
+  $("sortrow").addEventListener("click", e => { const b = e.target.closest(".chip"); if (!b) return; $("sort").value = b.dataset.v; $("sort").dispatchEvent(new Event("change", {bubbles:true})); });
   $("list").addEventListener("click", e => { const b = e.target.closest(".item"); if (b) openCard(+b.dataset.id, true); });
   $("b3d").addEventListener("click", () => { const on = $("b3d").getAttribute("aria-pressed") !== "true"; $("b3d").setAttribute("aria-pressed", on); $("b3d").textContent = on ? "2D" : "3D"; map.easeTo({pitch: on ? 58 : 0, bearing: on ? -14 : 0, duration: 700}); });
   $("bfit").addEventListener("click", fitResults);
@@ -561,13 +1065,25 @@ function setNear(pl){
 function renderNear(fit){
   if (!map || !map.getSource("near")) return;
   if (originMarker){ originMarker.remove(); originMarker = null; }
+  if (radMarker){ radMarker.remove(); radMarker = null; }
   if (!S.near){ map.getSource("near").setData(fc([])); return; }
-  const ring = [], cl = Math.cos(S.near.lat*Math.PI/180);
-  for (let i = 0; i <= 72; i++){ const a = i/72*2*Math.PI; ring.push([S.near.lng + S.nearKm/111.32/cl*Math.cos(a), S.near.lat + S.nearKm/111.32*Math.sin(a)]); }
-  map.getSource("near").setData(fc([{type:"Feature", geometry:{type:"Polygon", coordinates:[ring]}, properties:{}}]));
+  const cl = Math.cos(S.near.lat*Math.PI/180), c0 = S.near;
+  const ringOf = km => { const r = []; for (let i = 0; i <= 72; i++){ const a = i/72*2*Math.PI; r.push([c0.lng + km/111.32/cl*Math.cos(a), c0.lat + km/111.32*Math.sin(a)]); } return r; };
+  const drawRing = km => map.getSource("near").setData(fc([{type:"Feature", geometry:{type:"Polygon", coordinates:[ringOf(km)]}, properties:{}}]));
+  const ring = ringOf(S.nearKm); drawRing(S.nearKm);
+  // handle on the edge of the circle: drag it out or in to change the radius
+  const hel = document.createElement("div"); hel.className = "radh"; hel.setAttribute("role", "slider"); hel.setAttribute("aria-label", "Drag to change the search radius"); hel.setAttribute("aria-valuemin", 1); hel.setAttribute("aria-valuemax", 20); hel.setAttribute("aria-valuenow", S.nearKm); hel.tabIndex = 0;
+  hel.innerHTML = `<i><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12h18M3 12l4-4M3 12l4 4M21 12l-4-4M21 12l-4 4"/></svg></i><b>${S.nearKm} km</b>`;
+  radMarker = new maplibregl.Marker({element:hel, anchor:"left", draggable:true}).setLngLat([c0.lng + S.nearKm/111.32/cl, c0.lat]).addTo(map);
+  const kmAt = () => { const ll = radMarker.getLngLat(); return Math.min(20, Math.max(1, Math.round(kmBetween(c0.lat, c0.lng, ll.lat, ll.lng)))); };
+  radMarker.on("dragstart", () => hel.classList.add("on"));
+  radMarker.on("drag", () => { const km = kmAt(); drawRing(km); hel.lastChild.textContent = km + " km"; });
+  radMarker.on("dragend", () => { S.nearKm = kmAt(); syncUI(); apply(); renderNear(true); });
+  hel.addEventListener("keydown", e => { const d = e.key === "ArrowRight" || e.key === "ArrowUp" ? 1 : e.key === "ArrowLeft" || e.key === "ArrowDown" ? -1 : 0; if (!d) return; e.preventDefault(); S.nearKm = Math.min(20, Math.max(1, S.nearKm + d)); syncUI(); apply(); renderNear(true); const h = document.querySelector(".radh"); if (h) h.focus(); });
   const el = document.createElement("div"); el.className = "origin"; el.innerHTML = `<b>${esc(S.near.n)}</b><i></i><u></u>`;
-  originMarker = new maplibregl.Marker({element:el, anchor:"bottom"}).setLngLat([S.near.lng, S.near.lat]).addTo(map);
-  if (fit){ const b = new maplibregl.LngLatBounds(); ring.forEach(c => b.extend(c)); map.fitBounds(b, {padding:{top:70,bottom:innerWidth > 860 ? 50 : 140,left:innerWidth > 860 ? 410 : 30,right:50}, maxZoom:14.5, duration:800, pitch:map.getPitch(), bearing:map.getBearing()}); }
+  originMarker = new maplibregl.Marker({element:el, anchor:"bottom", draggable:S.near.t === "pin"}).setLngLat([S.near.lng, S.near.lat]).addTo(map);
+  if (S.near.t === "pin"){ el.classList.add("drag"); originMarker.on("dragend", () => { const ll = originMarker.getLngLat(); setNear({n:"Dropped pin", lat:Math.round(ll.lat*1e5)/1e5, lng:Math.round(ll.lng*1e5)/1e5, t:"pin"}); }); }
+  if (fit){ const b = new maplibregl.LngLatBounds(); ring.forEach(c => b.extend(c)); map.fitBounds(b, {padding:{top:70,bottom:innerWidth > 860 ? 50 : 140,left:innerWidth > 860 ? 410 : 30,right:innerWidth > 860 ? 110 : 96}, maxZoom:14.5, duration:800, pitch:map.getPitch(), bearing:map.getBearing()}); }
   declutter();
 }
 /* Landmark names never overlap: higher-priority names are placed first and anything that would collide is hidden until you zoom in. */
@@ -597,7 +1113,7 @@ function declutter(){
 let RES = [];
 function apply(){
   RES = [];
-  for (const p of P){ p.m = match(p); if (p.m) RES.push(p); }
+  for (const p of P){ p.m = match(p); if (S.strict && p.m === 1) p.m = 0; if (p.m) RES.push(p); }
   const by = {
     best: (a,b) => (b.m - a.m) || (S.near ? a.d - b.d : 0) || ((BP[b.id]?1:0) - (BP[a.id]?1:0)) || ((a.sold?1:0) - (b.sold?1:0)) || (b.id - a.id),
     plow: (a,b) => fromPrice(a) - fromPrice(b),
@@ -610,18 +1126,30 @@ function apply(){
 }
 function renderList(){
   const fits = RES.filter(p => p.m === 2).length, likely = RES.length - fits;
-  $("count").innerHTML = `${RES.length}<span>${RES.length === 1 ? "project found" : "projects found"}${likely ? ` · ${fits} fit, ${likely} likely` : ""}</span>`;
-  $("list").innerHTML = RES.slice(0, shown).map(p => `
-    <button type="button" class="item${p.id === openId ? " on" : ""}" data-id="${p.id}">
-      <span class="n">${esc(p.name)}</span><span class="p">${money(fromPrice(p))}+</span>
-      <span class="s">${p.sold ? '<i class="pill sold">Sold out</i>' : p.m === 1 ? '<i class="pill likely">Likely</i>' : `<i class="pill ${p.st}">${STAGE[p.st]}</i>`}${esc(p.loc)} · ${p.bhk.length ? esc(p.bhk.join(", ")) + " BHK" : KIND[p.kind]}${S.near ? " · " + p.d + " km from " + esc(S.near.n) : p.metro[0] <= 2 ? " · metro " + p.metro[0] + " km" : ""}</span>
-    </button>`).join("") || `<p class="hint">Nothing fits these filters. Raise the budget, drop an amenity, or clear all filters.</p>`;
+  $("count").innerHTML = `${RES.length}<span>${RES.length === 1 ? "project found" : "projects found"}${likely ? ` · ${fits} fit, ${likely} may fit` : ""}</span>`;
+  const TCOL = {apt:"#38bdf8", villa:"#2fd08a", plot:"#ff7a5c"};
+  $("list").innerHTML = RES.slice(0, shown).map(p => { const sq = p.u.map(u => u[2]).filter(Boolean), lo = Math.min(...sq), hi = Math.max(...sq);
+    const size = sq.length ? (lo === hi ? lo.toLocaleString("en-IN") : lo.toLocaleString("en-IN") + "–" + hi.toLocaleString("en-IN")) + " sq ft" : p.acres ? p.acres + " acres" : "On request";
+    const dist = S.near ? p.d + " km from " + esc(S.near.n) : p.metro && p.metro[0] <= 5 ? p.metro[0] + " km to " + esc(p.metro[1]) + " metro" : "";
+    const mix = p.kinds.length > 1, dim = p.sold || !p.m;
+    return `
+    <button type="button" class="item${p.id === openId ? " on" : ""}" data-id="${p.id}" style="--tc:${p.sold || !p.m ? "#7c869f" : TCOL[p.kind]}">
+      <span class="ith${mix ? " two" : ""}">${mix ? p.kinds.map(z => `<i style="color:${dim ? "#7c869f" : TCOL[z]}">${ic(z, 19)}</i>`).join("") : ic(p.kind, 24)}</span>
+      <span class="itm"><span class="n">${esc(p.name)}</span><span class="by">${p.brand ? esc(p.brand) + " · " : ""}${esc(p.loc)}</span></span>
+      <span class="p">${money(fromPrice(p))}+<small>onwards</small></span>
+      ${mix ? `<span class="types">${p.kinds.map(z => { const us = p.u.filter((u, n) => p.uk[n] === z), bh = [...new Set(us.map(u => u[1]).filter(Boolean))].sort((a,b) => a-b), sq = us.map(u => u[2]).filter(Boolean), pr = us.map(u => u[3]).filter(x => x != null); const off = S.kind.size && !S.kind.has(z); return `<span class="trow${off ? " off" : ""}" style="--kc:${dim || off ? "#7c869f" : TCOL[z]}"><b>${ic(z, 14)}${KIND[z]}</b><span>${bh.length ? bh.join(", ") + " BHK" : "–"}</span><span>${sq.length ? (Math.min(...sq) === Math.max(...sq) ? Math.min(...sq).toLocaleString("en-IN") : Math.min(...sq).toLocaleString("en-IN") + "–" + Math.max(...sq).toLocaleString("en-IN")) + " sq ft" : "–"}</span><span class="tp">${pr.length ? money(Math.min(...pr)) + "+" : "On request"}</span></span>`; }).join("")}</span>` : `<span class="specs"><span><small>${p.bhk.length ? "Homes" : "Type"}</small>${p.bhk.length ? esc(p.bhk.join(", ")) + " BHK" : KIND[p.kind]}</span><span><small>Size</small>${size}</span><span><small>Possession</small>${p.st === "ready" && !p.py ? "Ready" : p.py || "On request"}</span></span>`}
+      <span class="itf">${mix && p.py ? `<span class="poss">Possession ${p.py}</span>` : ""}${p.sold ? '<i class="pill sold">Sold out</i>' : p.m === 1 ? '<i class="pill likely">May fit</i>' : `<i class="pill ${p.st}">${STAGE[p.st]}</i>`}${dist ? `<span class="dist">${ic(S.near ? "pin" : "train", 13)}${dist}</span>` : ""}<span class="go">View ›</span></span>
+    </button>`; }).join("") || `<p class="hint">${S.q ? "Nothing in this list matches “" + esc(S.q) + "”. Clear the list search or loosen the filters." : "Nothing fits these filters. Raise the budget, drop an amenity, or clear all filters."}</p>`;
   $("more").hidden = RES.length <= shown;
-  const nf = (S.near ? 1 : 0) + S.kind.size + S.bhk.size + (S.pmax != null ? 1 : 0) + (S.sq ? 1 : 0) + S.cor.size + S.st.size + (S.sold ? 1 : 0) + S.am.size + (S.metro ? 1 : 0) + (S.dev ? 1 : 0) + (S.poss ? 1 : 0);
-  $("fbadge").textContent = nf || ""; $("bfilters").setAttribute("aria-label", "Filters" + (nf ? ", " + nf + " on" : "")); $("fshow").textContent = "Show " + RES.length + (RES.length === 1 ? " project" : " projects");
+  const nl = (S.near ? 1 : 0) + S.cor.size + (S.metro ? 1 : 0), nf = S.kind.size + S.bhk.size + (S.pmax != null ? 1 : 0) + (S.sq ? 1 : 0) + S.st.size + (S.sold ? 1 : 0) + S.am.size + (S.dev ? 1 : 0) + (S.poss ? 1 : 0);
+  $("fbadge").textContent = nf || ""; $("bfilters").setAttribute("aria-label", "Property filters" + (nf ? ", " + nf + " on" : ""));
+  $("lbadge").textContent = nl || ""; $("bloc").setAttribute("aria-label", "Location filters" + (nl ? ", " + nl + " on" : "")); $("fshow").textContent = "Show " + RES.length + (RES.length === 1 ? " project" : " projects");
   $("peekcount").textContent = RES.length + (RES.length === 1 ? " project found" : " projects found"); peekHint();
   const ps = RES.filter(p => p.psf).map(p => p.psf);
   $("sum").textContent = RES.length ? `From ${money(Math.min(...RES.map(fromPrice)))} to ${money(Math.max(...RES.map(p => p.pmax)))}${ps.length >= 3 ? " · typical ₹" + median(ps).toLocaleString("en-IN") + " per sq ft" : ""}` : "";
+  $("rstats").innerHTML = `<div><b>${RES.length}</b><span>${RES.length === 1 ? "project" : "projects"}${likely ? ` · ${likely} may fit` : ""}</span></div>` + (RES.length ? `<div><b>${money(Math.min(...RES.map(fromPrice)))} – ${money(Math.max(...RES.map(p => p.pmax)))}</b><span>price range</span></div>` + (ps.length >= 3 ? `<div><b>₹${median(ps).toLocaleString("en-IN")}</b><span>typical per sq ft</span></div>` : "") : "");
+  const SORTL = {best:"Best match", plow:"Price: low to high", phigh:"Price: high to low", poss:"Soonest possession", metro:"Nearest metro", land:"Largest land"};
+  $("sortrow").innerHTML = [...$("sort").options].map(o => `<button type="button" class="chip" data-v="${o.value}" aria-pressed="${S.sort === o.value}">${SORTL[o.value] || o.text}</button>`).join("");
   const sv = P.filter(p => saved.has(p.id));
   $("listbar").innerHTML = sv.length ? `<span>My shortlist: ${sv.length}</span><a href="${waLink("My shortlist from the " + CONFIG.brand + " Flat Finder:\n" + sv.map(p => "• " + p.name + ", " + p.loc + " (" + money(p.pmin) + " onwards)").join("\n") + "\nPlease share price sheets and site visit slots.")}" target="_blank" rel="noopener">Send to ${esc(CONFIG.brand)} on WhatsApp</a>` : "";
 }
@@ -667,8 +1195,9 @@ function projFC(){
   const inView = p => !view || (p.lng > view.getWest()-.02 && p.lng < view.getEast()+.02 && p.lat > view.getSouth()-.02 && p.lat < view.getNorth()+.02);
   for (const p of P){
     if (!inView(p)) continue;
+    if (S.hideOut && !p.m) continue;
     const sh = shape(p), m = p.m||0, kk = m ? k : Math.max(1, k*.6), sel = p.id === openId ? 1 : 0;
-    const skin = !m ? SKIN.none : p.sold ? SKIN.sold : SKIN[p.kind][m], a = (p.id % 50 - 25) * Math.PI/180, ca = Math.cos(a), sa = Math.sin(a), cl = Math.cos(p.lat*Math.PI/180);
+    let skin = !m ? SKIN.none : p.sold ? SKIN.sold : SKIN[p.kind][m]; const a = (p.id % 50 - 25) * Math.PI/180, ca = Math.cos(a), sa = Math.sin(a), cl = Math.cos(p.lat*Math.PI/180);
     const ll = (x,y) => [p.lng + (x*ca - y*sa)/(111320*cl), p.lat + (x*sa + y*ca)/111320];
     const poly = (pts, base, top, c) => { const r = pts.map(q => ll(q[0],q[1])); r.push(r[0]); feats.push({type:"Feature", geometry:{type:"Polygon", coordinates:[r]}, properties:{id:p.id, b:base, h:top, c}}); };
     const foot = (f, cx, cy, hw, hd) => f.map(q => [cx + q[0]*hw, cy + q[1]*hd]);
@@ -683,7 +1212,28 @@ function projFC(){
       }
       poly(foot(FOOT[0], cx, cy, hw*.5, hw*.34), total, total + 2.2*fh, sel ? "#ffffff" : skin[3]);          // crown
     };
-    if (p.kind === "apt"){
+    const house = (cx, cy, w, sc) => {   // a villa: light walls, a stepped green gable roof, a porch
+      const hw = w/2, hd = w*.4, h1 = 6.4*sc;
+      poly(foot(FOOT[0], cx, cy, hw, hd), 0, h1, sel ? "#ffffff" : skin[1]);
+      for (let i = 0; i < 4; i++) poly(foot(FOOT[0], cx, cy, hw*1.08, hd*(1.12 - i*.3)), h1 + i*1.35*sc, h1 + (i + 1)*1.35*sc, skin[0]);
+      poly(foot(FOOT[0], cx + hw*.45, cy - hd*1.25, hw*.42, hd*.35), 0, 3.4*sc, skin[2]);
+    };
+    if (p.kinds.length > 1){
+      // several home types in one project: each type gets its own zone and colour inside one shared boundary.
+      // Zones run front to back (plots, then villas, then towers) so the low ones are never hidden behind the towers.
+      const zones = ["plot","villa","apt"].filter(z => p.kinds.includes(z)), u = detail ? 1 : kk, fl = Math.max(p.floors || 12, 3);
+      const nT = detail ? Math.min(p.towers || 4, 6) : 1, tc = Math.min(nT, 3), tr = Math.ceil(nT/tc), tw = detail ? 27*kk : 20*kk, tg = tw*1.75;
+      const dW = {apt:tc*tg, villa:detail ? 140 : 52*u, plot:detail ? 124 : 30*u}, dD = {apt:tr*tg, villa:detail ? 130 : 42*u, plot:detail ? 56 : 18*u}, gapZ = detail ? 16 : 5*u, mg = detail ? 14 : 5*u;
+      const totalD = zones.reduce((n,z) => n + dD[z], 0) + gapZ*(zones.length - 1), hs = Math.max(...zones.map(z => dW[z]))/2 + mg, hd = totalD/2 + mg;
+      const r = [[-hs,-hd],[hs,-hd],[hs,hd],[-hs,hd]].map(q => ll(q[0],q[1])); r.push(r[0]);
+      pads.push({type:"Feature", geometry:{type:"Polygon", coordinates:[r]}, properties:{id:p.id, m, sel, mix:1}});
+      let y0 = -totalD/2;
+      for (const z of zones){ const cy0 = y0 + dD[z]/2; y0 += dD[z] + gapZ; skin = !m ? SKIN.none : p.sold ? SKIN.sold : SKIN[z][m];
+        if (z === "apt"){ for (let i = 0; i < nT; i++) tower(((i % tc) - (tc-1)/2)*tg, cy0 + (Math.floor(i/tc) - (tr-1)/2)*tg, tw, Math.max(fl + (detail ? ((i*7 + p.id) % 3) - 1 : 0), 3), FOOT[p.id % 4], detail ? Math.max(3, Math.ceil(fl/2)) : 3); }
+        else if (z === "villa"){ if (detail) for (let i = 0; i < 4; i++) house(((i % 2) - .5)*68, cy0 + (Math.floor(i/2) - .5)*62, 44, 3); else house(0, cy0, dW.villa*.88, kk*3.4); }
+        else if (detail){ for (let i = 0; i < 8; i++) poly(foot(FOOT[0], ((i % 4) - 1.5)*30, cy0 + (Math.floor(i/4) - .5)*27, 8, 5.8), 0, .7, skin[0]); }
+        else poly(foot(FOOT[0], 0, cy0, dW.plot/2, dD.plot/2), 0, 1.2*kk, skin[0]); }
+    } else if (p.kind === "apt"){
       const n = kk > 3 ? 1 : kk > 1.6 ? Math.min(sh.n,4) : Math.min(sh.n,18);
       const w = sh.w*kk, cols = Math.ceil(Math.sqrt(n)), rows = Math.ceil(n/cols);
       const side = detail ? Math.min(Math.max(Math.sqrt((p.acres||4)*4047), cols*w*1.7, 70), 520) : 0;
@@ -698,6 +1248,11 @@ function projFC(){
         const cx = ((i % cols) - (cols-1)/2) * gap, cy = (Math.floor(i/cols) - (rows-1)/2) * gap;
         tower(cx, cy, w, Math.max(sh.fl + (detail ? ((i*7 + p.id) % 3) - 1 : 0), 3), f, bands);
       }
+    } else if (p.kind === "villa"){
+      const big = detail ? 2.5 : 2.8, n = kk > 3 ? 1 : kk > 1.6 ? Math.min(sh.n, 2) : Math.min(sh.n, 6), w = 16.5*kk*big, cols = n < 4 ? n : Math.ceil(Math.sqrt(n*1.4)), rows = Math.ceil(n/cols), gx = w*1.45, gy = w*1.4;
+      if (detail){ const hs = cols*gx/2 + 10, hd = rows*gy/2 + 10, r = [[-hs,-hd],[hs,-hd],[hs,hd],[-hs,hd]].map(q => ll(q[0],q[1])); r.push(r[0]);
+        pads.push({type:"Feature", geometry:{type:"Polygon", coordinates:[r]}, properties:{id:p.id, m, sel}}); }
+      for (let i = 0; i < n; i++) house(((i % cols) - (cols-1)/2)*gx, (Math.floor(i/cols) - (rows-1)/2)*gy, w, kk*big);
     } else if (!detail){
       const w = 30*kk; poly(foot(FOOT[0], 0, 0, w/2, w/2*.62), 0, (p.kind === "plot" ? 1.2 : 5)*kk, skin[0]);
       if (p.kind === "villa") poly(foot(FOOT[0], 0, 0, w/2*.7, w/2*.4), 5*kk, 7.5*kk, skin[3]);
@@ -778,6 +1333,7 @@ function addOverlays(){
   map.addSource("proj", {type:"geojson", data:projFC()});
   map.addSource("pad", {type:"geojson", data:PADS});
   map.addLayer({id:"pad", type:"fill", source:"pad", paint:{"fill-color":["case",[">",["get","m"],0],"#1f4a36","#182540"],"fill-opacity":.85,"fill-outline-color":["case",["==",["get","sel"],1],"#ffffff",[">",["get","m"],0],"#58d68d","#33406b"]}});
+  map.addLayer({id:"padmix", type:"line", source:"pad", filter:["==",["get","mix"],1], paint:{"line-color":["case",["==",["get","sel"],1],"#ffb72b",[">",["get","m"],0],"#ffffff","#6b769c"],"line-width":["interpolate",["linear"],["zoom"],10,1.2,14,2.4],"line-dasharray":[2.2,1.6]}});
   map.addLayer({id:"p2", type:"fill-extrusion", source:"proj", paint:{"fill-extrusion-color":["get","c"],"fill-extrusion-base":["get","b"],"fill-extrusion-height":["get","h"],"fill-extrusion-opacity":.96,"fill-extrusion-vertical-gradient":true}});
   map.setLight({anchor:"viewport", color:"#ffffff", intensity:.42, position:[1.4,215,38]});
   // names on the map, in priority order: areas, tech parks, stations, malls, metro stops
@@ -788,12 +1344,33 @@ function addOverlays(){
   LM.filter(l => l[3] === "rail" && l[1] < 13.1).forEach(l => addLabel(l[0], l[2], l[1], "rail", 3, 12.2, lmPlace(l)));
   LM.filter(l => l[3] === "mall").forEach(l => addLabel(l[0], l[2], l[1], "mall", 4, 11.8, lmPlace(l)));
   B.stations.forEach(s => { addLabel(s[2], s[0], s[1], "metro", 5, 12.4, PLACES.find(p => p.lat === s[1] && p.lng === s[0])); LABELS[LABELS.length-1].el.style.setProperty("--dot", lcol(s[3])); });
-  map.on("click", e => { if (!picking) return; setNear({n:"Dropped pin", lat:Math.round(e.lngLat.lat*1e5)/1e5, lng:Math.round(e.lngLat.lng*1e5)/1e5, t:"pin"}); });
+  const dropPin = ll => setNear({n:"Dropped pin", lat:Math.round(ll.lat*1e5)/1e5, lng:Math.round(ll.lng*1e5)/1e5, t:"pin"});
+  map.on("click", e => { if (e.originalEvent.target !== map.getCanvas()) return;
+    const r = matchMedia("(hover:none)").matches ? 9 : 3, f = map.queryRenderedFeatures([[e.point.x - r, e.point.y - r], [e.point.x + r, e.point.y + r]], {layers:["pad","p2"].filter(id => map.getLayer(id))});
+    if (f.length){ openCard(f[0].properties.id, false); return; }
+    if (openId) closeCard(); });
+  // drag-to-drop: hold the pin button, drag it over the map, let go
+  const ghost = document.createElement("div"); ghost.className = "pinghost"; ghost.innerHTML = `<svg viewBox="0 0 24 24" width="46" height="46" aria-hidden="true"><path d="M12 22s-7-6-7-12a7 7 0 0 1 14 0c0 6-7 12-7 12z" fill="#ffb72b" stroke="#0a0f1e" stroke-width="1.2"/><circle cx="12" cy="10" r="2.6" fill="#0a0f1e"/></svg><i></i>`; document.body.appendChild(ghost);
+  const pinDrag = btn => { let st = null;
+    const tip = e => [e.clientX, e.clientY - (e.pointerType === "mouse" ? 4 : 58)];
+    const begin = e => { st.drag = true; clearTimeout(st.t); document.body.classList.add("pindrag"); if (navigator.vibrate) navigator.vibrate(12); moveTo(e); };
+    const moveTo = e => { const [x, y] = tip(e); ghost.style.transform = `translate(${x}px,${y}px)`; const r = $("map").getBoundingClientRect(), el = document.elementFromPoint(x, y); st.ok = !!el && $("map").contains(el) && !el.closest(".mapbar,.key,.maplibregl-ctrl,.fpill,.attr") && x > r.left && y > r.top; ghost.classList.toggle("no", !st.ok); st.x = x - r.left; st.y = y - r.top; };
+    btn.addEventListener("pointerdown", e => { if (e.button) return; st = {x0:e.clientX, y0:e.clientY, drag:false, last:e}; try { btn.setPointerCapture(e.pointerId); } catch(_) {} st.t = setTimeout(() => { if (st && !st.drag) begin(st.last); }, 280); });
+    btn.addEventListener("pointermove", e => { if (!st) return; st.last = e; if (!st.drag && Math.hypot(e.clientX - st.x0, e.clientY - st.y0) > 8) begin(e); if (st.drag){ e.preventDefault(); moveTo(e); } });
+    const end = (e, cancel) => { if (!st) return; clearTimeout(st.t); const d = st; st = null; document.body.classList.remove("pindrag"); if (!d.drag) return; pinDragAt = Date.now(); if (!cancel && d.ok){ dropPin(map.unproject([d.x, d.y])); try { localStorage.setItem("bp-pinhint", "1"); } catch(e) {} } };
+    btn.addEventListener("pointerup", e => end(e, false)); btn.addEventListener("pointercancel", e => end(e, true));
+    btn.addEventListener("contextmenu", e => e.preventDefault()); };
+  pinDrag($("gpin"));
+  const hintOff = () => document.body.classList.remove("pinhint-on"); let hintSeen = false; try { hintSeen = localStorage.getItem("bp-pinhint") === "1"; } catch(e) {}
+  setTimeout(() => { document.body.classList.add("pinhint-on"); setTimeout(hintOff, hintSeen ? 4000 : 9000); }, 1200);
+  setTimeout(() => { document.body.classList.add("tips-k", "tips-f"); setTimeout(() => document.body.classList.remove("tips-k", "tips-f"), 9000); }, 1200);
+  $("keykind").parentNode.addEventListener("pointerdown", () => document.body.classList.remove("tips-k"));
+  for (const id of ["bloc","bfilters"]) $(id).addEventListener("pointerdown", () => document.body.classList.remove("tips-f"));
+  $("gpin").addEventListener("pointerdown", hintOff); $("gpin").addEventListener("click", () => { if (Date.now() - pinDragAt < 600) return; document.body.classList.add("pinhint-on"); setTimeout(hintOff, 3500); }); $("gq").addEventListener("focus", hintOff);
   const pop = new maplibregl.Popup({closeButton:false, closeOnClick:false, offset:12});
   for (const id of ["pad","p2"]){
     map.on("mousemove", id, e => { const p = P.find(x => x.id === e.features[0].properties.id); map.getCanvas().style.cursor = "pointer"; pop.setLngLat([p.lng,p.lat]).setHTML(`<b>${esc(p.name)}</b><br>${esc(p.loc)} · ${money(p.pmin)} onwards${p.sold ? " · sold out" : ""}`).addTo(map); });
     map.on("mouseleave", id, () => { map.getCanvas().style.cursor = ""; pop.remove(); });
-    map.on("click", id, e => { if (!picking) openCard(e.features[0].properties.id, false); });
   }
   map.on("mousemove", "stn", e => { pop.setLngLat(e.lngLat).setHTML(esc(e.features[0].properties.n)).addTo(map); });
   map.on("mouseleave", "stn", () => pop.remove());
@@ -823,20 +1400,24 @@ function corridorPsf(p){
   const v = P.filter(x => x.cor === p.cor && x.kind === p.kind && x.psf && !x.sold).map(x => x.psf).sort((a,b) => a-b);
   return v.length >= 5 ? {lo:v[Math.floor(v.length*.05)], mid:median(v), hi:v[Math.floor(v.length*.95)], n:v.length} : null;
 }
+function heroCap(p){ return (p.kinds || [p.kind]).map(k => KIND[k]).join(" + ") + " · illustration"; }
 function heroSVG(p){
-  const W = 430, H = 190, G = 150, sh = shape(p); let g = "";
-  if (p.kind === "apt"){
-    const n = Math.min(sh.n, 9), tw = Math.min(40, (W-50)/n - 8), x0 = (W - n*(tw+8) + 8)/2, top = Math.max(sh.fl, 14);
-    for (let i = 0; i < n; i++){
-      const fl = Math.max(sh.fl + ((i*7 + p.id) % 3) - 1, 3), h = fl/top*(G-44), x = x0 + i*(tw+8), y = G - h;
-      g += `<rect x="${x-3}" y="${G-9}" width="${tw+6}" height="9" fill="#6b4a12"/><rect x="${x}" y="${y}" width="${tw}" height="${h-9}" fill="url(#win)"/><rect x="${x}" y="${y}" width="${tw}" height="${h-9}" fill="none" stroke="#fff1cc" stroke-width=".6"/><rect x="${x+tw*.3}" y="${y-6}" width="${tw*.4}" height="6" fill="#ffd77a"/>`;
-    }
-  } else if (p.kind === "villa"){
-    for (let i = 0; i < 7; i++){ const x = 28 + i*56; g += `<rect x="${x}" y="${G-34}" width="40" height="34" fill="url(#win)"/><path d="M${x-5} ${G-34} L${x+20} ${G-54} L${x+45} ${G-34}Z" fill="#ffd77a"/>`; }
-  } else {
-    for (let r = 0; r < 3; r++) for (let c = 0; c < 8; c++) g += `<path d="M${40+c*46-r*14} ${G-70+r*26} h38 l-12 20 h-38z" fill="none" stroke="#ffd77a" stroke-width="1.2"/>`;
-  }
-  return `<svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="xMidYMax slice" role="img" aria-label="Illustration of ${esc(p.name)}"><defs><linearGradient id="sky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#0b1230"/><stop offset="1" stop-color="#27356b"/></linearGradient><pattern id="win" width="8" height="7" patternUnits="userSpaceOnUse"><rect width="8" height="7" fill="#b9801a"/><rect x="1.5" y="1.5" width="5" height="3.4" fill="#ffd77a"/></pattern></defs><rect width="${W}" height="${H}" fill="url(#sky)"/><circle cx="${W-56}" cy="38" r="15" fill="#fff1cc" opacity=".85"/><rect y="${G}" width="${W}" height="${H-G}" fill="#16382b"/>${g}</svg>`;
+  const W = 430, H = 190, G = 150, K = ["apt","villa","plot"].filter(k => (p.kinds || [p.kind]).includes(k)), wt = {apt:1.35, villa:1, plot:1.05}, tot = K.reduce((n,k) => n + wt[k], 0);
+  let g = "", x = 12; const solo = K.length === 1;
+  K.forEach((k, zi) => { const a = x, b = x + (W - 24)*wt[k]/tot, zw = b - a; x = b;
+    if (zi) g += `<rect x="${a-1}" y="${G-24}" width="2" height="24" fill="#3b2a12"/><circle cx="${a}" cy="${G-30}" r="11" fill="#1f7a55"/><circle cx="${a+5}" cy="${G-24}" r="7" fill="#27916a"/>`;
+    if (k === "apt"){ const fl = p.floors || 14, n = Math.max(2, Math.min(p.towers || 6, Math.floor((zw - 10)/26), 9)), tw = Math.min(38, (zw - 10)/n - 7), x0 = a + (zw - n*(tw + 7) + 7)/2, top = Math.max(fl, 14);
+      for (let i = 0; i < n; i++){ const f = Math.max(fl + ((i*7 + p.id) % 3) - 1, 3), h = f/top*(G - 46), tx = x0 + i*(tw + 7), y = G - h;
+        g += `<rect x="${tx-3}" y="${G-9}" width="${tw+6}" height="9" fill="#0f4a66"/><rect x="${tx}" y="${y}" width="${tw}" height="${h-9}" fill="url(#winA)"/><rect x="${tx}" y="${y}" width="${tw}" height="${h-9}" fill="none" stroke="#a5e4ff" stroke-width=".6"/><rect x="${tx+tw*.3}" y="${y-6}" width="${tw*.4}" height="6" fill="#38bdf8"/>`; } }
+    else if (k === "villa"){ const n = Math.max(2, Math.floor((zw - 6)/52)), gap = (zw - n*40)/(n + 1);
+      if (solo) for (let i = 0; i < n - 1; i++){ const vx = a + gap*1.5 + 20 + i*(40 + gap); g += `<g opacity=".5"><rect x="${vx}" y="${G-58}" width="32" height="26" fill="#1d6b4b"/><path d="M${vx-4} ${G-58} L${vx+16} ${G-74} L${vx+36} ${G-58}Z" fill="#2fd08a"/></g>`; }
+      for (let i = 0; i < n; i++){ const vx = a + gap + i*(40 + gap);
+        g += `<rect x="${vx}" y="${G-34}" width="40" height="34" fill="#e6fff4"/><path d="M${vx-6} ${G-34} L${vx+20} ${G-56} L${vx+46} ${G-34}Z" fill="#2fd08a"/><rect x="${vx+6}" y="${G-26}" width="10" height="10" fill="#1d6b4b"/><rect x="${vx+24}" y="${G-26}" width="10" height="10" fill="#1d6b4b"/><rect x="${vx+16}" y="${G-14}" width="8" height="14" fill="#14553c"/>`; } }
+    else { const cols = Math.max(2, Math.floor((zw - 20)/42)), cw = (zw - 26)/cols;
+      g = `<rect x="${zi ? a : 0}" y="${G-40}" width="${zw + 24}" height="42" fill="#16382b"/>` + g;
+      for (let r = 0; r < 3; r++) for (let c = 0; c < cols; c++){ const px = a + 22 + c*cw - r*9, py = G - 34 + r*14; g += `<path d="M${px} ${py} h${cw-6} l-8 11 h-${cw-6}z" fill="rgba(255,122,92,.16)" stroke="#ff7a5c" stroke-width="1.2"/>`; }
+      g += `<rect x="${a+zw/2-1}" y="${G-62}" width="2" height="30" fill="#ffd9cf"/><rect x="${a+zw/2-17}" y="${G-74}" width="34" height="15" rx="2" fill="#ff7a5c"/><text x="${a+zw/2}" y="${G-63}" text-anchor="middle" font-size="8.5" font-weight="700" fill="#2a0f08" font-family="sans-serif">PLOTS</text>`; } });
+  return `<svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="xMidYMax slice" role="img" aria-label="Illustration of ${esc(p.name)}: ${heroCap(p)}"><defs><linearGradient id="sky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#0b1230"/><stop offset="1" stop-color="#27356b"/></linearGradient><pattern id="winA" width="8" height="7" patternUnits="userSpaceOnUse"><rect width="8" height="7" fill="#12587a"/><rect x="1.5" y="1.5" width="5" height="3.4" fill="#bfeaff"/></pattern></defs><rect width="${W}" height="${H}" fill="url(#sky)"/><circle cx="${W-56}" cy="38" r="15" fill="#fff1cc" opacity=".85"/><rect y="${G}" width="${W}" height="${H-G}" fill="#16382b"/>${g}</svg>`;
 }
 function openCard(id, fly){
   const p = P.find(x => x.id === id); if (!p) return;
@@ -845,54 +1426,60 @@ function openCard(id, fly){
   const earth = `https://earth.google.com/web/@${p.lat},${p.lng},880a,650d,35y,20h,62t,0r`;
   const units = p.u.filter(u => u[2] || u[3]);
   const rows = units.slice(0, 14).map(u => `<tr class="${(S.bhk.size || S.pmax != null || S.sq) && unitFit(u) === 2 ? "hit" : ""}"><td>${esc(u[0])}</td><td class="r">${u[2] ? u[2].toLocaleString("en-IN") : "–"}</td><td class="r">${u[3] ? money(u[3]) : "On request"}</td><td class="r">${u[2] && u[3] ? "₹" + Math.round(u[3]*1e5/u[2]).toLocaleString("en-IN") : "–"}</td></tr>`).join("");
-  const sh = shape(p), cp = p.psf ? corridorPsf(p) : null, img = BP[p.id] && BP_IMG[BP[p.id]];
+  const sh = shape(p), cp = p.psf ? corridorPsf(p) : null, img = p.img || (BP[p.id] && BP_IMG[BP[p.id]]);
   const facts = [
     ["Stage", p.sold ? "Sold out by builder" : STAGE[p.st]], ["Possession", p.poss || "–"],
-    ["Homes", p.bhk.length ? p.bhk.join(", ") + " BHK" : KIND[p.kind]], ["RERA", p.rera ? p.rera : (p.rera_st === "ok" ? "Registered" : p.rera_st === "pending" ? "Awaited" : "–")]
+    ["Homes", (p.kinds.length > 1 ? p.kinds.map(k => KIND[k]).join(" + ") + " · " : "") + (p.bhk.length ? p.bhk.join(", ") + " BHK" : KIND[p.kind])], ["RERA", p.rera ? p.rera : (p.rera_st === "ok" ? "Registered" : p.rera_st === "pending" ? "Awaited" : "–")]
   ];
   const tiles = [[p.acres ? p.acres + " ac" : "–", "Land"], [p.kind === "apt" ? (p.towers || "–") : KIND[p.kind].slice(0,-1), p.kind === "apt" ? "Towers" : "Type"], [p.floors ? "G+" + p.floors : "–", "Floors"], [p.units ? p.units.toLocaleString("en-IN") : "–", "Units"]];
   const dist = [...(S.near ? [["From " + esc(S.near.n), p.d, 5]] : []), ["Metro: " + esc(p.metro[1]), p.metro[0], 2], ...p.off.slice(0,3).map(o => [esc(o[1]), o[0], 5])];
   const checks = ["pool","gym","clubhouse","kids","jogging","courts","indoor","spa","yoga","pet","cowork","theatre"];
   const pos = cp ? Math.min(Math.max((p.psf - cp.lo)/Math.max(cp.hi - cp.lo, 1), 0), 1)*100 : 0, mpos = cp ? Math.min(Math.max((cp.mid - cp.lo)/Math.max(cp.hi - cp.lo, 1), 0), 1)*100 : 0;
+  const ch = (i, t) => `<h3 class="ch">${ic(i, 17)}<span>${t}</span></h3>`;
+  const fact = f => `<div><dt>${f[0]}</dt><dd>${esc(f[1])}</dd></div>`;
+  const nearRows = [["Nearest school", p.near.school], ["Nearest hospital", p.near.hospital], ["Nearest supermarket or mall", p.near.shop]].filter(n => n[1][2]).map(n => [n[0], n[1][2] + (n[1][1] != null ? " · " + n[1][1] + " km" : "")]);
   $("card").innerHTML = `
-    <div class="chead"><h2>${esc(p.name)}</h2><button class="x" id="cx" type="button" aria-label="Close">×</button>
-      <div class="sub">${esc(p.dev)} · ${esc(p.loc)}, ${esc(p.cor)}</div></div>
+    <div class="chead"><h2>${esc(p.name)}</h2>
+      <a class="x mapgo" href="https://www.google.com/maps/search/?api=1&query=${g}" target="_blank" rel="noopener" aria-label="Open in Google Maps (opens a new tab)" title="Open in Google Maps"><img src="${CONFIG.mapsIcon}" alt="" height="20" style="width:auto" onerror="this.replaceWith(Object.assign(document.createElement('span'),{className:'mapfb',textContent:'Maps'}))"></a>
+      <button class="x" id="cx" type="button" aria-label="Close">×</button>
+      <div class="csub">${esc(p.dev)} · ${esc(p.loc)}, ${esc(p.cor)}</div></div>
     <div class="cbody">
-      <figure class="hero" id="hero">${img ? `<img src="${img}" alt="${esc(p.name)}" referrerpolicy="no-referrer"><figcaption>Photo: BharatProps</figcaption>` : heroSVG(p) + `<figcaption>Illustration from tower and floor counts</figcaption>`}</figure>
-      <div class="big">${money(p.pmin)}${p.pmax > p.pmin ? " to " + money(p.pmax) : ""}<small>Indicative price, ${esc(CONFIG.dataDate)}${p.psf ? " · about ₹" + p.psf.toLocaleString("en-IN") + " per sq ft" : ""}</small></div>
-      <div class="tiles">${tiles.map(t => `<div class="tile"><b>${esc(t[0])}</b><span>${t[1]}</span></div>`).join("")}</div>
-      <dl class="facts">${facts.map(f => `<div><dt>${f[0]}</dt><dd>${esc(f[1])}</dd></div>`).join("")}</dl>
-      <a class="bplink" href="${BP[p.id] ? BP_SITE + "/project/" + BP[p.id] : BP_SITE + "/projects"}" target="_blank" rel="noopener">${BP[p.id] ? "See photos and full details on BharatProps" : "Browse projects with photos on BharatProps"} →</a>
-      ${cp ? `<div><h3>Price against ${esc(p.cor)}</h3>
+      <figure class="hero" id="hero">${img ? `<img src="${img}" alt="${esc(p.name)}" referrerpolicy="no-referrer"><figcaption>Photo: BharatProps</figcaption>` : heroSVG(p) + `<figcaption>${heroCap(p)}</figcaption>`}</figure>
+      <section class="csec first">
+        <div class="big">${money(p.pmin)}${p.pmax > p.pmin ? " to " + money(p.pmax) : ""}<small>Indicative price, ${esc(CONFIG.dataDate)}${p.psf ? " · about ₹" + p.psf.toLocaleString("en-IN") + " per sq ft" : ""}</small></div>
+        <dl class="facts">${[facts[0], facts[1], facts[2], ["Typical price", p.psf ? "₹" + p.psf.toLocaleString("en-IN") + " per sq ft" : "On request"]].map(fact).join("")}</dl>
+        <a class="bplink" href="${BP[p.id] ? BP_SITE + "/project/" + BP[p.id] : BP_SITE + "/projects"}" target="_blank" rel="noopener">${BP[p.id] ? "See photos and full details on BharatProps" : "Browse projects with photos on BharatProps"} →</a>
+      </section>
+      <section class="csec">${ch("shapes","Project size")}
+        <div class="tiles">${tiles.map(t => `<div class="tile"><b>${esc(t[0])}</b><span>${t[1]}</span></div>`).join("")}</div>
+        ${p.land ? `<p class="stats" style="margin:0">${esc(p.land)}</p>` : ""}
+      </section>
+      ${rows || cp ? `<section class="csec">${ch("wallet","Homes and prices")}
+        ${rows ? `<div><div class="tw"><table><thead><tr><th>Type</th><th class="r">Sq ft</th><th class="r">Price</th><th class="r">Per sq ft</th></tr></thead><tbody>${rows}</tbody></table></div>${units.length > 14 ? `<p class="hint">${units.length - 14} more unit types on request.</p>` : ""}</div>` : ""}
+        ${cp ? `<div class="pvs"><h4>Price against ${esc(p.cor)}</h4>
         <div class="meter"><u style="left:${mpos}%"></u><i style="left:${pos}%"></i></div>
         <div class="scale"><span>₹${cp.lo.toLocaleString("en-IN")}</span><span>typical ₹${cp.mid.toLocaleString("en-IN")}</span><span>₹${cp.hi.toLocaleString("en-IN")}</span></div>
         <p class="hint" style="margin:6px 0 0">This project is ${p.psf > cp.mid*1.05 ? Math.round((p.psf/cp.mid-1)*100) + "% above" : p.psf < cp.mid*.95 ? Math.round((1-p.psf/cp.mid)*100) + "% below" : "in line with"} the typical price per sq ft of ${cp.n} available ${({apt:"apartment",villa:"villa",plot:"plot"})[p.kind]} projects in this corridor.</p></div>` : ""}
-      <div><h3>See the location in 3D</h3>
-        <div class="view3d">
-          <a class="wide" href="${earth}" target="_blank" rel="noopener">Open 3D view in Google Earth</a>
-          <button type="button" id="fly3d">See the 3D model on the map</button>
-          <a href="https://www.google.com/maps/@?api=1&map_action=map&center=${g}&zoom=18&basemap=satellite" target="_blank" rel="noopener">Satellite on Google Maps</a>
-          <a href="https://www.google.com/maps/@?api=1&map_action=pano&viewpoint=${g}" target="_blank" rel="noopener">Street View</a>
-          <a href="https://www.google.com/maps/dir/?api=1&destination=${g}" target="_blank" rel="noopener">Directions</a>
-        </div>
-        ${online ? `<iframe class="sat" style="margin-top:8px" loading="lazy" title="Satellite view of ${esc(p.name)}" src="https://maps.google.com/maps?q=${g}&t=k&z=17&output=embed"></iframe>` : ""}
-        <p class="hint" style="margin:7px 0 0">The 3D model on the map is an illustration built from this project's land, tower and floor counts. <a style="color:inherit" href="https://www.google.com/maps/search/?api=1&query=${q}" target="_blank" rel="noopener">Photos and reviews on Google Maps</a></p>
-      </div>
-      ${rows ? `<div><h3>Unit sizes and prices</h3><div class="tw"><table><thead><tr><th>Type</th><th class="r">Sq ft</th><th class="r">Price</th><th class="r">Per sq ft</th></tr></thead><tbody>${rows}</tbody></table></div>${units.length > 14 ? `<p class="hint">${units.length - 14} more unit types on request.</p>` : ""}</div>` : ""}
-      <div><h3>Getting around</h3><ul class="bars">${dist.map(d => `<li><div class="top"><span>${d[0]}</span><span>${d[1]} km</span></div><div class="bar"><i class="${d[1] <= d[2] ? "ok" : ""}" style="width:${Math.max(Math.min(d[1]/15,1)*100,3)}%"></i></div></li>`).join("")}</ul>
-        <p class="stats" style="margin:9px 0 0">${p.near.school[0]} schools within 1 km · ${p.near.hospital[0]} hospitals within 2 km · ${p.near.shop[0]} supermarkets or malls within 1.5 km</p></div>
-      ${p.am.length ? `<div><h3>Amenities</h3><ul class="checks">${checks.map(c => `<li class="${p.am.includes(c) ? "" : "no"}"><i>${p.am.includes(c) ? "✓" : "–"}</i>${AMEN[c]}</li>`).join("")}</ul>
-        <details><summary>Full list from the builder (${p.amraw.length})</summary><div class="tags" style="margin-top:8px">${p.amraw.map(a => `<span class="tag">${esc(a)}</span>`).join("")}</div></details></div>` : ""}
+      </section>` : ""}
+      <section class="csec">${ch("pin","Location and connectivity")}
+        <div><ul class="bars">${dist.map(d => `<li><div class="top"><span>${d[0]}</span><span>${d[1]} km</span></div><div class="bar"><i class="${d[1] <= d[2] ? "ok" : ""}" style="width:${Math.max(Math.min(d[1]/15,1)*100,3)}%"></i></div></li>`).join("")}</ul>
+        ${p.nearKnown ? `        <p class="stats" style="margin:9px 0 0">${p.near.school[0]} schools within 1 km · ${p.near.hospital[0]} hospitals within 2 km · ${p.near.shop[0]} supermarkets or malls within 1.5 km</p>` : ""}</div>
+        ${nearRows.length || p.pin ? `<dl class="facts one">${[...nearRows, ...(p.pin ? [["Pin code", p.pin]] : [])].map(fact).join("")}</dl>` : ""}
+      </section>
+      ${p.am.length ? `<section class="csec">${ch("spark","Amenities")}<div><ul class="checks">${checks.map(c => `<li class="${p.am.includes(c) ? "" : "no"}"><i>${p.am.includes(c) ? "✓" : "–"}</i>${AMEN[c]}</li>`).join("")}</ul>
+        <details><summary>Full list from the builder (${p.amraw.length})</summary><div class="tags" style="margin-top:8px">${p.amraw.map(a => `<span class="tag">${esc(a)}</span>`).join("")}</div></details></div></section>` : ""}
+      <section class="csec">${ch("hat","Builder and legal")}
+        <dl class="facts one">${[["Builder", p.dev || p.brand || "–"], ["RERA number", p.rera || "Not listed yet"], ["RERA status", p.rera_st === "ok" ? "Registered" : p.rera_st === "pending" ? "Awaited" : "–"]].map(fact).join("")}</dl>
+      </section>
     </div>
     <div class="cfoot">
       <a class="cta" href="${waLink(`Hi ${CONFIG.brand}, I am interested in ${p.name}, ${p.loc}. Please share the price sheet and available units.${need()}`)}" target="_blank" rel="noopener">Get price sheet on WhatsApp</a>
       <button class="save" id="sv" type="button" aria-pressed="${saved.has(id)}">${saved.has(id) ? "Saved" : "Save"}</button>
     </div>`;
   $("card").classList.add("open");
-  const hi = $("hero").querySelector("img"); if (hi) hi.onerror = () => { $("hero").innerHTML = heroSVG(p) + "<figcaption>Illustration from tower and floor counts</figcaption>"; };
+  const hi = $("hero").querySelector("img"); if (hi) hi.onerror = () => { $("hero").innerHTML = heroSVG(p) + "<figcaption>" + heroCap(p) + "</figcaption>"; };
   $("cx").onclick = closeCard;
   $("sv").onclick = () => { saved.has(id) ? saved.delete(id) : saved.add(id); persist(); $("sv").setAttribute("aria-pressed", saved.has(id)); $("sv").textContent = saved.has(id) ? "Saved" : "Save"; renderList(); };
-  $("fly3d").onclick = () => { $("b3d").setAttribute("aria-pressed", true); $("b3d").textContent = "2D"; map.flyTo({center:[p.lng,p.lat], zoom:15.6, pitch:66, bearing:25, duration:1600, padding:{right:innerWidth > 860 ? 430 : 0, left:innerWidth > 860 ? 372 : 0}}); if (innerWidth <= 860) closeCard(); };
   if (fly && map) map.flyTo({center:[p.lng,p.lat], zoom:Math.max(map.getZoom(), 14), duration:900, padding:{right:innerWidth > 860 ? 430 : 0, left:innerWidth > 860 ? 372 : 0}});
   renderList(); paint();
 }
@@ -906,10 +1493,10 @@ function placeFilters(){ // on a phone the filters are their own screen, opened 
   if (phone()){ if (f.parentNode !== $("app")) $("app").appendChild(f); }
   else { if (f.parentNode !== sc) sc.insertBefore(f, sc.firstChild); f.classList.remove("open"); }
 }
-function openFilters(open){ $("filters").classList.toggle("open", open); if (open) setSheet(false); }
+function openFilters(open, mode){ const f = $("filters"); if (open){ f.dataset.mode = mode; $("ftitle").textContent = mode === "loc" ? "Location filters" : "Property filters"; document.querySelector(".fbody").scrollTop = 0; } f.classList.toggle("open", open); }   // the list stays as it was, so closing filters returns you to it
 function peekHint(){ const open = $("sheet").classList.contains("full"); $("peekhint").textContent = open ? "Swipe down to see the map" : (S.near ? "Near " + S.near.n + " · swipe up" : "Swipe up for the full list"); }
 function setSheet(open){
-  const sh = $("sheet"); sh.style.transition = ""; sh.style.transform = ""; sh.classList.toggle("full", open);
+  const sh = $("sheet"); sh.style.transition = ""; sh.style.transform = ""; sh.classList.toggle("full", open); document.body.classList.toggle("sheet-full", open);
   $("grab").setAttribute("aria-expanded", open); peekHint();
 }
 (function(){
@@ -929,15 +1516,68 @@ function setSheet(open){
   sc.addEventListener("touchstart", e => { sy = e.touches[0].clientY; top0 = sc.scrollTop <= 0; }, {passive:true});
   sc.addEventListener("touchend", e => { if (phone() && top0 && sy != null && e.changedTouches[0].clientY - sy > 90 && sc.scrollTop <= 0) setSheet(false); sy = null; });
   addEventListener("resize", () => { placeFilters(); if (!phone()) setSheet(false); });
-  $("bfilters").addEventListener("click", () => openFilters(true));
+  $("bfilters").addEventListener("click", () => openFilters(true, "prop")); $("bloc").addEventListener("click", () => openFilters(true, "loc"));
   $("fclose").addEventListener("click", () => openFilters(false)); $("fshow").addEventListener("click", () => openFilters(false));
   document.addEventListener("keydown", e => { if (e.key === "Escape") openFilters(false); });
 })();
 
+/* ---------- data: projects.csv (one row per project) + units.csv (one row per unit type) ---------- */
+function parseCSV(t){
+  t = t.replace(/^\uFEFF/, ""); const rows = []; let row = [], cell = "", q = false;
+  for (let i = 0; i < t.length; i++){ const c = t[i];
+    if (q){ if (c === '"'){ if (t[i+1] === '"'){ cell += '"'; i++; } else q = false; } else cell += c; }
+    else if (c === '"') q = true;
+    else if (c === ","){ row.push(cell); cell = ""; }
+    else if (c === "\n" || c === "\r"){ if (c === "\r" && t[i+1] === "\n") i++; row.push(cell); cell = ""; if (row.some(x => x.trim() !== "")) rows.push(row); row = []; }
+    else cell += c; }
+  row.push(cell); if (row.some(x => x.trim() !== "")) rows.push(row);
+  const head = (rows.shift() || []).map(h => h.trim().toLowerCase().replace(/\s+/g, "_"));
+  return rows.map(r => { const o = {}; head.forEach((h,i) => o[h] = (r[i] || "").trim()); return o; });
+}
+function loadProjects(pt, ut){
+  const num = v => { v = String(v == null ? "" : v).replace(/,/g, "").trim(); return v === "" || isNaN(+v) ? null : +v; };
+  const list = v => String(v || "").split("|").map(x => x.trim()).filter(Boolean);
+  const KK = {apartment:"apt", apartments:"apt", apt:"apt", flat:"apt", flats:"apt", villa:"villa", villas:"villa", plot:"plot", plots:"plot"};
+  const SK = {"new launch":"new", new:"new", "under construction":"uc", uc:"uc", "ready to move":"ready", ready:"ready"};
+  const RK = {registered:"ok", ok:"ok", yes:"ok", awaited:"pending", pending:"pending"};
+  const byId = {}, byName = {};
+  for (const u of parseCSV(ut)){ const row = [u.unit_name, num(u.bedrooms), num(u.size_sqft), num(u.price_lakh)]; if (!row[0]) continue;
+    if (u.project_id) (byId[u.project_id] = byId[u.project_id] || []).push(row); else (byName[u.project_name.toLowerCase()] = byName[u.project_name.toLowerCase()] || []).push(row); }
+  const stations = BASE.stations.filter(s => s[4] !== 0), offices = LM.filter(l => l[3] === "office"), r1 = x => Math.round(x*10)/10;
+  const out = [];
+  parseCSV(pt).forEach((r, i) => {
+    const lat = num(r.latitude), lng = num(r.longitude), kind = KK[r.home_type.toLowerCase()];
+    if (!r.name || lat == null || lng == null || !kind){ console.warn("projects.csv row skipped (needs name, latitude, longitude, home_type):", r.name || "row " + (i + 2)); return; }
+    const id = num(r.id) != null ? num(r.id) : 900100 + i, py = num(r.possession_year);
+    const near = k => [num(r[k[0]]) || 0, num(r[k[2]]), r[k[1]] || ""];
+    const p = {id, name:r.name, dev:r.builder_full || r.builder_short || "", brand:r.builder_short || r.builder_full || "", loc:r.locality || "", cor:r.corridor || "", lat, lng, kind,
+      st:SK[r.stage.toLowerCase()] || (py >= 2029 ? "new" : py >= 2027 ? "uc" : "ready"), sold:/^(y|yes|true|1|sold)/i.test(r.sold_out),
+      pmin:num(r.price_from_lakh) || 0, pmax:num(r.price_to_lakh) || 0, bhk:list(r.bhk).map(num).filter(x => x != null), poss:r.possession_text || (py ? String(py) : ""), py,
+      land:r.land_text || "", acres:num(r.land_acres), towers:num(r.towers), floors:num(r.floors), units:num(r.total_units), units_txt:r.units_text || "",
+      rera:r.rera_number || "", rera_st:RK[r.rera_status.toLowerCase()] || (r.rera_number ? "ok" : ""),
+      u:byId[r.id] || byName[r.name.toLowerCase()] || [], am:list(r.amenity_tags).map(a => a.toLowerCase()), amraw:list(r.amenities_full),
+      metro:[num(r.metro_km), r.metro_station || ""], off:list(r.tech_parks).map(o => { const m = o.match(/^(.*\S)\s+([\d.]+)$/); return m ? [+m[2], m[1]] : null; }).filter(Boolean),
+      near:{school:near(["schools_within_1km","nearest_school","nearest_school_km"]), hospital:near(["hospitals_within_2km","nearest_hospital","nearest_hospital_km"]), shop:near(["shops_within_1_5km","nearest_shop","nearest_shop_km"]), park:near(["parks_nearby","nearest_park","nearest_park_km"])},
+      nearKnown:["schools_within_1km","hospitals_within_2km","shops_within_1_5km"].some(k => r[k] !== ""), pin:r.pin_code || "", img:r.photo_url || ""};
+    if (p.metro[0] == null){ let b = null; for (const s of stations){ const d = kmBetween(lat, lng, s[1], s[0]); if (!b || d < b[0]) b = [d, s[2]]; } p.metro = b ? [r1(b[0]), b[1]] : [99, ""]; }   // left blank in the sheet: nearest open station, worked out here
+    if (!p.off.length) p.off = offices.map(l => [r1(kmBetween(lat, lng, l[1], l[2])), l[0]]).sort((a,b) => a[0] - b[0]).slice(0, 9);
+    if (r.bharatprops_slug) BP[id] = r.bharatprops_slug;
+    out.push(p); });
+  return out;
+}
+
 /* ---------- start ---------- */
 (async function(){
   try {
-    [P, BASE] = await Promise.all([fetch("projects.json").then(r => r.json()), fetch("basemap.json").then(r => r.json())]);
+    const txt = f => fetch(f, {cache:"no-cache"}).then(r => { if (!r.ok) throw new Error(f); return r.text(); });
+    const [pt, ut, plt, mst, base] = await Promise.all([txt("projects.csv"), txt("units.csv"), txt("places.csv"), txt("metro_stations.csv"), fetch("basemap.json").then(r => r.json())]);
+    BASE = base; const f = v => { v = parseFloat(v); return isNaN(v) ? null : v; };
+    const PT = {"tech park":"office", office:"office", "it park":"office", mall:"mall", station:"rail", rail:"rail", railway:"rail", airport:"rail"};
+    LM = parseCSV(plt).map(r => [r.name, f(r.latitude), f(r.longitude), PT[(r.type || "").toLowerCase()]]).filter(l => l[0] && l[1] != null && l[2] != null && l[3]);
+    QUICK = parseCSV(plt).filter(r => /^(y|yes|true|1)/i.test(r.popular || "") && LM.some(l => l[0] === r.name)).map(r => r.name);
+    BASE.stations = parseCSV(mst).map(r => [f(r.longitude), f(r.latitude), r.name, (r.line || "").toLowerCase().replace(/\s*line$/, ""), /later|soon|construction|upcoming|^no/i.test(r.status || "") ? 0 : 1]).filter(x => x[2] && x[0] != null && x[1] != null);
+    P = loadProjects(pt, ut);
+    P.forEach(typeKinds);
   } catch(e) { $("list").innerHTML = `<p class="hint">The project data did not load. Refresh the page to try again.</p>`; return; }
   placeFilters(); prep(); buildUI(); syncUI(); apply(); initMap();
 })();
